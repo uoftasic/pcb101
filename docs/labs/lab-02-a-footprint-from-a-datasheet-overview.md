@@ -1,6 +1,6 @@
 # Lab 02: A footprint from a datasheet
 
-In this lab you make a footprint that KiCad's library doesn't have, for TI's RHL0024A package: a 24-pin VQFN, 3.5 × 5.5 mm, with an exposed pad underneath. You'll work out its pads by hand from the package drawing, draw the footprint and the symbol of the chip that comes in it, the SN74LVC8T245 level translator, and then check both against your own numbers and against KiCad's checks on a small board.
+In this lab you make a footprint that KiCad's library doesn't have, for TI's RHL0024A package: a 24-pin VQFN, 3.5 × 5.5 mm, with an exposed pad underneath. You'll work out its pads by hand from the package drawing, draw the footprint and the symbol of the chip that comes in it (the SN74LVC8T245 level translator), and then check both against your own numbers and against KiCad's checks on a small board.
 
 This lab takes about 2 h.
 
@@ -102,7 +102,7 @@ Can you turn your numbers into a footprint that KiCad will check?
 
    ![KiCad 10.0.8's Pad Properties dialog for pad 1 of the reference footprint: SMD, pad number 1, position -0.75, -2.67 mm, rounded rectangle with a 25 % corner, size 0.26 × 0.89 mm, on F.Cu with F.Paste and F.Mask.](../assets/img/kicad-pad-properties-rhl0024a.png)
 
-   Make it pad 2: SMD, rounded rectangle, 0.89 mm in X by 0.26 mm in Y, at X = −1.67 and Y = −2.25 with your own numbers in place of these if they differ. Leave F.Paste and F.Mask ticked. KiCad's Y axis points down, so negative Y is the top of the footprint.
+   Make it pad 2: SMD, rounded rectangle, 0.89 mm in X by 0.26 mm in Y, at X = −1.67 and Y = −2.25, with your own numbers in place of these if they differ. Leave F.Paste and F.Mask ticked. KiCad's Y axis points down, so negative Y is the top of the footprint.
 
 3. Make the rest of the left column with an array. Select pad 2 and press Ctrl+T:
 
