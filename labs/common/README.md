@@ -30,6 +30,8 @@ That FAIL is correct. The breakout has 10 ERC errors in KiCad 10.0.8, and the ch
 | `image-entry.sh` | runs inside the image before the command, and gives your uid the image's default library tables |
 | `check_board.py` | the board check: ERC, DRC, unconnected items and schematic parity, with PASS or FAIL |
 | `check_solutions.py` | runs the board check on every lab's reference solution; CI runs this |
+| `check_pmod.py`, `pins/` | the Pmod check for Labs 03 and 04: the board check, then the Pmod connectors' placement and a project's pin list (`pins/simproc.json` is SimProc's) |
+| `check_bringup.py` | the bring-up plan check for Lab 04: every section of `BRINGUP.md` filled in, and an expected value with its unit at every step |
 | `kicad_sexpr.py` | a small reader for KiCad's S-expression files, which the lab checkers use instead of KiCad's `pcbnew` Python module |
 | `selftest_check.py`, `selftest/` | four boards with known verdicts, which show that the check checks |
 | `fetch_boards.py`, `upstream.json` | fetches Tiny Tapeout's boards and libraries at pinned commits |
@@ -53,6 +55,13 @@ pb101: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f
 The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `PB101_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `PB101_QUIET=1` to drop the digest line.
 
 Running as your uid means starting with an empty home folder, and so with no KiCad library tables. Without them, ERC and DRC report every standard library as missing, and the SKY130 breakout's ERC warnings go from 103 to 236 and its DRC warnings from 123 to 130 (the errors stay 10 and 0). The image's own user, `kicad`, has the two tables in `/home/kicad/.config/kicad/10.0/`, but that folder is readable only by `kicad`. Its `fp-lib-table` and `sym-lib-table` are byte-for-byte the defaults KiCad ships in `/usr/share/kicad/template/` (we compared them with `cmp`), so `image-entry.sh` copies those. Every run then sees the same libraries as the image's default user, whoever runs it.
+
+From Lab 03 on, your board lives in a repository of your own, outside the course clone. Run `kicad.sh` from there and it mounts the current folder at `/work` as well, and starts the command in it, while the course's scripts stay under `/w`. That's what each lab's `check.sh` does:
+
+```bash
+cd ~/simproc-pmod
+~/pb101/labs/common/kicad.sh python3 /w/labs/common/check_pmod.py .
+```
 
 `kicad.sh` is a bash script, for Linux, macOS and WSL. Without bash, the plain `docker run` below does the same check. It runs as the image's own user, which already has the library tables, and on Linux it printed the same counts as `kicad.sh`. We haven't run it on Windows.
 
@@ -171,3 +180,21 @@ The labs open Tiny Tapeout's own board files, and this repo doesn't store copies
 `tinytapeout-kicad-libs` goes inside `upstream/breakout-pcb/`, because the breakouts' library tables look for it at `${KIPRJMOD}/../tinytapeout-kicad-libs` and the demo board's at `${KIPRJMOD}/../breakout-pcb/tinytapeout-kicad-libs`, and that one folder satisfies both. `breakout-pcb`'s `.gitmodules` points that submodule at `psychogenic/tinytapeout-kicad-libs`. The same commit is in `TinyTapeout/tinytapeout-kicad-libs`, which is the one we fetch.
 
 To add a board, add an entry to `upstream.json` with the full commit hash, the date, the licence and the paths to fetch, then run `fetch_boards.py` and check the files you need are there. The paths are git sparse-checkout patterns: `/dir/` for a folder, `/file` for one file, and `!/dir/*.wrl` to leave something out.
+
+## The Pmod check: `check_pmod.py`
+
+```bash
+labs/common/kicad.sh python3 labs/common/check_pmod.py PROJECT [--pins FILE] [--protect] [--bringup FILE] [--no-board-check]
+```
+
+Labs 03 and 04 run it through their own `check.sh`, on a student's board repository. It runs `check_board.py` on the project first, then reads the schematic's netlist (`kicad-cli sch export netlist`) and the board file, and prints one row per check, `ok` or `FAIL`, and a last line with the verdict. Its docstring lists every rule; the labs' READMEs list what each row passes on. `--pins` names a pin list other than SimProc's. `--protect` adds Lab 04's rows (series resistors, ESD on the dongle header, a current-sense point), and `--bringup` runs `check_bringup.py` on a plan as well. Exit status is 0 for PASS, 1 for FAIL and 2 if it couldn't run.
+
+A pin list is a JSON file like [`pins/simproc.json`](pins/simproc.json): the sockets the board uses, from left to right, the other parts the pins go to (for SimProc, a dongle header whose pins 1, 2 and 3 are GND, TXD and RXD), and one entry per project pin. An entry says the pin reaches a part's pin (`"to"`), needs a switch to 3.3 V and a pull-down (`"switch"`, `"pull": "down"`), or crosses from another supply (`"crossing"`, which `--protect` turns into a series-resistor requirement).
+
+## The bring-up plan check: `check_bringup.py`
+
+```bash
+python3 labs/common/check_bringup.py BRINGUP.md
+```
+
+It needs only Python. It checks that the plan has the five sections of Lab 04's template with something in each, no TODO anywhere, a current limit with its unit, and an `Expect:` with a value and its unit on every numbered item under "Before power" (at least 2) and "Steps" (at least 4). It can't tell whether an expected value is right; a person reads the plan for that.

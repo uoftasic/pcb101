@@ -1,0 +1,20 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "8e3aed46-6746-5032-97de-b7b0a36a6adf")
+	(paper "A4")
+	(title_block
+		(title "Pmod for a Tiny Tapeout project")
+		(date "2026-11-16")
+		(rev "1")
+		(company "UofT ASIC Team, PB101")
+		(comment 1 "Your name")
+	)
+	(lib_symbols)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+)
