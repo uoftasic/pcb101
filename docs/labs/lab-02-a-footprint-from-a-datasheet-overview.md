@@ -12,7 +12,7 @@ Package: [`labs/lab-02-a-footprint-from-a-datasheet/`](https://github.com/uoftas
 - Read [Schematics other people can read](../guide/schematics-other-people-can-read.md), [Symbols, footprints and libraries](../guide/symbols-footprints-and-libraries.md) and [From die to package](../guide/from-die-to-package.md).
 - Download TI's [SN74LVC8T245 datasheet](https://www.ti.com/lit/ds/symlink/sn74lvc8t245.pdf). We used revision SCES584D (June 2005, revised May 2026), and the page numbers below are that revision's PDF pages. If TI has revised it since, find the package outline headed "RHL0024A" near the end; the drawing we used is numbered 4225250/C.
 
-The SN74LVC8T245 moves eight signals between two supplies, each anywhere from 1.65 V to 5.5 V, which is the kind of part that sits between a Tiny Tapeout chip's 3.3 V pins and something running at another voltage. KiCad 10.0.8's `Package_DFN_QFN` library has 779 footprints and none of them is this package: the only RHL footprints in it, `Texas_VQFN-RHL-20` and its thermal-via version, have 20 pads.
+The SN74LVC8T245 moves eight signals between two supplies, each anywhere from 1.65 V to 5.5 V, which is the kind of part that sits between a Tiny Tapeout chip's 3.3 V pins and something running at another voltage. KiCad 10.0.8's `Package_DFN_QFN` library has 779 footprints and none of them is this package: the only RHL footprints in it, `Texas_VQFN-RHL-20` and its thermal-via version, are for a 20-pin package, with 21 pads counting the exposed pad.
 
 ## Part 1: Read the drawing
 
@@ -60,7 +60,7 @@ How big should each pad be, and where does it go?
 
    $$X = W_{min} + 2J_S + \sqrt{C_W^2 + F^2 + P^2}$$
 
-   Z is the distance between the outer ends of two opposite pads, G the distance between their inner ends, and X the pad width. $J_T = 0.30$, $J_H = 0$ and $J_S = -0.04$ mm are IPC-7351B's solder-fillet goals at the toe, heel and side of a no-lead terminal, at nominal density, as KiCad's footprint generator records them. F and P allow for the board maker's and the assembler's tolerances; this course uses F = 0.10 mm and P = 0.05 mm. Write each result to two decimal places in the Z, G and X rows of `pads.md`, in the lab folder.
+   Z is the distance between the outer ends of two opposite pads, G the distance between their inner ends, and X the pad width. $J_T = 0.30$, $J_H = 0$ and $J_S = -0.04$ mm are IPC-7351B's solder-fillet goals at the toe, heel and side of a no-lead terminal, at nominal density, as KiCad's footprint generator records them. F and P allow for the board maker's and the assembler's tolerances; this course uses F = 0.10 mm and P = 0.05 mm. The formula for G takes the worst case for S. KiCad's footprint generator combines the tolerances that make up S as a root-sum-square instead, which gives a larger G for this package; the course's check uses the worst case. Write each result to two decimal places in the Z, G and X rows of `pads.md`, in the lab folder.
 
 3. KiCad's library convention asks for at least 0.2 mm between the exposed pad and every other pad. Make the exposed pad's land the drawing's nominal size, 2.05 × 4.05, and work out the gap between it and the inner ends of your pads at G. Where the gap is less than 0.2 mm, move the pads' inner ends out until it's 0.2 mm, which makes the pads shorter. Then work out each pad's length, and the distance from the footprint's centre to the pad's centre, and write them in the "Pad length" and "Pad centre" rows. Write the exposed pad's size on the last line.
 
@@ -121,7 +121,7 @@ Can you turn your numbers into a footprint that KiCad will check?
 
    ![The reference footprint in the Footprint Editor, loaded from library pb101: pads 1 to 24 around exposed pad 25, the pin 1 triangle on the silkscreen, the body outline with its cut corner on F.Fab, and the courtyard.](../assets/img/kicad-footprint-editor-rhl0024a.png)
 
-7. Save, and run the check from Part 2 again. You should see `ok  Footprint  25 pads where your numbers put them, paste ..%, and matches none of KiCad's 779 QFN footprints`, with your own paste percentage. It compares every pad with your `pads.md` to within 0.01 mm, so if a pad is off it names the pad and where your numbers put it.
+7. Save, and run the check from Part 2 again. You should see `ok  Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 779 QFN footprints`, with your own paste percentage in place of the reference's 66. It compares every pad with your `pads.md` to within 0.01 mm, so if a pad is off it names the pad and where your numbers put it.
 
 Check: the Footprint row says `ok`.
 
@@ -134,13 +134,13 @@ Which pins does the schematic need, and what kind is each one?
    <details>
    <summary>Answer</summary>
 
-   It has 24 pins and no pin for the exposed pad, so pad 25 would get no net. Its footprint filters include `Texas*VQFN*RHL*`, which in KiCad 10.0.8's library matches only `Texas_VQFN-RHL-20` and `Texas_VQFN-RHL-20_ThermalVias`, 20-pad footprints whose description cites a different part's datasheet. A footprint for the wrong pin count can look plausible in a filtered list, which is one reason to read the drawing yourself.
+   It has 24 pins and no pin for the exposed pad, so pad 25 would get no net. Its footprint filters include `Texas*VQFN*RHL*`, which in KiCad 10.0.8's library matches only `Texas_VQFN-RHL-20` and `Texas_VQFN-RHL-20_ThermalVias`, footprints for a 20-pin package whose description cites a different part's datasheet. A footprint for the wrong pin count can look plausible in a filtered list, which is one reason to read the drawing yourself.
 
    </details>
 
 2. In the Symbol Editor, make a new symbol in the project library `pb101` called `SN74LVC8T245RHL`. Give it the pins in Table 4-1 on page 5: VCCA on 1, DIR on 2, A1 to A8 on 3 to 10, GND on 11, 12 and 13, B8 to B1 on 14 to 21, OE on 22 and VCCB on 23 and 24. Add pin 25 for the thermal pad, called `EP`. The Pin Table lets you type the pins into a grid rather than placing each one.
 
-3. Set each pin's electrical type, because ERC reasons from them: the supplies power input, DIR and OE input, and the A and B pins bidirectional. Where one name has several pins (GND, VCCB), make one of them power input and the others either power input too or passive, stacked behind it. The datasheet gives the thermal pad no type; the reference makes it passive, and the check accepts passive, power input, input, bidirectional or unspecified for it.
+3. Set each pin's electrical type, because ERC reasons from them: the supplies power input, DIR and OE input, and the A and B pins bidirectional. GND has three pins and VCCB two, and a schematic should only have to connect each of them once, so stack them. KiCad 10 can put a stack in a single pin: number one GND pin `[11,12,13]` and one VCCB pin `[23,24]`, and KiCad gives that pin's net to every pad in the list. KiCad's library convention (KLC S4.3) asks for these pin stacks from KiCad 10 on, in place of the older way of drawing several pins on top of each other, hidden behind one visible pin. The check accepts either, and the reference was drawn the older way. If you draw it that way, make the hidden pins passive. KiCad joins a hidden power-input pin to a global net named after it, so in Part 5 the pads' nets wouldn't match the schematic, and the check's Symbol row names the pin to change. The datasheet gives the thermal pad no type; the reference makes it passive, and the check accepts passive, power input, input, bidirectional or unspecified for it.
 
 4. Set the symbol's Footprint field to `pb101:RHL0024A`, and save.
 
@@ -238,7 +238,7 @@ Submit: nothing for this lab.
 ## Going further (optional)
 
 - Compare your pads with the QFN-64 on Tiny Tapeout's SKY130 breakout from Lab 01: KiCad's `QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm` uses 0.85 × 0.25 mm pads centred at ±4.45 mm. Its description cites the ATmega2560 datasheet, page 415, so the footprint under the Tiny Tapeout chip was drawn from another chip's package drawing.
-- Run `labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/selftest.py`, which runs the check on five folders with known verdicts, including a KiCad footprint renamed to `RHL0024A`, which fails with `these pads are the same as KiCad's ...`.
+- Run `labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/selftest.py`, which runs the check on seven folders with known verdicts, including a KiCad footprint renamed to `RHL0024A`, which fails with `these pads are the same as KiCad's ...`.
 
 ![The reference footprint RHL0024A, plotted with kicad-cli: copper pads in red, the paste openings on the exposed pad, silkscreen in yellow, the body outline and the courtyard.](../assets/img/lab02-rhl0024a-footprint.svg){width=40%}
 
