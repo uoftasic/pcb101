@@ -2,7 +2,7 @@
 
 <!--
   PB101 capstone. labs/capstone-a-board-for-a-team-chip/src/check_capstone.py reads this file.
-  Keep the four "##" headings. Number the requirements and the decisions. Every decision
+  Keep the four "##" headings, and number the requirements and the decisions. Every decision
   says which requirements it meets on a line starting "Meets:", and gives a value with its
   unit (1 kΩ, 2.7 mA, 22 ns, 10 nF, 113,636 baud); every requirement is met by at least one
   decision. Fill in every placeholder.
@@ -12,7 +12,7 @@ Brief: TODO (D or A). Project: TODO (the Tiny Tapeout project and its repository
 
 ## Requirements
 
-What the board has to do, each with a number where it has one: the pins it connects, the supplies on each side, the ratings it must stay within.
+What the board has to do, each with a number where it has one: the pins it connects, the supplies on each side, and the ratings it must stay within.
 
 1. TODO
 
