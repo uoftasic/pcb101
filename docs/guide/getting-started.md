@@ -22,7 +22,7 @@ So the course splits the work in two. You draw in a native KiCad, which is the s
 
 Install KiCad 10.0, the newest 10.0 release you can get. On November 16, 2026, that was 10.0.8 on every platform's download page. KiCad 10.0.0 came out on March 20, 2026.
 
-The major version matters because a KiCad file doesn't open in an older major version than the one that saved it. KiCad's [Linux packages page](https://www.kicad.org/download/linux-distros/) puts it this way: every year a new major release "comes out, bringing new features and bug fixes, but also usually bringing file format changes that prevent downgrading. In other words, once you update to 9.x and start modifying a project, you will no longer be able to open that project in any 8.x version." The same is true one step later. When we gave a board saved by KiCad 10 to `kicad-cli` 9.0.9, it printed `Failed to load board` and exited with status 3. Every file the course gives you is in the 10.0 format, so KiCad 9 won't open them.
+The major version matters because a KiCad file doesn't open in an older major version than the one that saved it. KiCad's [Linux packages page](https://www.kicad.org/download/linux-distros/) puts it this way: every year a new major release "comes out, bringing new features and bug fixes, but also usually bringing file format changes that prevent downgrading. In other words, once you update to 9.x and start modifying a project, you will no longer be able to open that project in any 8.x version." The same is true one step later. When we gave a board saved by KiCad 10 to `kicad-cli` 9.0.9, it printed `Failed to load board` and exited with status 3. Everything you make in this course is saved in the 10.0 format, so KiCad 9 can't open your work.
 
 Going the other way works. KiCad 10 opens boards saved by KiCad 9, and Tiny Tapeout's SKY130 breakout, the first board you open in Lab 01, is one of those. KiCad tells you so in a bar across the top of the canvas:
 
@@ -32,7 +32,7 @@ Going the other way works. KiCad 10 opens boards saved by KiCad 9, and Tiny Tape
 
 The conversion happens only if you save. Once you have saved the board, it's a 10.0 file and KiCad 9 can't open it any more, which is harmless for a copy you fetched for a lab but worth knowing before you open someone else's project.
 
-Within the 10.0 series, the patch releases (10.0.1, 10.0.2 and so on) all use the same file format, so any 10.0 release opens the course's files, and KiCad encourages everyone to keep up with the latest bugfix release. Every count and message on the lab pages, though, comes from one particular build, `kicad/kicad:10.0.8`. We haven't compared outputs across patch releases, so in some other build a message or a count may not match the page, and that's why the checks always run in the pinned image, whatever you have installed.
+Within the 10.0 series, the patch releases (10.0.1, 10.0.2 and so on) share a file format. The three we checked in KiCad's source, 10.0.0, 10.0.5 and 10.0.8, all write boards as version 20260206 and schematics as version 20260306, so a 10.0 release opens files from any other, and KiCad encourages everyone to keep up with the latest bugfix release. Every count and message on the lab pages, though, comes from one particular build, `kicad/kicad:10.0.8`. We haven't compared outputs across patch releases, so in some other build a message or a count may not match the page, and that's why the checks always run in the pinned image, whatever you have installed.
 
 ## Installing on Windows
 

@@ -6,7 +6,7 @@
 #
 # Builds pb101/kicad-shot first if it isn't there. The repo is mounted read-only; only
 # OUT_DIR is written. The container runs as your uid and is removed when the shot ends,
-# or after 10 minutes, whichever comes first.
+# or after 10 minutes where GNU timeout is installed.
 #
 # Environment:
 #   SCREEN              virtual screen size, default 1600x1000 (each editor fills it)
@@ -38,8 +38,13 @@ echo "shot.sh: $image, built from $base" >&2
 name="pb101-shot-$$-${RANDOM}"
 trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT INT TERM
 
+# GNU timeout ends a stuck shot after 10 minutes; macOS has no `timeout` unless coreutils
+# is installed, and then the shot simply has no time limit.
+limit=()
+command -v timeout >/dev/null 2>&1 && limit=(timeout 600)
+
 # shellcheck disable=SC2086  # PB101_DOCKER_ARGS is a list of flags on purpose
-timeout 600 docker run --rm --name "$name" ${PB101_DOCKER_ARGS:-} \
+${limit[@]+"${limit[@]}"} docker run --rm --name "$name" ${PB101_DOCKER_ARGS:-} \
     --user "$(id -u):$(id -g)" \
     -e SCREEN="${SCREEN:-1600x1000}" \
     -v "$root":/w:ro -v "$here":/rig:ro -v "$out":/out \

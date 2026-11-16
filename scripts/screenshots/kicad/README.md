@@ -1,6 +1,6 @@
 # KiCad screenshots and figures
 
-Two tools make the course's KiCad images. `render.sh` runs `kicad-cli` for 3D renders and SVG plots, which is all a figure needs when it only has to show a design. `shot.sh` takes real screenshots of KiCad's editors, for the steps where a student has to find something in the GUI. Both use the KiCad pinned in [`labs/common/kicad-image.txt`](../../../labs/common/kicad-image.txt) (`kicad/kicad:10.0.8`, by digest).
+Two tools make the course's KiCad images. `render.sh` runs `kicad-cli` for 3D renders and SVG plots, which is all a figure needs when it only has to show a design. `shot.sh` takes real screenshots of KiCad's editors, for the steps where a student has to find something in the GUI. Both are tools for whoever writes the course pages, and we have run them only on Linux. Both use the KiCad pinned in [`labs/common/kicad-image.txt`](../../../labs/common/kicad-image.txt) (`kicad/kicad:10.0.8`, by digest).
 
 ## GUI screenshots
 
@@ -19,9 +19,9 @@ That writes three PNGs into `docs/assets/img/`, each 1600 × 1000, in about 80 s
 
 Two runs gave byte-identical PNGs, so a changed screenshot means KiCad or the board changed.
 
-`shot.sh` builds the image `pb101/kicad-shot:10.0.8` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 30 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends or after 10 minutes. Only the output folder is written.
+`shot.sh` builds the image `pb101/kicad-shot:10.0.8` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 30 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends, or after 10 minutes where GNU `timeout` is installed. Only the output folder is written.
 
-Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background, and with the Footprint Editor open the process held 2.2 GB in our run with a 2 GB limit (some of it swapped) and 2.4 GB with a 4 GB limit. We ran the shots with `PB101_DOCKER_ARGS="--cpus 1 --memory 2g"`.
+Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background, and with the Footprint Editor open, `ps` reported 2.2 GB resident for KiCad under a 2 GB limit (the run completed) and 2.4 GB under a 4 GB limit. We ran the shots with `PB101_DOCKER_ARGS="--cpus 1 --memory 2g"`.
 
 ### The first-run wizard
 

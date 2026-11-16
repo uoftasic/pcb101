@@ -23,10 +23,13 @@
 set -euo pipefail
 
 # kicad-cli writes the time of the run into each SVG's <title>; drop it so that the same
-# input gives the same file.
+# input gives the same file. The sed runs in the image, so it's GNU sed on every host.
 strip_dates() {
-    find "$@" -name '*.svg' -newer "$stamp" -exec \
-        sed -i -E 's#^(<title>SVG Image created as .*) date [0-9T:-]+ (</title>)$#\1\2#' {} +
+    local files=() f
+    while IFS= read -r f; do files+=("$f"); done < <(find "$@" -name '*.svg' -newer "$stamp")
+    [ "${#files[@]}" -gt 0 ] || return 0
+    PB101_QUIET=1 "$kicad" sed -i -E \
+        's#^(<title>SVG Image created as .*) date [0-9T:-]+ (</title>)$#\1\2#' "${files[@]}"
 }
 stamp="$(mktemp)"
 trap 'rm -f "$stamp"' EXIT
