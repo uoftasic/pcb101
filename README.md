@@ -52,7 +52,7 @@ quarto render docs --profile pdf --to typst    # whole course as one PDF in docs
 | `docs/guide/` | Yes | Guide pages: reading only, no commands |
 | `docs/labs/` | Yes | Lab writeups: every command a student runs, in numbered parts and steps |
 | `labs/` | No | Lab packages, and the shared checks in `labs/common/` |
-| `scripts/` | No | `check_site.py` (the link check for the rendered site), the KiCad screenshot tools, and the scripts that draw the guide pages' figures |
+| `scripts/` | No | `check_site.py` (the link check for the rendered site), the KiCad screenshot tools, and the scripts that draw the site's figures |
 
 GitHub Pages is set to Source: GitHub Actions. `.github/workflows/site.yml` renders the site and the course PDF, checks the rendered site's links and anchors with `scripts/check_site.py`, and deploys `docs/_site`.
 
