@@ -53,7 +53,7 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
    10.0.8
    ```
 
-   The first line is the digest Docker resolved, which records exactly which build of KiCad ran. `kicad.sh` is a bash script, so it runs on Linux, macOS and WSL. Without bash, [`labs/common/README.md`](https://github.com/uoftasic/pb101/tree/main/labs/common) has a plain `docker run` command that does the same check; we have run it on Linux but not on Windows.
+   The first line is the digest Docker resolved, which records exactly which build of KiCad ran. `kicad.sh` is a bash script, so it runs on Linux, macOS and WSL. Without bash, [`labs/common/README.md`](https://github.com/uoftasic/pb101/tree/main/labs/common) has a plain `docker run` command that runs Part 4's board check without `kicad.sh`; we have run it on Linux but not on Windows.
 
 Check: KiCad's About box says 10.0, `kicad-cli version` prints `10.0.8`, and `labs/common/upstream/breakout-pcb/breakout-sky-qfn/` exists.
 
@@ -196,12 +196,12 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
 
    </details>
 
-6. DRC reports no errors, but one item is counted as excluded. Run DRC in KiCad's PCB Editor (Inspect → Design Rules Checker, then Run DRC) and look at its exclusions, or add `--reports labs/lab-01-open-a-board-you-didnt-design/results` to the command in step 3 and search `drc.json` for `"excluded": true`. What is it, and why doesn't it count?
+6. DRC reports no errors, but one item is counted as excluded. Run DRC in KiCad's PCB Editor (Inspect → Design Rules Checker, then Run DRC) and look at its exclusions, or add `--reports labs/lab-01-open-a-board-you-didnt-design/results` to the command in step 3 and search `drc.json` for `"excluded": true`. Then open the board's design rules, `breakout-sky-qfn.kicad_dru` in the board's folder, in a text editor. What is the excluded item, and why doesn't it count?
 
    <details>
    <summary>Answer</summary>
 
-   It's a `courtyards_overlap` error between J2, the unfitted 12-pin header, and the test point TP4. The designer marked it as excluded in the board file, which KiCad keeps as a record that someone looked at it and accepted it. J2 is DNP, so no header is ever soldered there to collide with TP4. `check_board.py` counts excluded items separately and never fails on them; `kicad-cli pcb drc` leaves them out unless you ask for `--severity-all`.
+   It's a `courtyards_overlap` error between J2, the unfitted 12-pin header, and the test point TP4, and a design rule excludes it: the last rule in `breakout-sky-qfn.kicad_dru`, called "testpoints under connectors", sets the severity of any courtyard clash between a test point (`TP*`) and a connector (`J*`) to `exclusion`. When we deleted that rule, DRC reported the same overlap as an error. J2 is DNP, so no header is ever soldered there to collide with TP4. `check_board.py` counts excluded items separately and never fails on them; `kicad-cli pcb drc` leaves them out unless you ask for `--severity-all`.
 
    </details>
 

@@ -37,6 +37,6 @@ nowhere: R1 and R3, the links that would take it to the regulators, are DNP.
 | ERC | error | pin_to_pin | 2 | A PWR_FLAG (a power output) sits on each regulator's output net, which the regulator's VOUT pin already drives, so two power outputs are connected. |
 | DRC | error | all | 0 | |
 | DRC | excluded | all | 1 | |
-| DRC | excluded | courtyards_overlap | 1 | The courtyards of J2 and TP4 overlap. The designer marked it as excluded in the board file, so it doesn't count as an error. J2 is DNP, so nothing is ever placed there to collide with TP4. |
+| DRC | excluded | courtyards_overlap | 1 | The courtyards of J2 and TP4 overlap. A rule in the board's own design rules, "testpoints under connectors" in breakout-sky-qfn.kicad_dru, sets the severity of any courtyard clash between a test point and a connector to exclusion, so it doesn't count as an error. J2 is DNP, so nothing is ever placed there to collide with TP4. |
 | ERC | warning | lib_symbol_mismatch | 69 | The symbol saved in the schematic differs from the one in today's library. |
 | DRC | warning | lib_footprint_issues | 76 | The board names footprint libraries this setup doesn't have: flyingcarsfootprints (the stitching vias and a logo) and Logos. |
