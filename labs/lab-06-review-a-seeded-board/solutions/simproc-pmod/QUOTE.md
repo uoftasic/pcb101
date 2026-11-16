@@ -2,10 +2,10 @@
 
 <!--
   PB101 Lab 06 reference, for the format only. We didn't upload these files to a fabricator,
-  because the machine the course was written on doesn't send files to outside sites, so the
+  because the machine the course was written on doesn't send files to outside sites. The
   price and build time are JLCPCB's advertised figures (its home page, read Nov 16, 2026),
-  not a quote for this board, and there is no DFM result. The commit hash is the self-test's;
-  src/selftest.py writes its own repository's hash in its place.
+  not a quote for this board, and there is no DFM result. The commit hash, 0000000, is a
+  placeholder, and src/selftest.py writes its own repository's hash in its place.
 -->
 
 - Fabricator: JLCPCB
