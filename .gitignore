@@ -28,3 +28,5 @@ _book/
 
 # Tiny Tapeout boards fetched by labs/common/fetch_boards.py (never committed)
 labs/common/upstream/
+# Reports written by labs/common/check_solutions.py
+labs/common/results/

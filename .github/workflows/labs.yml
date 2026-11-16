@@ -1,0 +1,68 @@
+# Board checks for the labs: ERC, DRC and schematic parity on every lab's reference
+# solution, in the pinned KiCad image, through the same scripts students run.
+#
+# It runs kicad/kicad by digest through labs/common/kicad.sh, the way students run it,
+# rather than as a job `container:`. That way CI uses the same user setup and the same
+# library tables (the image's defaults) as every expected count in the course. Run as root
+# with no library tables, the same board gives different warning counts (course plan, T12).
+#
+# The weekly run catches breakage that comes from outside this repo: a pinned Tiny Tapeout
+# commit that GitHub stops serving, a pinned image digest that Docker Hub stops serving, or
+# a change to GitHub's runners.
+name: Labs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "labs/**"
+      - ".github/workflows/labs.yml"
+  pull_request:
+    paths:
+      - "labs/**"
+      - ".github/workflows/labs.yml"
+  schedule:
+    - cron: "23 9 * * 1"   # Mondays, 09:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  boards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull the pinned KiCad image
+        run: docker pull "$(head -n 1 labs/common/kicad-image.txt)"
+
+      - name: Fetch the Tiny Tapeout boards at their pinned commits
+        run: python3 labs/common/fetch_boards.py
+
+      # Four boards with known verdicts: a clean KiCad demo must PASS, the same demo with
+      # a footprint deleted or a GND track across VCC must FAIL, and Tiny Tapeout's SKY130
+      # breakout must match its recorded counts. If this fails, the checker can't be
+      # trusted on anything below it.
+      - name: Does the checker check?
+        run: labs/common/kicad.sh python3 labs/common/selftest_check.py
+
+      - name: Check every lab's reference solution
+        run: |
+          set -o pipefail
+          labs/common/kicad.sh python3 labs/common/check_solutions.py | tee check.log
+          {
+            echo '### Reference solutions'
+            echo '```'
+            tail -n 40 check.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep the reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: board-reports
+          path: labs/common/results/
+          if-no-files-found: ignore

@@ -21,7 +21,7 @@ root="$(cd "$here/../.." && pwd)"
 image="$(head -n 1 "$here/kicad-image.txt" | tr -d '[:space:]')"
 
 if [ "$#" -eq 0 ]; then
-    sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//'
     exit 2
 fi
 
