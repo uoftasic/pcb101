@@ -14,7 +14,7 @@ For the DIP dock, the board's own Gerber settings produce ten files:
 
 ![KiCad's SVG plots of six of the DIP dock's layers, each labelled with the Gerber file that holds it](../assets/img/dip-dock-gerber-layers.svg)
 
-*Six of the DIP dock's ten Gerber layers, plotted by `kicad-cli pcb export svg` from the same board, in black on white. Under each panel is the Gerber file name and the file function KiCad records for it. Holes aren't drawn, because none of the Gerbers holds them. Made by [`scripts/figures/dip_dock_layers.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/dip_dock_layers.py).*
+*Six of the DIP dock's ten Gerber layers, plotted by `kicad-cli pcb export svg` from the same board, in black on white. Under each panel is the Gerber file name and the file function KiCad records for it. Holes aren't drawn, because none of the Gerbers holds them. Made by [`scripts/figures/dip_dock_layers.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/dip_dock_layers.py).*
 
 | File | What the fabricator does with it |
 |---|---|
@@ -91,7 +91,7 @@ Exported again with `--drill-origin plot`, which uses the same origin as the plo
 
 ![GerbView showing the same Gerbers with the drill holes centred in their pads](../assets/img/kicad-gerbview-dip-dock.png)
 
-*The same Gerbers with a drill file made with `--drill-origin plot`. The Layers Manager on the right lists all eleven files with the function GerbView read from each: "Copper, L2", "Soldermask, Bot", "Profile, NP" and so on. Both screenshots are from [`scripts/figures/shots/fab-outputs-dip-dock.sh`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/shots/fab-outputs-dip-dock.sh).*
+*The same Gerbers with a drill file made with `--drill-origin plot`. The Layers Manager on the right lists all eleven files with the function GerbView read from each: "Copper, L2", "Soldermask, Bot", "Profile, NP" and so on. Both screenshots are from [`scripts/figures/shots/fab-outputs-dip-dock.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/shots/fab-outputs-dip-dock.sh).*
 
 The files share nothing but their coordinates, so the drill file and the Gerbers can only line up if they use the same origin. Opening the whole set in GerbView before you upload it takes a minute, and it's the only check that looks at exactly the files the fab will get. Lab 05 has you do it with the files your CI built.
 

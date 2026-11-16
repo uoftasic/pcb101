@@ -28,7 +28,7 @@ The demo board's README says the three Pmod headers along its bottom edge "provi
 
 ![The demo board's three I/O Pmod sockets, with SimProc's pins](../assets/img/ic103-pmod-pinout-simproc.svg)
 
-*The demo board's sockets J14, J15 and J16, seen from above, drawn from the board file (`TinyTapeout/tt-demo-pcb` at bbf3dd1) by [`scripts/figures/pmod_pinout.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/pmod_pinout.py). Each pad carries the net the board file gives it; pin 1 is square. SimProc's pins are in blue with what they do, from its `info.yaml` and RTL. Every `uio` pin sets one bit of SimProc's `clk_per_bit`.*
+*The demo board's sockets J14, J15 and J16, seen from above, drawn from the board file (`TinyTapeout/tt-demo-pcb` at bbf3dd1) by [`scripts/figures/pmod_pinout.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/pmod_pinout.py). Each pad carries the net the board file gives it; pin 1 is square. SimProc's pins are in blue with what they do, from its `info.yaml` and RTL. Every `uio` pin sets one bit of SimProc's `clk_per_bit`.*
 
 Each socket has twelve pins in two rows of six. Pins 1 to 4 carry bits 0 to 3 of the bus, pins 7 to 10 carry bits 4 to 7, pins 5 and 11 are ground, and pins 6 and 12 are the demo board's +3V3. So a Pmod gets its power from those last four pins, at the same 3.3 V the chip's pads run from. The sockets' first pins are 22.86 mm apart, which is where [Placement and routing](placement-and-routing.md#connectors-first) gets that number.
 

@@ -19,7 +19,7 @@
 
 This page answers: *which parts can you solder to a board yourself with an iron, and how do you choose footprints so that the board you order is one you can put together?*
 
-You don't have to solder anything in PB101. But if your team orders the board you draw in [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md), someone will assemble it, quite possibly you, and a footprint you choose in the lab decides how hard that job is. This page is about choosing the size of each part and the footprint that goes with it.
+You don't have to solder anything in IC103. But if your team orders the board you draw in [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md), someone will assemble it, quite possibly you, and a footprint you choose in the lab decides how hard that job is. This page is about choosing the size of each part and the footprint that goes with it.
 
 ## Sizes and their codes
 
@@ -29,7 +29,7 @@ Horowitz and Hill favour 0603, "or the larger 0805 package, for general prototyp
 
 ![KiCad footprints for common small parts, drawn to one scale](../assets/img/ic103-footprint-sizes.svg)
 
-*Footprints from KiCad 10.0.8's own libraries, drawn to one scale on a 1 mm grid by [`scripts/figures/footprint_sizes.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/footprint_sizes.py): copper pads in gold, and the part's body as the fabrication layer draws it. Top row, resistors: 0402, 0603, 0805 and 1206, and the hand-soldering versions of 0603 and 0805. Bottom row: SOD-882, a two-pin diode package; SOT-23-5; SOIC-8; and the 9 × 9 mm QFN-64 that Tiny Tapeout's SKY130 chip comes in.*
+*Footprints from KiCad 10.0.8's own libraries, drawn to one scale on a 1 mm grid by [`scripts/figures/footprint_sizes.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/footprint_sizes.py): copper pads in gold, and the part's body as the fabrication layer draws it. Top row, resistors: 0402, 0603, 0805 and 1206, and the hand-soldering versions of 0603 and 0805. Bottom row: SOD-882, a two-pin diode package; SOT-23-5; SOIC-8; and the 9 × 9 mm QFN-64 that Tiny Tapeout's SKY130 chip comes in.*
 
 ## KiCad's hand-soldering footprints
 

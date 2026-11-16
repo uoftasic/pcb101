@@ -1,8 +1,8 @@
-# PB101 — PCB Design with KiCad
+# IC103 — PCB Design with KiCad
 
 In this course you design the boards a chip sits on. You start by reading Tiny Tapeout's own boards, the ones the team's chips arrive on, and then you draw a footprint from a package drawing, lay out a small board for one project's pins, protect it and write its bring-up plan, build its fabrication files in CI, and review a board before anyone pays to have it made. The capstone takes a board for one of the team's chips as far as an orderable design, in a repository of your own.
 
-PB101 is part of the UofT ASIC Team education materials, published at <https://uoftasic.com/pb101/>. Unlike the analog and digital courses, it doesn't run in the workbench. You install KiCad 10.0 on your own computer, and the course's checks run in KiCad's own Docker image. [Getting started](guide/getting-started.md) explains why, and what to install on Windows, macOS and Linux.
+IC103 is part of the UofT ASIC Team education materials, published at <https://uoftasic.com/ic103/>. Unlike the analog and digital courses, it doesn't run in the workbench. You install KiCad 10.0 on your own computer, and the course's checks run in KiCad's own Docker image. [Getting started](guide/getting-started.md) explains why, and what to install on Windows, macOS and Linux.
 
 ## Who this course is for
 

@@ -41,7 +41,7 @@ The SKY130 breakout shows what that looks like around a QFN. We measured its boa
 
 ![The SKY130 breakout around the chip U4](../assets/img/ic103-sky-breakout-u4-decoupling.svg)
 
-*A 24 × 24 mm patch of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`TinyTapeout/breakout-pcb` at 91a2bf1), drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/sky_breakout_map.py). Pads are coloured by the supply they're on; tracks and copper pours are left out. The chip U4 is placed at 135°, so its rows of pads run diagonally, and the 0402 capacitors C9, C11, C13, C15, C16, C17, C20, C23 and C24 sit just off its edges, each by a pin of its own colour. C2, C5 and C8 are 1 µF.*
+*A 24 × 24 mm patch of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`TinyTapeout/breakout-pcb` at 91a2bf1), drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/sky_breakout_map.py). Pads are coloured by the supply they're on; tracks and copper pours are left out. The chip U4 is placed at 135°, so its rows of pads run diagonally, and the 0402 capacitors C9, C11, C13, C15, C16, C17, C20, C23 and C24 sit just off its edges, each by a pin of its own colour. C2, C5 and C8 are 1 µF.*
 
 ## Track widths, clearances and vias
 

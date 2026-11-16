@@ -12,7 +12,7 @@ A board is a stack of copper layers separated by sheets of dielectric, with sold
 
 ![The stackups of the 2-layer DIP dock and the 4-layer SKY130 breakout](../assets/img/layers-two-stackups.svg){fig-alt="Two stacks of coloured bands, not to scale. Left, DIP dock, 2 copper layers, 1.561 mm in all: F.Mask solder mask 10 micrometres, F.Cu copper 35 micrometres, core FR4-7628 1.471 mm with relative permittivity 4.74, B.Cu copper 35 micrometres, B.Mask solder mask 10 micrometres. Right, SKY130 breakout, 4 copper layers, 1.561 mm in all: F.Mask 10 micrometres, F.Cu 35 micrometres, prepreg FR4-7628 0.1855 mm with permittivity 4.74, In1.Cu 35 micrometres, core FR4 1.03 mm with permittivity 4.6, In2.Cu 35 micrometres, prepreg FR4-7628 0.1855 mm with permittivity 4.74, B.Cu 35 micrometres, B.Mask 10 micrometres."}
 
-*The stackups of Tiny Tapeout's DIP dock and SKY130 breakout, from the `(stackup …)` section of each board file at `breakout-pcb` 91a2bf1. Copper and mask are drawn thicker than they are, so that they show. Drawn by [`scripts/figures/stackups.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/stackups.py).*
+*The stackups of Tiny Tapeout's DIP dock and SKY130 breakout, from the `(stackup …)` section of each board file at `breakout-pcb` 91a2bf1. Copper and mask are drawn thicker than they are, so that they show. Drawn by [`scripts/figures/stackups.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/stackups.py).*
 
 Both boards come out at 1.561 mm in all, which is the sum of their layers. The copper is 35 µm thick on every layer, the thickness PCBWay's capabilities page calls "1oz" (fabricators give copper thickness as a weight per square foot). The dielectric between copper layers is FR4, a glass-fibre and epoxy laminate, which the board files list either as **core** or as **prepreg**, the two kinds of FR4 sheet a fabricator presses together to make a board, each with its relative permittivity, εr. A 2-layer board is one core with copper on both sides. The 4-layer breakout has a 1.03 mm core in the middle and a thin 0.1855 mm prepreg between each outer layer and the inner layer next to it, so each outer layer has an inner layer very close underneath it.
 
@@ -28,7 +28,7 @@ The board files and plots of the copper show how Tiny Tapeout uses its layers. O
 ![B.Cu, the DIP dock's bottom copper](../assets/img/tt-dip-dock-bcu.png){fig-alt="The bottom copper layer of the DIP dock: mostly filled with ground copper, cut by tracks and by the round pads of through-hole parts."}
 :::
 
-*The two copper layers of the DIP dock, plotted by `kicad-cli` 10.0.8 with the board outline. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/kicad_figures.sh), as is the next plot.*
+*The two copper layers of the DIP dock, plotted by `kicad-cli` 10.0.8 with the board outline. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh), as is the next plot.*
 
 On the 4-layer SKY130 breakout most of the tracks are on the outer layers (590 segments on F.Cu and 404 on B.Cu), with a few on the inner ones (104 on In1.Cu and 41 on In2.Cu). A ground zone fills all four layers around the tracks, and the first inner layer, the one 0.19 mm under the chip, is almost solid ground:
 

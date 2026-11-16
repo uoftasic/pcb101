@@ -6,7 +6,7 @@ Everything you've drawn in this course plugs into Tiny Tapeout's demo board, and
 
 ![A diagram of where each kind of board attaches: the SKY130 breakout to the demo board through two DF12 connectors, the demo board to a Pmod board and to an analog source board, the breakout to a motherboard, a GF180 DIP carrier to the DIP dock, and a wafer.space chip-on-board module to a motherboard through a 70-pin mezzanine connector](../assets/img/ic103-board-kinds.svg)
 
-*Where each kind of board attaches, from the chip outwards. The solid boxes are boards that exist, or that you design in this course; the dashed ones are boards a team could design next. Made by [`scripts/figures/board_kinds.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/board_kinds.py).*
+*Where each kind of board attaches, from the chip outwards. The solid boxes are boards that exist, or that you design in this course; the dashed ones are boards a team could design next. Made by [`scripts/figures/board_kinds.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/board_kinds.py).*
 
 ## A board for an analog pin
 

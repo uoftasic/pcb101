@@ -2,15 +2,15 @@
 
 In this lab you start a board repository of your own and draw your first board in it: a 2-layer Pmod that plugs into the Tiny Tapeout demo board's three I/O sockets and connects one project's pins to what that project needs. The default project is the team's SimProc, which needs a header for a USB-UART dongle on `ui[0]` and `uo[0]` and eight switches that set its baud rate on `uio[0..7]`. You'll draw the schematic, place the connectors to Tiny Tapeout's spacing, route the board, and check it against SimProc's pin list. Labs 04 to 06 and the capstone all build on this board.
 
-The lab's files are in [`labs/lab-03-a-pmod-for-one-projects-pins/`](https://github.com/uoftasic/pb101/tree/main/labs/lab-03-a-pmod-for-one-projects-pins) in the course repo.
+The lab's files are in [`labs/lab-03-a-pmod-for-one-projects-pins/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-03-a-pmod-for-one-projects-pins) in the course repo.
 
 ## Before you start
 
-- Finish [Lab 01](lab-01-open-a-board-you-didnt-design-overview.md), Part 1, so that KiCad 10.0 is installed, the course repo is cloned (the commands below assume `~/pb101`; use your own path if it's elsewhere) and Docker can run the checks.
+- Finish [Lab 01](lab-01-open-a-board-you-didnt-design-overview.md), Part 1, so that KiCad 10.0 is installed, the course repo is cloned (the commands below assume `~/ic103`; use your own path if it's elsewhere) and Docker can run the checks.
 - Read the pages on row 5 of the [course path](../index.md#course-path): [Layers and fabricator rules](../guide/layers-and-fabricator-rules.md), [Placement and routing](../guide/placement-and-routing.md), [Pins, Pmods and planning a pinout](../guide/pins-pmods-and-planning-a-pinout.md) and [Parts you can solder by hand](../guide/parts-you-can-solder-by-hand.md).
 - Have git and a GitHub account working, as you did in IC102.
 
-The check scripts are bash. On Windows, run them in WSL; the lab's [README](https://github.com/uoftasic/pb101/tree/main/labs/lab-03-a-pmod-for-one-projects-pins) has a plain `docker run` for PowerShell, which we haven't tested on Windows.
+The check scripts are bash. On Windows, run them in WSL; the lab's [README](https://github.com/uoftasic/ic103/tree/main/labs/lab-03-a-pmod-for-one-projects-pins) has a plain `docker run` for PowerShell, which we haven't tested on Windows.
 
 The lab takes about 4 hours: roughly 15 minutes for Part 1, an hour for the schematic, half an hour to place the connectors, an hour and 45 minutes to place and route the rest, and half an hour for Part 5. Those are our estimates for a first board, but we timed the check itself: it took 17 to 35 seconds in our runs once Docker had the image.
 
@@ -21,11 +21,11 @@ Your board lives in a repository of your own from now on, and the course's check
 1. Copy the board template out of the course repo and make it a git repository:
 
    ```bash
-   cp -r ~/pb101/labs/lab-03-a-pmod-for-one-projects-pins/template ~/simproc-pmod
+   cp -r ~/ic103/labs/lab-03-a-pmod-for-one-projects-pins/template ~/simproc-pmod
    cd ~/simproc-pmod
    git init -b main
    git add .
-   git commit -m "Start from the PB101 board template"
+   git commit -m "Start from the IC103 board template"
    ```
 
    The template is a KiCad 10 project named `pmod`. Its Board Setup already holds JLCPCB's published limits for a 2-layer board (0.10 mm tracks and gaps, 0.15 mm holes, 0.25 mm vias, silkscreen text at least 1.0 mm high and 0.15 mm thick), `pmod.kicad_dru` adds their 0.18 mm minimum annular ring, and you draw with 0.25 mm tracks and 0.2 mm clearance. `lib/` holds Tiny Tapeout's Pmod symbol and footprint (Apache 2.0), and the project's library tables point at it, so the project opens the same way on any computer.
@@ -35,7 +35,7 @@ Your board lives in a repository of your own from now on, and the course's check
 3. Before you run the check on the empty project, write down which of its parts you expect to fail. Then run it from your repository:
 
    ```bash
-   ~/pb101/labs/lab-03-a-pmod-for-one-projects-pins/check.sh
+   ~/ic103/labs/lab-03-a-pmod-for-one-projects-pins/check.sh
    ```
 
    You should see the board check, then the Pmod check, both failing:
@@ -58,7 +58,7 @@ Your board lives in a repository of your own from now on, and the course's check
    FAIL  pmod.kicad_pro: board check FAIL; 0 of 2 Pmod checks ok
    ```
 
-   An empty schematic has nothing in it for ERC to object to, so the board check on its own can't tell you whether a board does anything. The Pmod check reads SimProc's pin list, [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json), and fails until your board does what that list asks.
+   An empty schematic has nothing in it for ERC to object to, so the board check on its own can't tell you whether a board does anything. The Pmod check reads SimProc's pin list, [`labs/common/pins/simproc.json`](https://github.com/uoftasic/ic103/blob/main/labs/common/pins/simproc.json), and fails until your board does what that list asks.
 
 KiCad and `kicad-cli` write a few files of their own next to the project (a `.kicad_prl` of local settings and a folder of backups). `git status` lists them as untracked; leave them out of your commits for now, by committing with `git commit -am`, and Lab 05 adds the `.gitignore` that deals with them.
 
@@ -206,7 +206,7 @@ Look at your board in KiCad's 3D viewer (View > 3D Viewer, Alt+3). If your KiCad
 
 Does your board connect SimProc's pins the way its pin list says?
 
-1. Open [`simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json) and compare it with your schematic, pin by pin.
+1. Open [`simproc.json`](https://github.com/uoftasic/ic103/blob/main/labs/common/pins/simproc.json) and compare it with your schematic, pin by pin.
 
 2. Suppose you'd put `UART_TX` on the header's pin 2 and `UART_RX` on pin 3, and routed the board to match. Write down which parts of the check would catch it: ERC, DRC, parity, or the Pmod check.
 
@@ -226,7 +226,7 @@ Does your board connect SimProc's pins the way its pin list says?
 
 ## Finishing
 
-You're done when `~/pb101/labs/lab-03-a-pmod-for-one-projects-pins/check.sh`, run in your own repository, ends with `PASS  pmod.kicad_pro: board check PASS; 14 of 14 Pmod checks ok`, and the commit it checked is pushed to GitHub.
+You're done when `~/ic103/labs/lab-03-a-pmod-for-one-projects-pins/check.sh`, run in your own repository, ends with `PASS  pmod.kicad_pro: board check PASS; 14 of 14 Pmod checks ok`, and the commit it checked is pushed to GitHub.
 
 Questions:
 

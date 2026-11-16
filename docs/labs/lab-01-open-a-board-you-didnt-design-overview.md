@@ -4,7 +4,7 @@ In this lab you install KiCad and open the board the team's SKY130 chips arrive 
 
 This lab takes about 1 h 30 min, not counting the time KiCad and the course's Docker image take to download.
 
-Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uoftasic/pb101/tree/main/labs/lab-01-open-a-board-you-didnt-design)
+Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-01-open-a-board-you-didnt-design)
 
 ## Before you start
 
@@ -18,8 +18,8 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
 2. Clone the course and go into it:
 
    ```bash
-   git clone https://github.com/uoftasic/pb101.git
-   cd pb101
+   git clone https://github.com/uoftasic/ic103.git
+   cd ic103
    ```
 
    Run every command in this lab from that folder.
@@ -49,11 +49,11 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
    The first time, it pulls `kicad/kicad:10.0.8`, an 812 MB download. After that you should see:
 
    ```text
-   pb101: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
+   ic103: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
    10.0.8
    ```
 
-   The first line is the digest that Docker resolved, which records exactly which build of KiCad ran. `kicad.sh` is a bash script, so it runs on Linux, macOS and WSL. If you don't have bash, [`labs/common/README.md`](https://github.com/uoftasic/pb101/tree/main/labs/common) has a plain `docker run` command that runs Part 4's board check without `kicad.sh`; we have run it on Linux but not on Windows.
+   The first line is the digest that Docker resolved, which records exactly which build of KiCad ran. `kicad.sh` is a bash script, so it runs on Linux, macOS and WSL. If you don't have bash, [`labs/common/README.md`](https://github.com/uoftasic/ic103/tree/main/labs/common) has a plain `docker run` command that runs Part 4's board check without `kicad.sh`; we have run it on Linux but not on Windows.
 
 Check: KiCad's About box says 10.0, `kicad-cli version` prints `10.0.8`, and `labs/common/upstream/breakout-pcb/breakout-sky-qfn/` exists.
 
@@ -282,7 +282,7 @@ Submit: nothing for this lab.
 
 ## Going further (optional)
 
-- Run `check_board.py` on Tiny Tapeout's demo board, `labs/common/upstream/tt-demo-pcb`, and compare its counts with the table in [`labs/common/README.md`](https://github.com/uoftasic/pb101/tree/main/labs/common). Its parity items include a `missing_footprint`, which is why the course's check fails on parity warnings as well as parity errors.
+- Run `check_board.py` on Tiny Tapeout's demo board, `labs/common/upstream/tt-demo-pcb`, and compare its counts with the table in [`labs/common/README.md`](https://github.com/uoftasic/ic103/tree/main/labs/common). Its parity items include a `missing_footprint`, which is why the course's check fails on parity warnings as well as parity errors.
 - Open the breakout in the PCB Editor and follow VDDA from R15 to the chip's pins on the copper, through the board's four layers.
 
 Next on the [Course path](../index.md#course-path): read [Schematics other people can read](../guide/schematics-other-people-can-read.md), [Symbols, footprints and libraries](../guide/symbols-footprints-and-libraries.md) and [From die to package](../guide/from-die-to-package.md), then do [Lab 02: A footprint from a datasheet](lab-02-a-footprint-from-a-datasheet-overview.md).

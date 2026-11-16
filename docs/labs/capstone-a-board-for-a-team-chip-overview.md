@@ -2,7 +2,7 @@
 
 In the capstone you take one board for a team chip to the point where it could be ordered: drawn, checked, reviewed, built by CI, with a design note that says why every part is there and a bring-up plan that says what to expect at every step. You choose one of two briefs. Brief D is a bring-up Pmod for a digital project, and if you built the SimProc Pmod in Labs 03 and 04, you can carry that board through. Brief A is a small source board that drives one analog pin of a chip from a known, filtered voltage. Everything goes in a repository of your own.
 
-The capstone's files are in [`labs/capstone-a-board-for-a-team-chip/`](https://github.com/uoftasic/pb101/tree/main/labs/capstone-a-board-for-a-team-chip) in the course repo.
+The capstone's files are in [`labs/capstone-a-board-for-a-team-chip/`](https://github.com/uoftasic/ic103/tree/main/labs/capstone-a-board-for-a-team-chip) in the course repo.
 
 ## Before you start
 
@@ -25,7 +25,7 @@ Brief D is for SimProc, Sentry, or a Tiny Tapeout project of your own. The board
 - in `DESIGN.md`, what happens on each line when either side is unpowered, which firmware mode and switch settings the board assumes, and a check that the project's clock and edges are within the pin ratings (outputs to 33 MHz and inputs to 66 MHz, by Tiny Tapeout's GPIO spec);
 - if the project's pinout is awkward for the demo board, a line in `DESIGN.md` on what it cost the board.
 
-For a project other than SimProc, write its pin list in the form of [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json), as Lab 03's Going further describes, and pass it to the check with `--pins`.
+For a project other than SimProc, write its pin list in the form of [`labs/common/pins/simproc.json`](https://github.com/uoftasic/ic103/blob/main/labs/common/pins/simproc.json), as Lab 03's Going further describes, and pass it to the check with `--pins`.
 
 ### Brief A: a source board for one analog pin
 
@@ -55,7 +55,7 @@ What does your board have to do, in numbers?
 2. Copy the design note's template in:
 
    ```bash
-   cp ~/pb101/labs/capstone-a-board-for-a-team-chip/DESIGN.md .
+   cp ~/ic103/labs/capstone-a-board-for-a-team-chip/DESIGN.md .
    ```
 
 3. Fill in the line at the top and write the Requirements: a numbered list of what the board has to do, from the brief and from your project, each with its number where it has one (a pin, a voltage, a current, a rate). Leave the Decisions for Part 3.
@@ -63,7 +63,7 @@ What does your board have to do, in numbers?
 4. Commit `DESIGN.md`, because the check runs Lab 05's check first, and that fails on any file git doesn't track. Then write down which rows you expect to fail, and run the check with your brief:
 
    ```bash
-   ~/pb101/labs/capstone-a-board-for-a-team-chip/check.sh --brief D
+   ~/ic103/labs/capstone-a-board-for-a-team-chip/check.sh --brief D
    ```
 
    On Lab 04's reference board with Lab 05's CI and the template copied in, in a repository with one commit, the rows were:
@@ -154,7 +154,7 @@ The check can't tell whether your requirements are the right ones, whether a dec
 
 ## Finishing
 
-You're done when `~/pb101/labs/capstone-a-board-for-a-team-chip/check.sh --brief D` (or `--brief A`), run in your own repository on the commit you pushed, ends with `PASS`, and that commit's run on GitHub is green.
+You're done when `~/ic103/labs/capstone-a-board-for-a-team-chip/check.sh --brief D` (or `--brief A`), run in your own repository on the commit you pushed, ends with `PASS`, and that commit's run on GitHub is green.
 
 Questions:
 
@@ -184,4 +184,4 @@ Submit: the URL of your repository and the hash of the commit the check passed o
 - For Brief A, add a buffer between the trimmer and the filter, and work out how much of the sampling droop it removes. KiCad's `MCP6001R` is a 1 MHz op-amp in SOT-23-5; its pins 2 and 5, V+ and V−, are the reverse of those on `MCP6001-OT`, the plain MCP6001 in the same package. A swap like that, between two variants of one part in the same package, is the kind of fault you looked for in Lab 06.
 - Do both briefs.
 
-Next on the [Course path](../index.md#course-path): this is the last row. A second course, PB201, would take up what PB101 left out: 4-layer boards and decoupling for a QFN, characterization boards with a reference of their own, and high-speed signals.
+Next on the [Course path](../index.md#course-path): this is the last row. A second course, PB201, would take up what IC103 left out: 4-layer boards and decoupling for a QFN, characterization boards with a reference of their own, and high-speed signals.

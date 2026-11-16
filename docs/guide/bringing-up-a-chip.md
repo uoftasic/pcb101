@@ -8,7 +8,7 @@ In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you write a `BRINGUP.md
 
 ![A flow chart of seven bring-up steps, each with the reading written down beforehand](../assets/img/ic103-bringup-order.svg)
 
-*The order of a first power-up. Each step has a reading you write down before you do it; any step that doesn't give that reading sends you back to the bench with the power off. Made by [`scripts/figures/bringup_order.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/bringup_order.py).*
+*The order of a first power-up. Each step has a reading you write down before you do it; any step that doesn't give that reading sends you back to the bench with the power off. Made by [`scripts/figures/bringup_order.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/bringup_order.py).*
 
 ## Before any power
 
@@ -36,7 +36,7 @@ Your Pmod can't measure the chip's current, and it's worth understanding why bef
 
 ![The bottom of Tiny Tapeout's SKY130 breakout: the DF12 connectors J1 and J3, and the unfitted supply header with a note about measuring each supply](../assets/img/sky-breakout-3d-bottom.png)
 
-*The bottom of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`breakout-pcb` at 91a2bf1, Apache-2.0), rendered by `kicad-cli` in the course image, which draws no parts. J1 and J3 are the DF12 connectors to the demo board. The row of pads at the top is J2, a header that isn't fitted on the boards Tiny Tapeout ships, and the silkscreen under it explains how per-rail measurement would work: "remove the relevant resistor, feed/monitor current going into pin marked \*". Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/board_renders.sh).*
+*The bottom of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`breakout-pcb` at 91a2bf1, Apache-2.0), rendered by `kicad-cli` in the course image, which draws no parts. J1 and J3 are the DF12 connectors to the demo board. The row of pads at the top is J2, a header that isn't fitted on the boards Tiny Tapeout ships, and the silkscreen under it explains how per-rail measurement would work: "remove the relevant resistor, feed/monitor current going into pin marked \*". Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/board_renders.sh).*
 
 Measuring one rail on its own means taking an 0805 link off the breakout and fitting J2, which is rework on the board that holds the kit's only chip. [Measuring current](measuring-current.md) covers when that's worth it; if it is, practise it first on a breakout without a chip.
 

@@ -2,7 +2,7 @@
 
 In this lab you make your Lab 03 board safe to plug into a Tiny Tapeout kit, which comes with a single chip, and you write down how it will be brought up. You'll put a series resistor on each UART line, an ESD array on the dongle header and a current-sense point in the board's own supply, and you'll write `BRINGUP.md`: what drives each line when one side is unpowered, the checks before anything is powered, and the reading you expect at every step.
 
-The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoftasic/pb101/tree/main/labs/lab-04-protect-and-plan) in the course repo.
+The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-04-protect-and-plan) in the course repo.
 
 ## Before you start
 
@@ -15,9 +15,9 @@ Copy the bring-up plan's template into your repository and run the Lab 04 check 
 
 ```bash
 cd ~/simproc-pmod
-cp ~/pb101/labs/lab-04-protect-and-plan/BRINGUP.md .
+cp ~/ic103/labs/lab-04-protect-and-plan/BRINGUP.md .
 git add BRINGUP.md
-~/pb101/labs/lab-04-protect-and-plan/check.sh
+~/ic103/labs/lab-04-protect-and-plan/check.sh
 ```
 
 It runs everything Lab 03's check runs, then the Lab 04 rows and the bring-up plan. On our Lab 03 board the board check still passes and five Pmod rows fail:
@@ -176,7 +176,7 @@ What do you check before power, and what should you read at each step?
 
 ## Finishing
 
-You're done when `~/pb101/labs/lab-04-protect-and-plan/check.sh`, run in your own repository, ends with `PASS  pmod.kicad_pro: board check PASS; 17 of 17 Pmod checks ok; bring-up plan PASS`, and the commit it checked is pushed to GitHub.
+You're done when `~/ic103/labs/lab-04-protect-and-plan/check.sh`, run in your own repository, ends with `PASS  pmod.kicad_pro: board check PASS; 17 of 17 Pmod checks ok; bring-up plan PASS`, and the commit it checked is pushed to GitHub.
 
 Questions:
 

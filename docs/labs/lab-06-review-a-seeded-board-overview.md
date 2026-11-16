@@ -2,7 +2,7 @@
 
 In this lab you review a board you didn't draw. It's a SimProc Pmod like yours, with its bring-up plan, and we planted eight faults in it: some that the course's checks find and more that they don't. You'll run the checks you already have, then go through the board line by line against the course checklist and write each fault you find in `REVIEW.md`. Then you get a fabricator's quote for your own board, without ordering it, and record the price, the build time and the fabricator's own check of your files in `QUOTE.md`.
 
-The lab's files are in [`labs/lab-06-review-a-seeded-board/`](https://github.com/uoftasic/pb101/tree/main/labs/lab-06-review-a-seeded-board) in the course repo.
+The lab's files are in [`labs/lab-06-review-a-seeded-board/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-06-review-a-seeded-board) in the course repo.
 
 ## Before you start
 
@@ -19,16 +19,16 @@ What do the checks you already have find on this board?
 1. Copy the seeded board out of the course repo, so that KiCad's own files and anything you change stay out of it, and copy the two templates into your board repository:
 
    ```bash
-   cp -r ~/pb101/labs/lab-06-review-a-seeded-board/board ~/seeded-review
+   cp -r ~/ic103/labs/lab-06-review-a-seeded-board/board ~/seeded-review
    cd ~/simproc-pmod
-   cp ~/pb101/labs/lab-06-review-a-seeded-board/REVIEW.md ~/pb101/labs/lab-06-review-a-seeded-board/QUOTE.md .
+   cp ~/ic103/labs/lab-06-review-a-seeded-board/REVIEW.md ~/ic103/labs/lab-06-review-a-seeded-board/QUOTE.md .
    ```
 
 2. Will the board check pass on a board with eight faults in it? Write down your guess, then run it on the copy:
 
    ```bash
    cd ~/seeded-review
-   ~/pb101/labs/common/kicad.sh python3 /w/labs/common/check_board.py .
+   ~/ic103/labs/common/kicad.sh python3 /w/labs/common/check_board.py .
    ```
 
    You should see it pass, with the same 32 DRC warnings as Lab 04's reference board:
@@ -48,7 +48,7 @@ What do the checks you already have find on this board?
 3. Now run Lab 04's check, which also compares the board with SimProc's pin list:
 
    ```bash
-   ~/pb101/labs/lab-04-protect-and-plan/check.sh
+   ~/ic103/labs/lab-04-protect-and-plan/check.sh
    ```
 
    You should see the board check and the bring-up plan check pass. In the Pmod check, the connectors row fails, the power row passes, and the pins row says that the pins aren't checked until the connectors pass:
@@ -77,7 +77,7 @@ What do the checks you already have find on this board?
 
 Which faults does a person find that the checks don't?
 
-1. Open `~/seeded-review/pmod.kicad_pro` in KiCad, and open both the Schematic Editor and the PCB Editor. Keep the checklist from [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), SimProc's pin list ([`simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json)) and the board's `BRINGUP.md` open beside them.
+1. Open `~/seeded-review/pmod.kicad_pro` in KiCad, and open both the Schematic Editor and the PCB Editor. Keep the checklist from [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), SimProc's pin list ([`simproc.json`](https://github.com/uoftasic/ic103/blob/main/labs/common/pins/simproc.json)) and the board's `BRINGUP.md` open beside them.
 
    ![The seeded SimProc Pmod in the PCB Editor](../assets/img/kicad-pcb-editor-seeded-board.png)
 
@@ -107,7 +107,7 @@ Which faults does a person find that the checks don't?
 
    ```bash
    cd ~/simproc-pmod
-   ~/pb101/labs/lab-06-review-a-seeded-board/check.sh
+   ~/ic103/labs/lab-06-review-a-seeded-board/check.sh
    ```
 
    It prints a line for each row of your table and says whether that row finds a planted fault. A row finds one when its Where names the right part or file and its Line is the line that fault breaks; each row can find one fault. Our reference review's lines look like this:
@@ -155,7 +155,7 @@ What would your board cost to make, how long would it take, and what does the fa
 
 ## Finishing
 
-You're done when `~/pb101/labs/lab-06-review-a-seeded-board/check.sh`, run in your own repository, ends with `PASS  review PASS (5 of 8 planted faults found); quote PASS` or a higher count, and `REVIEW.md` and `QUOTE.md` are committed and pushed.
+You're done when `~/ic103/labs/lab-06-review-a-seeded-board/check.sh`, run in your own repository, ends with `PASS  review PASS (5 of 8 planted faults found); quote PASS` or a higher count, and `REVIEW.md` and `QUOTE.md` are committed and pushed.
 
 Questions:
 

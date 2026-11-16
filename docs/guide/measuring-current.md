@@ -38,7 +38,7 @@ The voltage across the resistor is $V = IR$, and it has to do two jobs at once: 
 
 ![Voltage across a sense resistor against current](../assets/img/ic103-shunt-drop.svg)
 
-*$V = IR$ for three resistors, drawn by [`scripts/figures/shunt_drop.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/shunt_drop.py). The blue band is a multimeter's burden at full scale, and the grey band is the current the whole kit draws from USB on its factory test.*
+*$V = IR$ for three resistors, drawn by [`scripts/figures/shunt_drop.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/shunt_drop.py). The blue band is a multimeter's burden at full scale, and the grey band is the current the whole kit draws from USB on its factory test.*
 
 Some numbers from the figure:
 
@@ -56,7 +56,7 @@ Some numbers from the figure:
 
 ![The top edge of the SKY130 breakout, with the 0 Ω links and J2](../assets/img/ic103-sky-breakout-links.svg)
 
-*The top 12.5 mm of Tiny Tapeout's SKY130 breakout, drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/sky_breakout_map.py), with pads coloured by supply. R14, R13 and R15 each join a regulator net (red) to one of the chip's rails. J2's twelve pads, and U2's, are grey because those parts aren't fitted.*
+*The top 12.5 mm of Tiny Tapeout's SKY130 breakout, drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/sky_breakout_map.py), with pads coloured by supply. R14, R13 and R15 each join a regulator net (red) to one of the chip's rails. J2's twelve pads, and U2's, are grey because those parts aren't fitted.*
 
 That rework is on the board that carries the kit's only chip, which is why the course doesn't ask you to do it. If the team needs per-rail readings, practise the rework first on a breakout made from Tiny Tapeout's open files, with its passives and no chip. Tiny Tapeout's [analog page](https://tinytapeout.com/specs/analog/) adds a reason to care about the chip's own currents: "A draw of around 20mA from the power supply will result in a 0.1V drop through the PDN", the chip's internal power network.
 

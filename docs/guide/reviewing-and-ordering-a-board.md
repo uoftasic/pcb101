@@ -61,7 +61,7 @@ OSH Park's price depends only on area, so you can work it out yourself. A board 
 
 The build times don't include shipping. JLCPCB's shipping table is an image we couldn't read, so we have no confirmed transit time or shipping price to Canada; from the build times and OSH Park's lead time, expect one to three weeks between ordering and holding the boards. That's why the course suggests ordering as a group right after Lab 06, when everyone's board has been reviewed.
 
-Assembly is optional in PB101, and most course boards are meant to be soldered by hand ([Parts you can solder by hand](parts-you-can-solder-by-hand.md)). If you do want it: JLCPCB's economic assembly has an $8.18 setup fee, $1.53 for the stencil, $3.07 to load each "extended" part and $0.0016 per solder joint (its price page, updated October 22, 2026), and PCBWay advertises "Only $ 29 in total for 1-20pcs assembly".
+Assembly is optional in IC103, and most course boards are meant to be soldered by hand ([Parts you can solder by hand](parts-you-can-solder-by-hand.md)). If you do want it: JLCPCB's economic assembly has an $8.18 setup fee, $1.53 for the stencil, $3.07 to load each "extended" part and $0.0016 per solder joint (its price page, updated October 22, 2026), and PCBWay advertises "Only $ 29 in total for 1-20pcs assembly".
 
 Two Toronto companies make boards too. Candor Industries (125 Martin Ross Avenue) does quick-turn, multilayer, impedance-controlled and RF boards, and Bittele Electronics, headquartered in Toronto with production in Markham, does fabrication, parts and assembly. Neither publishes prices or a student programme: Candor quotes on request, and Bittele through its online ordering system.
 

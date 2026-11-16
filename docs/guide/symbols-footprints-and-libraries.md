@@ -10,7 +10,7 @@ A symbol is a drawing with **pins**. Each pin has a number, a name and an electr
 
 ![Tiny Tapeout's symbol for the SKY130 chip in its QFN-64](../assets/img/tt-openframe-qfn-symbol.png){fig-alt="A tall rectangular schematic symbol with pins on all four sides. Pin names include uo_out, ui_in and uio lines, vccd, vddio, vdda, the ground pins and analog pins, each with its pin number."}
 
-*The symbol `Openframe_QFN_TT06_REV2` from Tiny Tapeout's library (`tinytapeout-kicad-libs` at 0e99691), plotted by `kicad-cli` 10.0.8. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/kicad_figures.sh).*
+*The symbol `Openframe_QFN_TT06_REV2` from Tiny Tapeout's library (`tinytapeout-kicad-libs` at 0e99691), plotted by `kicad-cli` 10.0.8. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh).*
 
 The breakout's chip uses `Openframe_QFN_TT06_REV2`, whose description is "Openframe QFN packaging, with TinyTapeout 6+ pin mapping". It's a single unit with 65 pins. Pins 1 to 64 are the package's pins, and pin 65, named `ThermalPad`, is the exposed pad underneath it. Of the 65, 19 are power inputs (the supply and ground pins, and the thermal pad), 12 inputs, 11 bidirectional, 10 outputs, 12 passive and 1 not connected. Its footprint field already names a footprint, `Package_DFN_QFN:QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm`, which is the form every footprint reference takes: a library's nickname, a colon, and the footprint's name in that library.
 
@@ -35,7 +35,7 @@ A part on the back of the board uses the `B.` layers instead. The copper, mask a
 
 ![KiCad's footprint for a 9 × 9 mm QFN-64 with a 7.65 mm exposed pad](../assets/img/kicad-qfn64-9x9-ep7.65-footprint.png){fig-alt="A square footprint drawn in several colours. Sixteen narrow pads line each side. The large square exposed pad fills most of the middle and is covered by a 6 by 6 grid of smaller rounded squares, the paste openings. A thin outline around everything is the courtyard, and short silkscreen corner marks sit just outside the pads, with a small filled triangle at the top-left corner."}
 
-*`QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm` from KiCad 10.0.8's `Package_DFN_QFN` library, with its copper, paste, mask, silkscreen, fab and courtyard layers. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/kicad_figures.sh).*
+*`QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm` from KiCad 10.0.8's `Package_DFN_QFN` library, with its copper, paste, mask, silkscreen, fab and courtyard layers. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh).*
 
 That footprint shows each layer at work. Its 64 signal pads are 0.85 × 0.25 mm rounded rectangles on `F.Cu`, `F.Mask` and `F.Paste`. The exposed pad, pad 65, is a 7.65 mm square on `F.Cu` and `F.Mask` only, and its paste is printed through 36 separate 1.03 mm squares in a 6 × 6 grid, which together cover 36 × 1.03² / 7.65² = 65 % of it. KLC's rule F6.3 explains why an exposed pad gets separate openings: they're there "to reduce the amount of solderpaste that is applied during stencil application". [From die to package](from-die-to-package.md) shows where the exposed pad comes from. The silkscreen lines are 0.12 mm wide, the courtyard is drawn in 0.05 mm lines and reaches 5.13 mm from the centre on each side, and the fab outline is 0.1 mm.
 
@@ -79,7 +79,7 @@ A KiCad design doesn't depend on its libraries once a part is placed, because it
 
 ![The Footprint Editor with the breakout's U4 open from the board](../assets/img/kicad-footprint-editor-sky-breakout-u4.png){fig-alt="KiCad's Footprint Editor. A banner across the top of the canvas reads: Editing U4 from board. Saving will update the board only. Open in library Package_DFN_QFN. The canvas shows the QFN-64 footprint with its large exposed pad numbered 65. The Properties panel on the left lists U4's fields, including Characteristics ASIC IC, LCSC TT_ASIC_CHIP and MPN TT_ASIC, and the library link Package_DFN_QFN. The status bar at the bottom shows Pads 101."}
 
-*U4 opened from the board in the Footprint Editor of KiCad 10.0.8. The status bar counts 101 pads: 64 signal pads, the exposed pad and its 36 paste openings, which KiCad stores as pads with no copper. Screenshot from [`scripts/screenshots/kicad/shot.sh`](https://github.com/uoftasic/pb101/blob/main/scripts/screenshots/kicad/README.md).*
+*U4 opened from the board in the Footprint Editor of KiCad 10.0.8. The status bar counts 101 pads: 64 signal pads, the exposed pad and its 36 paste openings, which KiCad stores as pads with no copper. Screenshot from [`scripts/screenshots/kicad/shot.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/screenshots/kicad/README.md).*
 
 The copies are also where two kinds of warning come from. When KiCad can find the library a part came from, it compares the copy with the library's version, and when they differ it warns. When it can't find the library at all, it warns about that instead. In the course's setup, DRC on the breakout reports:
 

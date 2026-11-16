@@ -32,7 +32,7 @@ The SKY130 chip on Tiny Tapeout's breakout has three supply rails: `VCCD`, the 1
 
 ![Where the SKY130 breakout's three supplies come from](../assets/img/ic103-sky-breakout-rails.svg)
 
-*The supplies on Tiny Tapeout's SKY130 QFN breakout, rev 3.2, as fitted, from the board file at 91a2bf1 (drawn by [`scripts/figures/sky_breakout_rails.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/sky_breakout_rails.py)). U1, an AP2112K-1.8 regulator, makes `VCCD`. `VDD_IO` and `VDDA` come straight from the demo board's 3.3 V through four 0 Ω links, past the empty place of the second regulator U2. The dashed parts are marked DNP, do not populate.*
+*The supplies on Tiny Tapeout's SKY130 QFN breakout, rev 3.2, as fitted, from the board file at 91a2bf1 (drawn by [`scripts/figures/sky_breakout_rails.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/sky_breakout_rails.py)). U1, an AP2112K-1.8 regulator, makes `VCCD`. `VDD_IO` and `VDDA` come straight from the demo board's 3.3 V through four 0 Ω links, past the empty place of the second regulator U2. The dashed parts are marked DNP, do not populate.*
 
 Two things follow. First, a board plugged into the demo board can't set the chip's supplies one at a time. The breakout's connectors carry only +3V3, +5V and ground, so changing +3V3 changes `VDD_IO` and `VDDA` together, and `VCCD` stays at 1.8 V as long as U1 has enough input. Second, `VDD_IO` is the demo board's +3V3, joined to it by three 0 Ω links. Anything that pushes current into the chip's I/O supply pushes it into the demo board's whole 3.3 V net.
 

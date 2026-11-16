@@ -2,7 +2,7 @@
 
 In this lab you give your board repository a GitHub Actions workflow. On every push it checks the board, builds the files a fabricator needs (Gerbers, a drill file, a BOM and a position file) and the images a reviewer looks at, and uploads them as one artifact. You'll finish the build script that does the work, write the `.gitignore` that keeps KiCad's own files out of git, look at the Gerbers the way the fab will, and then break the board on purpose to watch the run go red.
 
-The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uoftasic/pb101/tree/main/labs/lab-05-fab-outputs-in-ci) in the course repo.
+The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-05-fab-outputs-in-ci) in the course repo.
 
 ## Before you start
 
@@ -19,7 +19,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
 
    ```bash
    cd ~/simproc-pmod
-   cp -r ~/pb101/labs/lab-05-fab-outputs-in-ci/starter/. .
+   cp -r ~/ic103/labs/lab-05-fab-outputs-in-ci/starter/. .
    git status
    ```
 
@@ -55,7 +55,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
 4. `build.sh` has five TODOs, which you'll do in Part 3, and there's no `.gitignore` yet. Before you run anything, write down which rows of the Lab 05 check you expect to fail. Then run it:
 
    ```bash
-   ~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh
+   ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh
    ```
 
    It first runs `bash ci/build.sh all` in the pinned image and prints what that prints, then one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
@@ -101,7 +101,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 1. Write the five commands the TODOs in `ci/build.sh` ask for. Each `kicad-cli` command prints its own options with `--help`; for example, run
 
    ```bash
-   ~/pb101/labs/common/kicad.sh kicad-cli pcb export drill --help
+   ~/ic103/labs/common/kicad.sh kicad-cli pcb export drill --help
    ```
 
    and the same for `sch export bom`, `pcb export pos`, `pcb render` and `pcb export svg`. Keep the file names the comments give, because the check looks for them. Things to decide as you go:
@@ -139,7 +139,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 
    </details>
 
-5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, named Board, for your commit, and the run's page lists the job's steps and, once it has finished, the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/pb101/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py): all six succeeded in 11 s, and the artifact held 21 files. On GitHub, pulling the image (812 MB) adds to that, and we haven't timed it there.
+5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, named Board, for your commit, and the run's page lists the job's steps and, once it has finished, the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/ic103/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py): all six succeeded in 11 s, and the artifact held 21 files. On GitHub, pulling the image (812 MB) adds to that, and we haven't timed it there.
 
 ## Part 4: Look at what the fab will get
 
@@ -208,14 +208,14 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 7. Find the hash of the commit with the planted error (`git log --oneline` lists it) and run the check with it:
 
    ```bash
-   ~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
+   ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
    It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    c36542d, an earlier commit on this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
 
 ## Finishing
 
-You're done when `~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <your planted commit>`, run in your own repository, ends with `PASS  pmod: 9 of 9 Lab 05 checks ok`, and your repository's Actions tab shows a red run on that commit and a green run, with its `board-outputs` artifact, on a later one.
+You're done when `~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh --planted <your planted commit>`, run in your own repository, ends with `PASS  pmod: 9 of 9 Lab 05 checks ok`, and your repository's Actions tab shows a red run on that commit and a green run, with its `board-outputs` artifact, on a later one.
 
 Questions:
 

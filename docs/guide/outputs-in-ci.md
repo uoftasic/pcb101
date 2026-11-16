@@ -6,9 +6,9 @@ Continuous integration (CI) means that every time you push, a fresh machine chec
 
 ![A flow chart of one CI run: a push, a runner that checks out the commit, the pinned KiCad image, the checks, and either a failed run or the outputs uploaded as an artifact](../assets/img/ic103-ci-flow.svg)
 
-*One CI run for a board. If ERC, DRC or schematic parity finds an error, the step fails and GitHub Actions skips the later steps, so a broken board never produces a set of Gerbers that looks ready to order. Made by [`scripts/figures/ci_flow.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/ci_flow.py).*
+*One CI run for a board. If ERC, DRC or schematic parity finds an error, the step fails and GitHub Actions skips the later steps, so a broken board never produces a set of Gerbers that looks ready to order. Made by [`scripts/figures/ci_flow.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/ci_flow.py).*
 
-Other KiCad projects already work this way. wafer.space's chip-on-board repository, for example, has a GitHub Actions workflow that runs in the `kicad/kicad:10.0` container, renders the top and bottom of each board with `kicad-cli pcb render`, plots the copper and silkscreen layers with `kicad-cli pcb export svg`, exports each schematic with `kicad-cli sch export pdf`, and commits the results back to the repository (`.github/workflows/release-docs.yml` and `.github/scripts/gen_docs.py` in `wafer-space/chip-on-board-wire-bonded-pcbs`). This course's own repository does the checking half: its [`labs.yml`](https://github.com/uoftasic/pb101/blob/main/.github/workflows/labs.yml) workflow runs the board check on every lab's reference solution whenever `labs/` changes, and once a week in case something outside the repository has moved.
+Other KiCad projects already work this way. wafer.space's chip-on-board repository, for example, has a GitHub Actions workflow that runs in the `kicad/kicad:10.0` container, renders the top and bottom of each board with `kicad-cli pcb render`, plots the copper and silkscreen layers with `kicad-cli pcb export svg`, exports each schematic with `kicad-cli sch export pdf`, and commits the results back to the repository (`.github/workflows/release-docs.yml` and `.github/scripts/gen_docs.py` in `wafer-space/chip-on-board-wire-bonded-pcbs`). This course's own repository does the checking half: its [`labs.yml`](https://github.com/uoftasic/ic103/blob/main/.github/workflows/labs.yml) workflow runs the board check on every lab's reference solution whenever `labs/` changes, and once a week in case something outside the repository has moved.
 
 ## Checks that fail the run
 
@@ -36,7 +36,7 @@ exit status 5
 
 The three parity issues were there in the first run too. KiCad reports schematic parity problems as warnings, so `--severity-error` filters them out, and in every project the course checked, that included a footprint that is in the schematic and missing from the board. On the DIP dock the three are about a logo (one footprint, `PSYLOGO01`, placed twice and not in the schematic), which is harmless. On your board the same filter would let a missing connector through with a green run.
 
-That is why the labs don't use the plain `kicad-cli` flags as their "done when". They run [`labs/common/check_board.py`](https://github.com/uoftasic/pb101/blob/main/labs/common/check_board.py), which runs ERC and DRC with every severity, reads the JSON reports, and fails on any error, any unconnected item, and any parity item at all. On the DIP dock it took 18 s and ended like this:
+That is why the labs don't use the plain `kicad-cli` flags as their "done when". They run [`labs/common/check_board.py`](https://github.com/uoftasic/ic103/blob/main/labs/common/check_board.py), which runs ERC and DRC with every severity, reads the JSON reports, and fails on any error, any unconnected item, and any parity item at all. On the DIP dock it took 18 s and ended like this:
 
 ```text
                 errors  warnings  excluded
@@ -55,7 +55,7 @@ It exits 1 on a FAIL, so a workflow step that runs it fails the run. The 159 DRC
 
 A Docker image name such as `kicad/kicad:10.0` is a tag, and a tag is a pointer that the publisher moves. On Docker Hub, `kicad/kicad:10.0` and `kicad/kicad:10.0.8` were both last updated on October 30, 2026, and both are 812 MB, because `10.0` currently points at 10.0.8. KiCad posted 10.0.5 on July 22, 10.0.6 on August 29, 10.0.7 on October 7 and 10.0.8 on October 30, so a workflow that names `10.0` gets a new KiCad every few weeks without anyone committing anything. That is fine for pictures. For checks, it means a DRC count can change on a Monday morning for reasons that have nothing to do with your board.
 
-A digest names one exact image, and Docker won't substitute another. The course's checks name `kicad/kicad:10.0.8@sha256:3f4a01786dfb…` (in full in [`labs/common/kicad-image.txt`](https://github.com/uoftasic/pb101/blob/main/labs/common/kicad-image.txt)), and `labs/common/kicad.sh` prints the digest it ran before every check, so a log always records which KiCad produced it. We haven't compared outputs across 10.0 patch releases, so when the course moves to a newer one, it will be a commit of its own that regenerates every count on every page.
+A digest names one exact image, and Docker won't substitute another. The course's checks name `kicad/kicad:10.0.8@sha256:3f4a01786dfb…` (in full in [`labs/common/kicad-image.txt`](https://github.com/uoftasic/ic103/blob/main/labs/common/kicad-image.txt)), and `labs/common/kicad.sh` prints the digest it ran before every check, so a log always records which KiCad produced it. We haven't compared outputs across 10.0 patch releases, so when the course moves to a newer one, it will be a commit of its own that regenerates every count on every page.
 
 ## The user and the library tables
 
@@ -79,7 +79,7 @@ The second is 3D models. The image doesn't include KiCad's 3D models of parts (t
 
 ![A kicad-cli render of the top of the DIP dock, with pads, silkscreen and holes but no parts](../assets/img/dip-dock-3d-top.png)
 
-*The top of Tiny Tapeout's DIP dock as `kicad-cli pcb render` draws it in `kicad/kicad:10.0.8`: copper under the green mask, gold pads, silkscreen and holes, and no parts, because the image has no 3D models. Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/board_renders.sh).*
+*The top of Tiny Tapeout's DIP dock as `kicad-cli pcb render` draws it in `kicad/kicad:10.0.8`: copper under the green mask, gold pads, silkscreen and holes, and no parts, because the image has no 3D models. Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/board_renders.sh).*
 
 For a reviewer that is often better than a render with parts, since the pads and the silkscreen are what they're checking.
 
