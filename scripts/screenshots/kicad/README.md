@@ -64,8 +64,11 @@ The other shot files:
 |---|---|---|
 | [`shots/lab01-sky-breakout.sh`](shots/lab01-sky-breakout.sh) | the breakout's Symbol Fields Table, two zoomed schematic blocks, and the ERC dialog listing its errors | the fetched boards |
 | [`shots/lab02-rhl0024a.sh`](shots/lab02-rhl0024a.sh) | Lab 02's reference footprint in the Footprint Editor, and the Pad Properties and Create Array dialogs | Lab 02's check run on `solutions/`, which writes the project the shot opens |
+| [`shots/lab03-lab04-pmod.sh`](shots/lab03-lab04-pmod.sh) | the symbol chooser filtered to Tiny Tapeout's Pmod connector and to the SP0502 ESD array, and Position Relative To on J2 of Lab 03's reference board | nothing: the template and the reference board are in the repo |
+| [`shots/lab05-ci.sh`](shots/lab05-ci.sh) | GerbView with the Gerbers and drill file that Lab 05's `ci/build.sh fab` writes for Lab 04's reference board, then with its File menu open, and the DRC dialog on that board with Lab 05's planted error | nothing: the shot runs the build script and `planted.py` itself |
+| [`shots/lab06-review.sh`](shots/lab06-review.sh) | Lab 06's seeded board in the PCB Editor; Board Setup's Constraints page, J4 selected with the Properties panel, and J4's Footprint Properties dialog, all on Lab 04's reference board | nothing |
 
-These two click at fixed screen positions, read off earlier captures and listed in each file's header. Typing into an editor's library filter right after it opens didn't always take in our runs; when a shot stops at a `wait_window`, run it again before changing anything.
+All but `lab03-lab04-pmod.sh` click at fixed positions on the 1600 × 1000 screen, read off earlier captures and given in a comment in the file. Typing into an editor's library filter right after it opens didn't always take in our runs; when a shot stops at a `wait_window`, run it again before changing anything.
 
 ## Renders and plots
 
