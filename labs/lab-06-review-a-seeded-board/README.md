@@ -42,7 +42,7 @@ The key the check uses, `data/review-key.json`, holds only SHA-256 hashes of the
 | `solutions/` | the planted faults and a reference review and quote record; see its README |
 | `src/make_seeded.py` | writes `board/` with Lab 03's generator, in the pinned image |
 | `src/check_lab06.py` | the check itself |
-| `src/selftest.py` | the seeded board and review records with known verdicts, for testing the checks themselves (8 of 8, 32 s with one CPU) |
+| `src/selftest.py` | the seeded board and review records with known verdicts, for testing the checks themselves (8 of 8; it took 18 to 54 s with one CPU in our runs) |
 | `results/` | local outputs; never committed |
 
 ```bash
