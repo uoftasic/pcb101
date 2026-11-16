@@ -1,0 +1,78 @@
+{
+  "comment": "Tiny Tapeout boards and libraries the labs read. fetch_boards.py checks each one out at the commit below into labs/common/upstream/<dest>. Nothing here is copied into this repo. 'paths' are git sparse-checkout patterns (non-cone): only those files are downloaded.",
+  "sources": [
+    {
+      "name": "breakout-pcb",
+      "url": "https://github.com/TinyTapeout/breakout-pcb.git",
+      "commit": "91a2bf189b53b0523ef83e2edc4d76c770e7d5b4",
+      "date": "2026-10-29",
+      "license": "Apache-2.0 (LICENSE at the repository root)",
+      "dest": "breakout-pcb",
+      "paths": [
+        "/LICENSE",
+        "/README.md",
+        "/.gitmodules",
+        "/breakout-sky-qfn/",
+        "!/breakout-sky-qfn/*.wrl",
+        "/breakout-ihp-qfn/",
+        "/dip-dock/"
+      ],
+      "used_for": "The SKY130 QFN breakout (rev 3.2) that Lab 01 reads; the IHP breakout's own QFN-64 footprint for Lab 02; the 2-layer DIP dock, Lab 03's closest reference."
+    },
+    {
+      "name": "tinytapeout-kicad-libs",
+      "url": "https://github.com/TinyTapeout/tinytapeout-kicad-libs.git",
+      "commit": "0e996913629fdc6ace27858d77dbe218274e99e6",
+      "date": "2026-10-24",
+      "license": "Apache-2.0",
+      "dest": "breakout-pcb/tinytapeout-kicad-libs",
+      "paths": ["/*"],
+      "used_for": "The commit breakout-pcb's submodule names. It sits where the breakouts' fp-lib-table and sym-lib-table look for it (${KIPRJMOD}/../tinytapeout-kicad-libs) and where the demo board's fp-lib-table looks for it (${KIPRJMOD}/../breakout-pcb/tinytapeout-kicad-libs). breakout-pcb's .gitmodules points at psychogenic/tinytapeout-kicad-libs; the same commit is in TinyTapeout's repository, which is the one fetched here."
+    },
+    {
+      "name": "tt-demo-pcb",
+      "url": "https://github.com/TinyTapeout/tt-demo-pcb.git",
+      "commit": "bbf3dd1f771d5aed249b07ddf130b3ddc8261d60",
+      "date": "2026-08-29",
+      "license": "Apache-2.0 for the PCB, CC0 for the documentation (README)",
+      "dest": "tt-demo-pcb",
+      "paths": [
+        "/LICENSE",
+        "/README.md",
+        "/.gitignore",
+        "/.gitmodules",
+        "/fp-lib-table",
+        "/sym-lib-table",
+        "/tinytapeout-demo.kicad_pro",
+        "/tinytapeout-demo.kicad_sch",
+        "/tinytapeout-demo.kicad_pcb",
+        "/tinytapeout-demo.kicad_dru",
+        "/rp2350.kicad_sch"
+      ],
+      "used_for": "The RP2350 demo board: how it loads the project pins (DIP switches, 7-segment display), where its TVS diodes are, and the fp-info-cache it still tracks in git."
+    },
+    {
+      "name": "kicad-tinytapeout-pmod-lib",
+      "url": "https://github.com/TinyTapeout/kicad-tinytapeout-pmod-lib.git",
+      "commit": "9ee6345a6153ca20004fca47eec910166af836d7",
+      "date": "2024-07-10",
+      "license": "Apache-2.0",
+      "dest": "kicad-tinytapeout-pmod-lib",
+      "paths": ["/*"],
+      "used_for": "Tiny Tapeout's Pmod connector footprints and placement rules for Lab 03."
+    },
+    {
+      "name": "pcb-files",
+      "url": "https://github.com/TinyTapeout/pcb-files.git",
+      "commit": "ca5fd7241e3715898633e1e40fd54351a0809cce",
+      "date": "2026-09-19",
+      "license": "No licence file in the repository; fetched for reading only, never copied into this repo",
+      "dest": "pcb-files",
+      "paths": [
+        "/README.md",
+        "/ETR/breakout-skyqfn-v3p2/bom/"
+      ],
+      "used_for": "Tiny Tapeout's production BOM for the SKY130 QFN breakout rev 3.2 (2025-10-04), to compare with the fitted parts in Lab 01."
+    }
+  ]
+}

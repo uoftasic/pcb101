@@ -25,3 +25,6 @@ venv/
 # Build artifacts (if any local tools)
 site/
 _book/
+
+# Tiny Tapeout boards fetched by labs/common/fetch_boards.py (never committed)
+labs/common/upstream/
