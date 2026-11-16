@@ -19,7 +19,7 @@
 
 This page answers: *which parts can you solder to a board yourself with an iron, and how do you choose footprints so that the board you order is one you can put together?*
 
-Nothing in PB101 requires you to solder. But if your team orders the board you draw in [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md), someone will assemble it, quite possibly you, and a footprint you choose in the lab decides how hard that job is. This page is about choosing the size of each part and the footprint that goes with it.
+You don't have to solder anything in PB101. But if your team orders the board you draw in [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md), someone will assemble it, quite possibly you, and a footprint you choose in the lab decides how hard that job is. This page is about choosing the size of each part and the footprint that goes with it.
 
 ## Sizes and their codes
 
@@ -48,18 +48,18 @@ So the 0603 hand-soldering pad reaches 1.4 mm from the middle of the part instea
 
 Tiny Tapeout's boards use smaller parts than this page recommends. On the SKY130 breakout, every 100 nF capacitor is 0402, the 1 µF capacitors are 0603 and the 10 µF ones 0805. The DIP dock uses 0402 for 36 of its 37 resistors and for its 100 nF capacitors, 0603 for its 1 µF capacitors and LED, and SOT-353 (SC-70-5) for its two logic gates. That's fine for them, because their boards are assembled by machine: Tiny Tapeout's archive of production files has the breakout's bill of materials prepared for JLCPCB's assembly service.
 
-The exception on the breakout makes the point. Its 0 Ω links R13, R14 and R15, which connect the chip's three supplies, are 0805, while the board's other fitted 0 Ω links, R2, R4, R5 and R8, are 0603 or 0402. The schematic explains why: each supply "may be monitored or fed through these headers by popping off the relevant resistor (0805s for easier manip)". Those three are the parts a person is expected to take off by hand, so they got the larger size. ([Measuring current](measuring-current.md) comes back to them.)
+There's one exception on the breakout. Its 0 Ω links R13, R14 and R15, which connect the chip's three supplies, are 0805, while the board's other fitted 0 Ω links, R2, R4, R5 and R8, are 0603 or 0402. The schematic explains why: each supply "may be monitored or fed through these headers by popping off the relevant resistor (0805s for easier manip)". Those three are the parts a person is expected to take off by hand, so they got the larger size. ([Measuring current](measuring-current.md) comes back to them.)
 
 ## Packages with pads you can't reach
 
-The size of a part isn't the only thing that decides whether you can solder it. What matters as much is whether the iron can reach the joint.
+Whether you can solder a part depends as much on whether the iron can reach the joint as on the part's size.
 
 - **SOT-23-5**, the package of the breakout's AP2112K regulator, has its leads out beside the body, on 1.325 × 0.6 mm pads at 0.95 mm pitch. You can see and reach every joint.
 - **SOIC-8** has leads on a 1.27 mm pitch, again beside the body.
 - **SOD-882**, the package of 22 of the TVS diodes on the demo board, has a body of 1.0 × 0.6 mm and two pads of 0.4 × 0.7 mm, 0.7 mm apart between centres. That's about the size of an 0402, with the same problem.
 - **QFN-64**, 9 × 9 mm with a 0.5 mm pitch, has pads 0.25 mm wide. Each one reaches only 0.375 mm beyond the edge of the body, and the 7.65 × 7.65 mm exposed pad in the middle is entirely underneath the part, where no iron can reach it. The Tiny Tapeout chip comes already mounted on its breakout, so a QFN is something you'll draw a footprint for, in [Lab 02](../labs/lab-02-a-footprint-from-a-datasheet-overview.md), and not something you'll solder.
 
-When you add ESD protection to your Pmod in Lab 04, look for a part whose package is in the first group, not the third.
+When you add ESD protection to your Pmod in Lab 04, look for a part in a package like the first two in this list, with its leads beside the body, and not one like SOD-882.
 
 ## Through-hole parts
 
