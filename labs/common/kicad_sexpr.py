@@ -2,8 +2,8 @@
 .kicad_mod), for the lab checkers.
 
 The checkers read KiCad's files directly rather than importing KiCad's `pcbnew` Python
-module, because KiCad plans to remove that module in KiCad 11 (course plan, K11), and a
-checker that parses the files keeps working whatever happens to it.
+module, because KiCad plans to remove that module in KiCad 11, and a checker that parses
+the files keeps working whatever happens to it.
 
     from kicad_sexpr import load, children, child, prop
     board = load("board.kicad_pcb")

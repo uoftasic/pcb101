@@ -12,14 +12,14 @@
   - SkyWater sky130_fd_io user guide (URL on protecting-the-chips-io), read Nov 16, 2026:
     "Grounded Power Supplies", hold mode, enable_h.
   - Tiny Tapeout ETR demo board guide, read Nov 16, 2026: back-powering a breakout with
-    3v3; config.ini modes; uio_oe_pico. FAQ (one chip per kit), per the course plan T1.
+    3v3; config.ini modes; uio_oe_pico. FAQ (one chip per kit).
   - Horowitz and Hill, The Art of Electronics, 3rd ed. (printed pages): 611 (TPS775xx
     output capacitor and ESR), 754 (mixed supplies), 759-760 (latch-up; a chip powered by its logic inputs),
     795 (Fig. 12.4: HIGH input partially powers the rail), 804-805 (HBM, Fig. 12.21 and
     12.22, 15 uJ at 2.5 kV).
   - The 5VTVS lines against the SKY breakout: we matched the demo board's J5 pad Ln to
     the breakout's J1 pad n (all 16 digital project nets on those pads agree); /A-/X are
-    an0-an11, res_an16, res_an19 and eight GND (the course plan's fact T15 agrees).
+    an0-an11, res_an16, res_an19 and eight GND.
 -->
 
 This page answers: *where does each of the chip's supplies come from, what happens to the chip when one board is powered and the board connected to it isn't, and where does static get in?*

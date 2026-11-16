@@ -17,9 +17,9 @@ solution use the same numbers. For each pair of opposite sides, with every lengt
 J_T, J_H and J_S are IPC-7351B's solder-fillet goals for a no-lead part with a toe fillet,
 at nominal density: toe 0.30, heel 0.00, side -0.04. They are the values KiCad's footprint
 generator transcribes from IPC-7351B table 3-15 (src/kilibs/config/ipc_configs/ipc_7351b.yaml
-in gitlab.com/kicad/libraries/kicad-footprint-generator, commit 090252c, as the course plan
-records in its fact P2, and as that file reads at 090252c). F is the board fabricator's
-tolerance and P the placement machine's; the course uses F = 0.10 and P = 0.05.
+in gitlab.com/kicad/libraries/kicad-footprint-generator, as that file reads at commit
+090252c). F is the board fabricator's tolerance and P the placement machine's; the course
+uses F = 0.10 and P = 0.05.
 
 C_S here is the worst case, S_max - S_min. KiCad's generator combines the tolerances that
 make up S as a root-sum-square instead and centres that band on S's nominal

@@ -31,7 +31,7 @@ KiCad 10 opens a modal "KiCad Setup" wizard before any editor if its settings fo
 - a readable `sym-lib-table`, `fp-lib-table` and `design-block-lib-table`;
 - `do_not_show_again.update_check_prompt` and `do_not_show_again.data_collection_prompt` set to true in `kicad_common.json`.
 
-Under Xvfb the wizard sits over the editor and the board never loads, which is what the course plan's first test ran into. `rig.sh` writes all of them before KiCad starts. It copies the two library tables from `/usr/share/kicad/template/` (the same files the image's own user has), writes an empty design-block table, runs `kicad-cli version` to get a default `kicad_common.json`, and ticks every "don't show again" box in it. KiCad then opens straight into the editor.
+Under Xvfb the wizard sits over the editor and the board never loads, so `rig.sh` writes all of them before KiCad starts. It copies the two library tables from `/usr/share/kicad/template/` (the same files the image's own user has), writes an empty design-block table, runs `kicad-cli version` to get a default `kicad_common.json`, and ticks every "don't show again" box in it. KiCad then opens straight into the editor.
 
 The rest of the rig:
 

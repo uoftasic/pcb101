@@ -5,7 +5,7 @@
 
 1. The starter breakout-notes.md, all TODO: must FAIL.
 2. solutions/breakout-notes.md: must PASS.
-3. The solution with the course plan's first-draft mistake, VDD_IO regulated by U2
+3. The solution with a mistake from an early draft of the course, VDD_IO regulated by U2
    (which is DNP) instead of passing through R8: must FAIL on that row.
 4. The solution with TP1 added to "Not fitted": must FAIL on that row.
 5. The solution with the volts written the schematic's way, 1V8 and 3V3: must PASS.
