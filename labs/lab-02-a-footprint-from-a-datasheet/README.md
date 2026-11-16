@@ -13,7 +13,8 @@ from the repo root:
 labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/check_footprint.py
 ```
 
-It takes about 20 s once your footprint and symbol exist, and ends with `PASS` or `FAIL`.
+It ends with `PASS` or `FAIL`. With your footprint and symbol in place, in our runs it took 46
+and 48 s with the container limited to one CPU.
 On the folder as shipped it prints
 `FAIL  4 of 4 parts have a MISMATCH: pads.md, Footprint, Symbol and Fit`.
 
