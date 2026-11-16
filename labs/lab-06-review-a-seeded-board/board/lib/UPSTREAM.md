@@ -1,4 +1,4 @@
-# Tiny Tapeout's Pmod library, two files of it
+# Two files from Tiny Tapeout's Pmod library
 
 | | |
 |---|---|
