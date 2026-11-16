@@ -159,7 +159,7 @@ You're done when `~/pb101/labs/lab-06-review-a-seeded-board/check.sh`, run in yo
 
 Questions:
 
-1. In `~/seeded-review`, put J3 back at 22.86 mm from J2 (X 147.72 mm), the way you placed it in Lab 03, save, and run Lab 04's check there again. The check now passes every `uio` row. Look at the pin numbers it prints for `uio[6]` and `uio[7]`. What does it check about those lines, and what doesn't it?
+1. In `~/seeded-review`, untick Locked for J3 in the Properties panel, put it back at 22.86 mm from J2 (X 147.72 mm) the way you placed it in Lab 03, lock it again, save, and run Lab 04's check there again. The check now passes every `uio` row. Look at the pin numbers it prints for `uio[6]` and `uio[7]`. What does it check about those lines, and what doesn't it?
 
    <details>
    <summary>Answer</summary>

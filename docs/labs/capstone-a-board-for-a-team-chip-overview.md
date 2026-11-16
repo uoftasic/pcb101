@@ -181,7 +181,7 @@ Submit: the URL of your repository and the hash of the commit the check passed o
 ## Going further (optional)
 
 - Order your board with your cohort after a second person has read `BRINGUP.md`, and bring it up when there's a chip to bring up; [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) has the costs, and SimProc, on TTSKY25b, is the only team chip that could be on a bench before the TTSKY26d chips, which are expected in May 2027.
-- For Brief A, add a buffer between the trimmer and the filter, and work out how much of the sampling droop it removes. KiCad's `MCP6001R` is a 1 MHz op-amp in SOT-23-5; its pins 2 and 5 are the reverse of the plain `MCP6001`'s, which is the kind of package-variant fault you looked for in Lab 06.
+- For Brief A, add a buffer between the trimmer and the filter, and work out how much of the sampling droop it removes. KiCad's `MCP6001R` is a 1 MHz op-amp in SOT-23-5; its pins 2 and 5, V+ and V−, are the reverse of those on `MCP6001-OT`, the plain MCP6001 in the same package. A swap like that is the kind of package-variant fault you looked for in Lab 06.
 - Do both briefs.
 
 Next on the [Course path](../index.md#course-path): this is the last row. A second course, PB201, would take up what PB101 left out: 4-layer boards and decoupling for a QFN, characterization boards with a reference of their own, and high-speed signals.
