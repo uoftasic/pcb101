@@ -34,7 +34,8 @@ On the folder as shipped it prints `FAIL  4 of 4 parts of the check disagree`.
 | `results/` | local outputs; never committed |
 
 `labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/selftest.py` runs
-the self-test in about 70 s and ends with `5 of 5 cases gave the expected verdict`.
+the self-test in 1 to 3 min (68 s and 150 s in our two runs) and ends with `5 of 5 cases gave the
+expected verdict`.
 
 The datasheet is TI's and isn't copied here; `data/rhl0024a.json` holds only the numbers
 the lab uses, each with the page it's on.

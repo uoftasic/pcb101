@@ -58,6 +58,15 @@ A shot file is a few lines of bash that `rig.sh` sources. [`shots/sky-breakout.s
 
 KiCad's standalone editors have no command-line option to open the Footprint Editor, so the example opens it the way a student would: Edit → Find (Ctrl+F) for `U4`, then Edit Footprint (Ctrl+E).
 
+The other shot files:
+
+| Shot file | Writes | Needs first |
+|---|---|---|
+| [`shots/lab01-sky-breakout.sh`](shots/lab01-sky-breakout.sh) | the breakout's Symbol Fields Table, two zoomed schematic blocks, and the ERC dialog listing its errors | the fetched boards |
+| [`shots/lab02-rhl0024a.sh`](shots/lab02-rhl0024a.sh) | Lab 02's reference footprint in the Footprint Editor, and the Pad Properties and Create Array dialogs | Lab 02's check run on `solutions/`, which writes the project the shot opens |
+
+These two click at fixed screen positions, read off earlier captures and listed in each file's header. Typing into an editor's library filter right after it opens didn't always take in our runs; when a shot stops at a `wait_window`, run it again before changing anything.
+
 ## Renders and plots
 
 ```bash
