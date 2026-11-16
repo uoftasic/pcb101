@@ -6,7 +6,7 @@ A chip on its own can't do much. It needs its supplies at the right voltages, a 
 
 The quotes from Tiny Tapeout's web pages on this page were read on November 16, 2026, and the board files and READMEs are the ones at the commits the course fetches (listed in [`labs/common/upstream.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/upstream.json)).
 
-## What comes in a devkit
+## The devkit
 
 Tiny Tapeout doesn't sell bare chips. Its [FAQ](https://tinytapeout.com/faq/) says "We don't ship bare dies either", and describes what you get instead: "The devkit consists of two PCBs (printed circuit boards) - a 'demo board' and a 'breakout board'. The breakout board contains the shuttle's ASIC, and connects to the demo board via a set of pins." The same FAQ says "You only get 1 chip." A second chip means a second devkit, which is a good reason to treat the one on your bench carefully.
 
@@ -16,9 +16,9 @@ Tiny Tapeout doesn't sell bare chips. Its [FAQ](https://tinytapeout.com/faq/) sa
 
 The **breakout** is a small board that carries the chip and the few parts the chip needs right beside it. On a SKY130 shuttle it's 50 × 50 mm with four copper layers, and the chip is in a QFN-64 package, which [From die to package](from-die-to-package.md) takes apart. The breakout makes the chip's supply voltages from what the demo board gives it. Two Hirose DF12 connectors on its underside, one with 60 pins and one with 50, plug it into the demo board, and the FAQ describes them as "2 connectors where you get all of the signals of the chip."
 
-The **demo board** is everything else. Its [README](https://github.com/TinyTapeout/tt-demo-pcb) lists three ways to reach a project: "directly, using the input DIP switches and 7-segment display", "via breadboard or extension boards through PMODs", or "by interacting through the on-board RP2". The RP2 is an RP2350 microcontroller, and the README says it "is responsible for selecting projects, by controlling the project MUX that's on the ASIC and, under most circumstances, providing the clock for the projects." That multiplexer is there because a shuttle's chip carries many projects at once (TT08's carries 135, according to Tiny Tapeout's [news post](https://tinytapeout.com/news/tt08-arrives/) about it), and the RP2350 connects one of them to the pins. The demo board takes its power from a USB-C connector, and Tiny Tapeout's [demo board guide](https://tinytapeout.com/guides/get-started-demoboard-etr/) says that, running the factory test project, the kit draws "around 180-200 milliAmps, on the 5V supply". That number is useful later, when you plan the first power-up of a board of your own.
+The **demo board** is everything else. Its [README](https://github.com/TinyTapeout/tt-demo-pcb) lists three ways to reach a project: "directly, using the input DIP switches and 7-segment display", "via breadboard or extension boards through PMODs" (a Pmod is a small add-on board on a 2 × 6 pin header, a format Digilent defined and the README links), or "by interacting through the on-board RP2". The RP2 is an RP2350 microcontroller, and the README says it "is responsible for selecting projects, by controlling the project MUX that's on the ASIC and, under most circumstances, providing the clock for the projects." That multiplexer is there because a shuttle's chip carries many projects at once (TT08's carries 135, according to Tiny Tapeout's [news post](https://tinytapeout.com/news/tt08-arrives/) about it), and the RP2350 connects one of them to the pins. The demo board takes its power from a USB-C connector, and Tiny Tapeout's [demo board guide](https://tinytapeout.com/guides/get-started-demoboard-etr/) says that, running the factory test project, the kit draws "around 180-200 milliAmps, on the 5V supply". That number is useful later, when you plan the first power-up of a board of your own.
 
-## What the chip's pins can take
+## The chip's pin limits
 
 Every board you design for these chips starts from the limits of the chip's pins, so it's worth having them in one place. Tiny Tapeout's [GPIO page](https://tinytapeout.com/specs/gpio/) gives each project 26 digital pins:
 
@@ -45,7 +45,7 @@ Two of those numbers shape almost every board in this course. A 4 mA output is a
 
 Analog pins have limits of their own. The [analog spec](https://tinytapeout.com/specs/analog/) says that for SKY130 the path between a pad and a project's analog pin has a resistance under 500 Ω and a capacitance under 5 pF, with a maximum current of 4 mA, and that an analog switch (`tt_asw_3v3`) sits in that path. The demo board guide says SKY130 chips "have 12 pins dedicated to analog, while projects may use up to 6 of these", that the demo board brings them to a 100 mil header, and that "Each of these lines is pulled down with a large 10 MegaOhm resistance". Whatever drives an analog pin from a board of yours drives all of that: the switch, the pad's capacitance and the pull-down.
 
-## What the devkit leaves to you
+## Hardware for one project
 
 The demo board is general on purpose. It gives every project the same switches, the same display, the same three Pmods and the same microcontroller, and that covers a lot of projects. What it can't give is hardware that one particular project needs.
 

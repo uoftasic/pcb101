@@ -4,7 +4,7 @@ This page answers: *the schematic shows the chip as a box with 65 pins, and the 
 
 Every part in a KiCad design has two drawings. Its **symbol** is what you place in the schematic, and it says what the part does: which pins it has, what they're called and what kind of pin each one is. Its **footprint** is what you place on the board, and it says where the copper, solder and markings go. The two are joined by a single field on the symbol, which names the footprint, and by pin numbers, which must match pad numbers. Both drawings come from **libraries**, which KiCad finds through **library tables**. This page takes each of those in turn, using the chip on Tiny Tapeout's SKY130 breakout as the example throughout, and in [Lab 02](../labs/lab-02-a-footprint-from-a-datasheet-overview.md) you make a symbol and a footprint of your own.
 
-## A symbol says what a part does
+## Symbols
 
 A symbol is a drawing with **pins**. Each pin has a number, a name and an electrical type, which [Schematics other people can read](schematics-other-people-can-read.md) showed is what ERC checks. A symbol also has **fields**: a reference (`U4`), a value, a footprint, a datasheet link and a description. A part with several identical sections, such as a quad op-amp, can be split into **units**, each drawn separately.
 
@@ -16,7 +16,7 @@ The breakout's chip uses `Openframe_QFN_TT06_REV2`, whose description is "Openfr
 
 A symbol's pin types are part of its correctness. If a supply pin were drawn as passive, ERC couldn't tell you when the supply was missing, and if two outputs were drawn as bidirectional, it couldn't tell you when they fought. When you make a symbol from a datasheet, the pin types deserve as much care as the pin numbers.
 
-## A footprint says where the copper goes
+## Footprints and their layers
 
 A footprint is a set of numbered **pads** plus drawings on the board's technical layers. The pad numbers are what join it to the symbol: symbol pin 17 connects to whatever pad is numbered 17, so the symbol's pin 65, `ThermalPad`, lands on the footprint's pad 65, the exposed pad. KiCad doesn't check that the pin and pad mean the same thing, only that the numbers match, which is why a footprint and a symbol made from two different datasheets can disagree without any check noticing.
 
@@ -86,7 +86,7 @@ The copies are also where two kinds of warning come from. When KiCad can find th
 - 47 `lib_footprint_mismatch` warnings, such as "Footprint 'C_0402_1005Metric' does not match copy in library 'Capacitor_SMD'". They cover every footprint the board took from KiCad's own libraries: 25 capacitors, 15 resistors, 3 fiducials, the two regulators, the header J2 and the chip. The warning says that the copies differ, not how. For U4, we compared the two: the pads are identical, and the library's version has gained a filled triangle on the silkscreen at the pin 1 corner, which the board's copy doesn't have, and different fields.
 - 76 `lib_footprint_issues` warnings, all "The current configuration does not include the footprint library …": 74 for `flyingcarsfootprints`, the library of the board's stitching vias, and 2 for `Logos`. `flyingcarsfootprints` isn't in either of Tiny Tapeout's library repositories, so these 74 stay whatever you install.
 
-ERC reports the same two kinds for symbols: 69 `lib_symbol_mismatch` and 22 `lib_symbol_issues`. None of these warnings is about the board's copper. They're about whether the design still matches its libraries, and when a design is meant to be a record of what was built, the copy in the design is the one that counts. When you start a board of your own, though, it's worth resolving them: either update the part from the library, or know why you've kept the old copy.
+ERC reports the same two kinds for symbols: 69 `lib_symbol_mismatch` and 22 `lib_symbol_issues`. None of these warnings is about the board's copper. They're about whether the design still matches its libraries. When a design is a record of a board that was built, its own copies are what was made, so leave them as they are. When you start a board of your own, though, it's worth resolving them: either update the part from the library, or know why you've kept the old copy.
 
 ## Check yourself
 

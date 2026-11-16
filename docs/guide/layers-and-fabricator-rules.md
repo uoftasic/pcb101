@@ -6,7 +6,7 @@ A board design in KiCad is a description that a fabricator turns into fibreglass
 
 The fabricators' numbers on this page come from their own pages, read on November 16, 2026. They change from time to time, so check the page of the fabricator you're ordering from before you rely on them.
 
-## What a board is made of
+## Stackups
 
 A board is a stack of copper layers separated by sheets of dielectric, with solder mask over the outer copper and silkscreen printed on top. KiCad keeps the stack, the **stackup**, in the board file, and here are two of Tiny Tapeout's, drawn from theirs:
 
@@ -18,7 +18,7 @@ Both boards come out at 1.561 mm in all, which is the sum of their layers. The c
 
 That closeness is the point of a 4-layer board. At high frequencies a signal's return current flows in the conductor closest under its track, and Hall and Heck (*Advanced Signal Integrity for High-Speed Digital Designs*, chapter 10) point out that when the return has to detour around a gap in a plane, the first effect is extra series inductance in the path. A solid ground layer 0.19 mm under the top layer gives every top-layer signal a return path right below it.
 
-## What each layer is for
+## The copper layers in use
 
 The board files and plots of the copper show how Tiny Tapeout uses its layers. On the 2-layer DIP dock, tracks run on both layers (353 track segments on F.Cu and 182 on B.Cu), and a zone on the `GND` net fills the space left over on both:
 
@@ -38,7 +38,7 @@ On the 4-layer SKY130 breakout most of the tracks are on the outer layers (590 s
 
 Copper isn't the only layer the fabricator works from. As [Symbols, footprints and libraries](symbols-footprints-and-libraries.md) showed, the mask layers say where the solder mask is opened, the paste layers become the stencil, and the silkscreen layers are printed. `Edge.Cuts` holds the board's outline, which the fabricator routes out. The fab and courtyard layers stay in KiCad.
 
-## What fabricators can make
+## Fabricators' minimums
 
 Each fabricator publishes its own minimums, and they differ. These are three that students often use, set beside the numbers KiCad's library convention (KLC) uses for its footprints:
 
@@ -54,13 +54,11 @@ Each fabricator publishes its own minimums, and they differ. These are three tha
 
 Sources: JLCPCB's [capabilities page](https://jlcpcb.com/capabilities/pcb-capabilities), PCBWay's [capabilities page](https://www.pcbway.com/capabilities.html), OSH Park's [services page](https://docs.oshpark.com/services/), and KLC's source at commit 6e8cbad. An empty cell means that page doesn't give the number, not that there's no limit.
 
-Two rows are worth a second look, because in them the library is looser than a fabricator. KLC's footprints draw silkscreen at 0.12 mm, under JLCPCB's 0.15 mm minimum line width (JLCPCB's page adds "Characters width less than 0.15mm will be unidentifiable") and PCBWay's 0.15 mm minimum character width. And KLC's minimum annular ring of 0.15 mm is under JLCPCB's 2-layer absolute minimum of 0.18 mm. So a board built from KiCad's own footprints isn't automatically within a given fabricator's rules, and the only way to know is to check it against them.
+Two rows are worth a second look, because in them the library is looser than a fabricator. KLC's footprints draw silkscreen at 0.12 mm, under JLCPCB's 0.15 mm minimum line width (JLCPCB's page adds "Characters width less than 0.15mm will be unidentifiable") and PCBWay's 0.15 mm minimum character width. And KLC's minimum annular ring of 0.15 mm is under JLCPCB's 2-layer absolute minimum of 0.18 mm. So a board built from KiCad's own footprints isn't automatically within a given fabricator's rules, and checking it against them is how you find out.
 
 ## Telling KiCad the rules
 
-KiCad keeps a board's rules in two places.
-
-**Board Setup** has a Constraints section with the board-wide minimums: clearance, track width, via size and annular ring, hole sizes and clearances, copper-to-edge clearance, and silkscreen text height and thickness. They're saved in the project's `.kicad_pro` file, alongside the **net classes**, which set the clearance, track width and via size for groups of nets. The DIP dock's constraints, for example, are a minimum clearance and track width of 0.16 mm, a minimum via diameter of 0.5 mm with a 0.125 mm annular ring, 0.25 mm minimum holes, 0.5 mm from copper to the board edge, and silkscreen text at least 0.8 mm high and 0.08 mm thick. Its Default net class asks for 0.2 mm clearance and 0.22 mm tracks, and a Power class for 0.25 mm of each.
+KiCad keeps a board's rules in two places. **Board Setup** has a Constraints section with the board-wide minimums: clearance, track width, via size and annular ring, hole sizes and clearances, copper-to-edge clearance, and silkscreen text height and thickness. They're saved in the project's `.kicad_pro` file, alongside the **net classes**, which set the clearance, track width and via size for groups of nets. The DIP dock's constraints, for example, are a minimum clearance and track width of 0.16 mm, a minimum via diameter of 0.5 mm with a 0.125 mm annular ring, 0.25 mm minimum holes, 0.5 mm from copper to the board edge, and silkscreen text at least 0.8 mm high and 0.08 mm thick. Its Default net class asks for 0.2 mm clearance and 0.22 mm tracks, and a Power class for 0.25 mm of each.
 
 **Custom rules** go in a `.kicad_dru` file beside the project, written in KiCad's rules language. Each rule has a name, an optional condition that picks the objects it applies to, and one or more constraints. Here is one of the SKY130 breakout's own rules, which lets tracks and gaps shrink to 0.16 mm where they have to squeeze between the pins of a fine-pitch QFN, while the rest of the board keeps the wider net-class values:
 
@@ -76,7 +74,7 @@ Read the condition carefully, though. It applies to anything inside the courtyar
 
 KiCad 10 added a graphical editor for these rules. The announcement of KiCad 10.0.0 describes it as "a new rule editor dialog that enables users to create custom design rules in a graphical workflow", and the KiCad 10 manual says you open it from **Tools → Design Rule Editor** and that its rules are stored in the same `.kicad_dru` file as rules written by hand, so you can use either.
 
-## Checking a board against a fabricator
+## The DIP dock against JLCPCB's rules
 
 To see what a fabricator's numbers do to a real board, we added JLCPCB's 2-layer minimums to a copy of the DIP dock's `.kicad_dru` and ran DRC on it in the course's pinned image. These are the rules we added, after the dock's own:
 
@@ -108,7 +106,7 @@ Without the added rules, DRC finds no errors on the dock apart from six courtyar
 - 101 `text_thickness` warnings, 98 of them for text 0.14 mm thick, and 38 `text_height` warnings, for text 0.8 mm (29) or 0.9 mm (9) high, which is within PCBWay's 0.8 mm minimum but under JLCPCB's 1.0 mm.
 - 199 `assertion_failure` errors for silkscreen lines thinner than 0.15 mm. One is a shape drawn on the board itself, and 198 belong to footprints: 98 from Tiny Tapeout's library, 16 from the stitching-via library, 1 logo, and 83 from KiCad's own libraries (33 in resistors, 30 in pin headers, 9 in capacitors, 6 in pin sockets, 4 in SOT packages and 1 in a socket), which draw their silkscreen at KLC's 0.12 mm.
 
-None of this means the DIP dock can't be made. JLCPCB's page says thin silkscreen is "unidentifiable", not that it stops an order, and the dock was designed with Tiny Tapeout's own rules. It does show what a fabricator's rules file is for: it turns "check the fabricator's limits" from a job for your eyes into a list from DRC, which you can then fix, or accept item by item with a reason.
+None of this means the DIP dock can't be made. JLCPCB's page says thin silkscreen is "unidentifiable", not that it stops an order, and the dock was designed with Tiny Tapeout's own rules. A fabricator's rules file gives you, from DRC, a list of every place the board falls short of the fabricator's numbers, and you can fix each one or accept it with a reason. Without the file you'd be finding them by eye.
 
 ## Check yourself
 

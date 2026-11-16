@@ -23,7 +23,7 @@ This is the board that carries a SKY130 chip, so it's the one most of the team's
 
 The chip, U4, sits in the middle in KiCad's own footprint `QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm`: a 9 × 9 mm QFN with 64 pins at 0.5 mm pitch and a 7.65 mm square exposed pad underneath. Its schematic symbol, `Openframe_QFN_TT06_REV2`, comes from Tiny Tapeout's own library. The chip is placed at 45° to the board's edges, which the board file records as a rotation of 135°.
 
-Around it are footprints for the parts that power it. There are two SOT-23-5 footprints for an AP2112K-1.8 regulator, U1 and U2; a footprint for a 24LC02 EEPROM, U3; a 1 × 12 header, J2, along the top edge, whose silkscreen names its pins GND, ENA, RST, INC, VCCD, VDDIO and VDDA; four test points; a set of resistors, several of them 0 Ω; and capacitors in three sizes, 0402, 0603 and 0805, close to the chip. The schematic explains what they're for in notes on the sheet. One reads "For Sky: VCC\* 1v8 / VDD\* 3v3", which names the chip's core supply (`VCCD`, 1.8 V) and its I/O and analog supplies (`VDD_IO` and `VDDA`, 3.3 V). Another says the "Breakout is fed 3v3 (guaranteed) and 5V (assumes USB supply) and regulates core voltages as needed. Each LDO has jumpers to select source or bypass completely." A third says that "each supply pin is jumpered and may be monitored or fed through these headers by popping off the relevant resistor (0805s for easier manip)".
+Around it are footprints for the parts that power it. There are two SOT-23-5 footprints for an AP2112K-1.8 regulator, U1 and U2; a footprint for a 24LC02 EEPROM, U3; a 1 × 12 header, J2, along the top edge, whose silkscreen names its pins GND, ENA, RST, INC, VCCD, VDDIO and VDDA; four test points; a set of resistors, several of them 0 Ω; and capacitors in three sizes, 0402, 0603 and 0805, close to the chip. (Those are imperial size codes, and KiCad's footprint names give the metric size too: `C_0402_1005Metric` is 1.0 × 0.5 mm.) The schematic explains what they're for in notes on the sheet. One reads "For Sky: VCC\* 1v8 / VDD\* 3v3", which names the chip's core supply (`VCCD`, 1.8 V) and its I/O and analog supplies (`VDD_IO` and `VDDA`, 3.3 V). Another says the "Breakout is fed 3v3 (guaranteed) and 5V (assumes USB supply) and regulates core voltages as needed. Each LDO has jumpers to select source or bypass completely." A third says that "each supply pin is jumpered and may be monitored or fed through these headers by popping off the relevant resistor (0805s for easier manip)".
 
 So the board has room for more than one way of powering the chip, and a breakout as built uses one of them. Which parts are fitted, and so which way this revision is built, is what you work out in Lab 01, by following each supply from the connector to the chip's pins.
 
@@ -31,7 +31,7 @@ So the board has room for more than one way of powering the chip, and a breakout
 
 *The bottom of the breakout, with the footprints of its two Hirose DF12 connectors: J1 with 60 pins and J3 with 50. They plug into the demo board and carry every signal and supply between the two boards.*
 
-## Footprints that aren't fitted
+## Unfitted footprints and DNP
 
 A footprint on a board is a promise of copper, not of a part. When a designer leaves room for a part that a particular build doesn't use, KiCad marks it **DNP**, for "do not populate". In the board file a DNP footprint carries `dnp` in its attributes, and in the schematic its symbol carries `(dnp yes)` and is drawn crossed out. Several of the breakout's footprints are marked that way.
 
@@ -79,7 +79,7 @@ The DIP dock is the closest thing among Tiny Tapeout's boards to the board you d
 
 Three of these four boards have four copper layers and one has two. The extra layers in a 4-layer board are inside it. On the SKY130 breakout, a ground zone fills all four layers around the tracks, and the first inner layer is almost solid ground, which gives the signals on the top layer a return path close underneath them. A 2-layer board has to route on both of its layers and fit its ground in around the signals. [Layers and fabricator rules](layers-and-fabricator-rules.md) shows both stackups from the board files.
 
-## What Tiny Tapeout's own boards got wrong
+## Tiny Tapeout's errata
 
 The `breakout-pcb` README is candid about past mistakes, and they're worth knowing before you design anything. The TT07 breakout "has the ASIC project MUX `reset_n` and `increment` wires crossed and is thus mislabelled", and the production run of the TT06 demo boards "had very low valued resistances which, if you wish to interact with analog projects, had to be removed or replaced."
 
