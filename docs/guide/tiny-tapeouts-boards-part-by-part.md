@@ -25,7 +25,7 @@ The chip, U4, sits in the middle in KiCad's own footprint `QFN-64-1EP_9x9mm_P0.5
 
 Around it are footprints for the parts that power it. There are two SOT-23-5 footprints for an AP2112K-1.8 regulator, U1 and U2; a footprint for a 24LC02 EEPROM, U3; a 1 × 12 header, J2, along the top edge, whose silkscreen names its pins GND, ENA, RST, INC, VCCD, VDDIO and VDDA; four test points; a set of resistors, several of them 0 Ω; and capacitors in three sizes, 0402, 0603 and 0805, close to the chip. (Those are imperial size codes, and KiCad's footprint names give the metric size too: `C_0402_1005Metric` is 1.0 × 0.5 mm.) The schematic explains what they're for in notes on the sheet. One reads "For Sky: VCC\* 1v8 / VDD\* 3v3", which names the chip's core supply (`VCCD`, 1.8 V) and its I/O and analog supplies (`VDD_IO` and `VDDA`, 3.3 V). Another says the "Breakout is fed 3v3 (guaranteed) and 5V (assumes USB supply) and regulates core voltages as needed. Each LDO has jumpers to select source or bypass completely." A third says that "each supply pin is jumpered and may be monitored or fed through these headers by popping off the relevant resistor (0805s for easier manip)".
 
-So the board has room for more than one way of powering the chip, and a breakout as built uses one of them. Which parts are fitted, and so which way this revision is built, is what you work out in Lab 01, by following each supply from the connector to the chip's pins.
+So the board has room for more than one way of powering the chip, and a breakout as built uses one of them. In Lab 01 you work out which parts are fitted, and so which way this revision is built, by following each supply from the connector to the chip's pins.
 
 ![A 3D render of the bottom of the same breakout](../assets/img/tt-sky-breakout-bottom.png){fig-alt="Bottom view of the same square board. Two long, narrow rows of fine-pitch pads, one near the left edge and one near the right edge, are the footprints of the two connectors that plug into the demo board. The rest of the bottom is copper under solder mask, with vias and a few small pads."}
 
@@ -33,17 +33,17 @@ So the board has room for more than one way of powering the chip, and a breakout
 
 ## Unfitted footprints and DNP
 
-A footprint on a board is a promise of copper, not of a part. When a designer leaves room for a part that a particular build doesn't use, KiCad marks it **DNP**, for "do not populate". In the board file a DNP footprint carries `dnp` in its attributes, and in the schematic its symbol carries `(dnp yes)` and is drawn crossed out. Several of the breakout's footprints are marked that way.
+A footprint on a board means the copper will be there, but it doesn't mean a part will be fitted to it. When a designer leaves room for a part that a particular build doesn't use, KiCad marks it **DNP**, for "do not populate". In the board file a DNP footprint carries `dnp` in its attributes, and in the schematic its symbol carries `(dnp yes)` and is drawn crossed out. Several of the breakout's footprints are marked that way.
 
-DNP changes what gets assembled, not what gets made. The fabricator still makes the pads of a DNP footprint (you can see U2's and U3's pads in the render above), and the assembler leaves them empty. `kicad-cli`, the program the course's checks use, writes a DNP column into a bill of materials by default and can leave DNP parts out of a bill of materials or a placement file (`--exclude-dnp`). Lab 05 has you make both files.
+DNP affects assembly and not fabrication. The fabricator still makes the pads of a DNP footprint (you can see U2's and U3's pads in the render above), and the assembler leaves them empty. `kicad-cli`, the program the course's checks use, writes a DNP column into a bill of materials by default and can leave DNP parts out of a bill of materials or a placement file (`--exclude-dnp`). Lab 05 has you make both files.
 
-The board file says what the designer intended. What was actually built is a separate question, and Tiny Tapeout keeps a separate record of it: its `pcb-files` repository preserves "the PCB/PCBA production files as they were used when creating the relevant run", including the bill of materials sent to the assembler. In Lab 01 you compare the breakout's DNP marks with that record for the same revision.
+The board file says what the designer intended, and Tiny Tapeout keeps a separate record of what was actually built: its `pcb-files` repository preserves "the PCB/PCBA production files as they were used when creating the relevant run", including the bill of materials sent to the assembler. In Lab 01 you compare the breakout's DNP marks with that record for the same revision.
 
 ## Links and jumpers
 
 The breakout's supplies run through **0 Ω resistors**: resistor footprints fitted with a part whose resistance is (very nearly) zero. A 0 Ω resistor behaves as a wire, but it's placed by the same machine as every other resistor, and it can be taken off with a soldering iron, which opens the connection. That makes it a jumper you can change after the board is built. The breakout's note says why three of its links are bigger than the others: they're 0805 parts "for easier manip", because you'd take one off by hand to measure a supply or feed it from outside.
 
-The demo board shows a second kind of jumper, and it makes a good first net to follow, because every `uo_out` pin of every project goes through one. Following the net names in its board file:
+The demo board shows a second kind of jumper. Every `uo_out` pin of every project goes through one, so the path from a `uo_out` pin makes a good first net to follow. Following the net names in its board file:
 
 - `uo_out0` goes to one side of JP2, a two-pad solder jumper whose footprint is bridged with copper (KiCad calls the part `SolderJumper_2_Bridged`).
 - The other side of JP2 goes to R19, a 510 Ω resistor in an 0402 package.
@@ -83,7 +83,7 @@ Three of these four boards have four copper layers and one has two. The extra la
 
 The `breakout-pcb` README is candid about past mistakes, and they're worth knowing before you design anything. The TT07 breakout "has the ASIC project MUX `reset_n` and `increment` wires crossed and is thus mislabelled", and the production run of the TT06 demo boards "had very low valued resistances which, if you wish to interact with analog projects, had to be removed or replaced."
 
-Neither mistake is the kind that KiCad's checks find. ERC checks the schematic against rules about pins, DRC checks the board against geometric rules and against the schematic, and both are happy with two wires that connect cleanly to the wrong pins, or with a resistor of the wrong value. Mistakes like these are found by reading the board against what it's meant to do, which is what the review in [Lab 06](../labs/lab-06-review-a-seeded-board-overview.md) is for.
+Neither mistake is the kind that KiCad's checks find. ERC checks the schematic against rules about pins, DRC checks the board against geometric rules and against the schematic, and neither reports two wires that connect cleanly to the wrong pins, or a resistor of the wrong value. Mistakes like these are found by reading the board against what it's meant to do, which is what the review in [Lab 06](../labs/lab-06-review-a-seeded-board-overview.md) is for.
 
 ## Check yourself
 
