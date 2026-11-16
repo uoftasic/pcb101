@@ -1,0 +1,24 @@
+# The whole course as one PDF:
+#   quarto render docs --profile pdf --to typst      # writes docs/_book/*.pdf
+# Chapter order follows the sidebar in _quarto.yml.
+
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "PB101 — PCB Design with KiCad"
+  subtitle: "Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip."
+  author: "UofT ASIC Team"
+  output-file: "pb101-course"
+  chapters:
+    - index.md
+    - part: "Course path"
+      chapters:
+        - guide/getting-started.md
+        - labs/lab-01-overview.md
+
+format:
+  typst:
+    toc: true
+    toc-depth: 1
