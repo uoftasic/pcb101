@@ -3,7 +3,11 @@
 
 The checkers read KiCad's files directly rather than importing KiCad's `pcbnew` Python
 module, because KiCad plans to remove that module in KiCad 11, and a checker that parses
-the files keeps working whatever happens to it.
+the files keeps working whatever happens to it. `pcbnew` is KiCad's SWIG-based Python
+binding, and KiCad's developer documentation says those bindings "are deprecated as of
+KiCad 9.0" and that "The current plan is to remove the SWIG bindings in KiCad 11.0"
+(PCB Python Bindings, https://dev-docs.kicad.org/en/apis-and-binding/pcbnew/, read
+November 16, 2026).
 
     from kicad_sexpr import load, children, child, prop
     board = load("board.kicad_pcb")
