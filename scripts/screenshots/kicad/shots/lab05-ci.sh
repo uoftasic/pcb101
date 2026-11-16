@@ -3,6 +3,7 @@
 # Writes:
 #   kicad-gerbview-simproc-pmod.png    GerbView with the Gerbers and the drill file that
 #                                      `bash ci/build.sh fab` writes for that board
+#   kicad-gerbview-file-menu.png       the same, with GerbView's File menu open
 #   kicad-drc-planted-clearance.png    the PCB Editor's DRC dialog on the same board with the
 #                                      error Lab 05, Part 5 plants (src/planted.py)
 
@@ -13,6 +14,11 @@ gerbview /tmp/work/out/fab/*.gbr /tmp/work/out/fab/*.drl >/tmp/gerbview.log 2>&1
 wait_window 'Gerber Viewer' 120
 pause 5
 capture kicad-gerbview-simproc-pmod
+# GerbView's File menu, where a student opens the files by hand.
+key alt+f
+pause 2
+capture kicad-gerbview-file-menu
+key Escape
 quit gerbview
 
 # The planted error: the +3V3 track along the top edge dragged 1 mm down, into J1's pads.
