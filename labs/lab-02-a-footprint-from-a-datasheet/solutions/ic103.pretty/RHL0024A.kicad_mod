@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "TI RHL0024A, VQFN-24, 3.5x5.5 mm body, 0.5 mm pitch, 2.05x4.05 mm exposed pad (SN74LVC8T245 datasheet SCES584D, https://www.ti.com/lit/ds/symlink/sn74lvc8t245.pdf, page 36). PB101 Lab 02 reference solution: IPC-7351B nominal goals, pads trimmed to 0.2 mm from the exposed pad.")
+	(descr "TI RHL0024A, VQFN-24, 3.5x5.5 mm body, 0.5 mm pitch, 2.05x4.05 mm exposed pad (SN74LVC8T245 datasheet SCES584D, https://www.ti.com/lit/ds/symlink/sn74lvc8t245.pdf, page 36). IC103 Lab 02 reference solution: IPC-7351B nominal goals, pads trimmed to 0.2 mm from the exposed pad.")
 	(tags "VQFN RHL0024A")
 	(property "Reference" "REF**"
 		(at 0 -4.37 0)

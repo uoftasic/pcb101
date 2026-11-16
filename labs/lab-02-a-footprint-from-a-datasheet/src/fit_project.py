@@ -133,7 +133,7 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
         flag = symbol_text(f.read(), "PWR_FLAG")
     if student is None or flag is None:
         raise ValueError("symbol not found")
-    cached = student.replace(f'(symbol "{sym_name}"', f'(symbol "pb101:{sym_name}"', 1)
+    cached = student.replace(f'(symbol "{sym_name}"', f'(symbol "ic103:{sym_name}"', 1)
     flag = flag.replace('(symbol "PWR_FLAG"', '(symbol "power:PWR_FLAG"', 1)
 
     pins = pins_of(student, sym_name)
@@ -154,7 +154,7 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
         if etype in ("power_in", "input"):
             power_nets.add(net)
 
-    sch = (f'(kicad_sch\n\t(version 20250114)\n\t(generator "pb101_lab02_fit")\n\t(generator_version "10.0")\n'
+    sch = (f'(kicad_sch\n\t(version 20250114)\n\t(generator "ic103_lab02_fit")\n\t(generator_version "10.0")\n'
            f'\t(uuid "{root}")\n\t(paper "A4")\n\t(lib_symbols\n'
            + "\t\t" + cached.replace("\n", "\n\t") + "\n"
            + "\t\t" + flag.replace("\n", "\n\t") + "\n\t)\n")
@@ -162,12 +162,12 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
         sch += label(net, pt[0], pt[1], f"pin{i}")
     for u in units:
         ux = X0 + (u - 1) * 50.8
-        sch += (f'\t(symbol\n\t\t(lib_id "pb101:{sym_name}")\n\t\t(at {ux:g} {Y0:g} 0)\n\t\t(unit {u})\n'
+        sch += (f'\t(symbol\n\t\t(lib_id "ic103:{sym_name}")\n\t\t(at {ux:g} {Y0:g} 0)\n\t\t(unit {u})\n'
                 f'\t\t(exclude_from_sim no)\n\t\t(in_bom yes)\n\t\t(on_board yes)\n\t\t(dnp no)\n'
                 f'\t\t(uuid "{sym_uuid if u == units[0] else uid("U1", u)}")\n')
         sch += prop_s("Reference", "U1", ux, Y0 - 30)
         sch += prop_s("Value", fields["Value"], ux, Y0 + 30)
-        sch += prop_s("Footprint", f"pb101:{fp_name}", ux, Y0 + 32, hide=True)
+        sch += prop_s("Footprint", f"ic103:{fp_name}", ux, Y0 + 32, hide=True)
         sch += prop_s("Datasheet", fields.get("Datasheet", ""), ux, Y0 + 34, hide=True)
         sch += prop_s("Description", fields.get("Description", ""), ux, Y0 + 36, hide=True)
         for unit, num, *_ in pins_of(student, sym_name, stacks=False):
@@ -219,7 +219,7 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
             parts.append(f'(path "/{sym_uuid}")')
             parts.append('(sheetname "/")')
             parts.append('(sheetfile "fit.kicad_sch")')
-    footprint = f'\t(footprint "pb101:{fp_name}"\n\t\t' + "\n\t\t".join(p.replace("\n", "\n\t") for p in parts) + "\n\t)\n"
+    footprint = f'\t(footprint "ic103:{fp_name}"\n\t\t' + "\n\t\t".join(p.replace("\n", "\n\t") for p in parts) + "\n\t)\n"
     layers = ('\t(layers\n\t\t(0 "F.Cu" signal)\n\t\t(2 "B.Cu" signal)\n\t\t(9 "F.Adhes" user "F.Adhesive")\n'
               '\t\t(11 "B.Adhes" user "B.Adhesive")\n\t\t(13 "F.Paste" user)\n\t\t(15 "B.Paste" user)\n'
               '\t\t(5 "F.SilkS" user "F.Silkscreen")\n\t\t(7 "B.SilkS" user "B.Silkscreen")\n'
@@ -228,7 +228,7 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
               '\t\t(23 "Eco2.User" user "User.Eco2")\n\t\t(25 "Edge.Cuts" user)\n\t\t(27 "Margin" user)\n'
               '\t\t(31 "F.CrtYd" user "F.Courtyard")\n\t\t(29 "B.CrtYd" user "B.Courtyard")\n'
               '\t\t(35 "F.Fab" user)\n\t\t(33 "B.Fab" user)\n\t)\n')
-    pcb = ('(kicad_pcb\n\t(version 20260206)\n\t(generator "pb101_lab02_fit")\n\t(generator_version "10.0")\n'
+    pcb = ('(kicad_pcb\n\t(version 20260206)\n\t(generator "ic103_lab02_fit")\n\t(generator_version "10.0")\n'
            '\t(general\n\t\t(thickness 1.6)\n\t\t(legacy_teardrops no)\n\t)\n\t(paper "A4")\n' + layers +
            '\t(setup\n\t\t(pad_to_mask_clearance 0)\n\t\t(allow_soldermask_bridges_in_footprints no)\n\t)\n'
            + footprint +
@@ -243,10 +243,10 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
     rel_fp = os.path.relpath(fp_lib_dir, out_dir)
     rel_sym = os.path.relpath(sym_lib, out_dir)
     with open(os.path.join(out_dir, "fp-lib-table"), "w") as f:
-        f.write(f'(fp_lib_table\n\t(version 7)\n\t(lib (name "pb101")(type "KiCad")'
+        f.write(f'(fp_lib_table\n\t(version 7)\n\t(lib (name "ic103")(type "KiCad")'
                 f'(uri "${{KIPRJMOD}}/{rel_fp}")(options "")(descr "Lab 02"))\n)\n')
     with open(os.path.join(out_dir, "sym-lib-table"), "w") as f:
-        f.write(f'(sym_lib_table\n\t(version 7)\n\t(lib (name "pb101")(type "KiCad")'
+        f.write(f'(sym_lib_table\n\t(version 7)\n\t(lib (name "ic103")(type "KiCad")'
                 f'(uri "${{KIPRJMOD}}/{rel_sym}")(options "")(descr "Lab 02"))\n)\n')
     # Unconnected items aren't counted: the pads that share a net (GND, VCCB) have no
     # tracks between them on a board with one part on it, and that's expected.

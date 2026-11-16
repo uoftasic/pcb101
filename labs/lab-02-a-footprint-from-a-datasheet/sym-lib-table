@@ -1,4 +1,4 @@
 (sym_lib_table
 	(version 7)
-	(lib (name "pb101")(type "KiCad")(uri "${KIPRJMOD}/pb101.kicad_sym")(options "")(descr "Lab 02: your symbols"))
+	(lib (name "ic103")(type "KiCad")(uri "${KIPRJMOD}/ic103.kicad_sym")(options "")(descr "Lab 02: your symbols"))
 )

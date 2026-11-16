@@ -88,8 +88,8 @@ $R sym $B/../tinytapeout-kicad-libs/symbols/TinyTapeout.kicad_sym Openframe_QFN_
 ```bash
 L=labs/lab-02-a-footprint-from-a-datasheet/solutions
 mkdir -p labs/common/results/figures
-$R --bg '#001023' fp  $L/pb101.pretty RHL0024A labs/common/results/figures
-$R --bg '#ffffff' sym $L/pb101.kicad_sym SN74LVC8T245RHL labs/common/results/figures
+$R --bg '#001023' fp  $L/ic103.pretty RHL0024A labs/common/results/figures
+$R --bg '#ffffff' sym $L/ic103.kicad_sym SN74LVC8T245RHL labs/common/results/figures
 ```
 
 The top-view render took 12 s. The header of [`render.sh`](render.sh) lists the defaults it passes to `kicad-cli`. What we measured on the SKY130 breakout:

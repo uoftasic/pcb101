@@ -1,7 +1,7 @@
 # Lab 02: A footprint from a datasheet
 
 Writeup: [`docs/labs/lab-02-a-footprint-from-a-datasheet-overview.md`](../../docs/labs/lab-02-a-footprint-from-a-datasheet-overview.md)
-· live: <https://uoftasic.com/pb101/labs/lab-02-a-footprint-from-a-datasheet-overview.html>
+· live: <https://uoftasic.com/ic103/labs/lab-02-a-footprint-from-a-datasheet-overview.html>
 
 You work out the land pattern for TI's RHL0024A package (VQFN-24, 3.5 × 5.5 mm), which
 KiCad's library doesn't have, from the drawing on page 36 of the
@@ -21,10 +21,10 @@ in our two runs, with the container limited to one CPU. On the folder as shipped
 
 | File | What it is |
 |---|---|
-| `lab02.kicad_pro`, `fp-lib-table`, `sym-lib-table` | the KiCad project you open; its library tables add `pb101.pretty` and `pb101.kicad_sym` as the project library `pb101` |
+| `lab02.kicad_pro`, `fp-lib-table`, `sym-lib-table` | the KiCad project you open; its library tables add `ic103.pretty` and `ic103.kicad_sym` as the project library `ic103` |
 | `pads.md` | the file you fill in: your hand calculation |
-| `pb101.pretty/` | your footprint goes here, as `RHL0024A.kicad_mod` |
-| `pb101.kicad_sym` | your symbol goes here, as `SN74LVC8T245RHL` |
+| `ic103.pretty/` | your footprint goes here, as `RHL0024A.kicad_mod` |
+| `ic103.kicad_sym` | your symbol goes here, as `SN74LVC8T245RHL` |
 | `data/rhl0024a.json` | the drawing's numbers and Table 4-1's pins, with the page each comes from |
 | `src/land_pattern.py` | the course's arithmetic; `python3 src/land_pattern.py` prints it, so open it only after your own numbers are written down |
 | `src/check_footprint.py` | the check: your numbers, your footprint, your symbol, and a one-part board built from them through `labs/common/check_board.py` |

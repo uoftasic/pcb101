@@ -3,7 +3,7 @@
 # project first, which also checks the reference:
 #   labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/check_footprint.py \
 #       labs/lab-02-a-footprint-from-a-datasheet/solutions
-# Its library tables point at solutions/, so the editors list the reference as library pb101.
+# Its library tables point at solutions/, so the editors list the reference as library ic103.
 # Writes kicad-footprint-editor-rhl0024a.png, kicad-pad-properties-rhl0024a.png and
 # kicad-create-array-rhl0024a.png. The symbol's figure is a kicad-cli plot (render.sh sym):
 # in our runs the Symbol Editor's library filter didn't take typed text under Xvfb.
@@ -24,7 +24,7 @@ wait_window 'Footprint Editor' 60
 pause 15
 type_text RHL0024A
 key Return
-wait_window 'pb101:RHL0024A.*Footprint Editor' 30
+wait_window 'ic103:RHL0024A.*Footprint Editor' 30
 pause 5
 capture kicad-footprint-editor-rhl0024a
 
@@ -35,7 +35,7 @@ wait_window 'Pad Properties' 20
 pause 3
 capture kicad-pad-properties-rhl0024a
 key Escape
-wait_window 'pb101:RHL0024A.*Footprint Editor' 10
+wait_window 'ic103:RHL0024A.*Footprint Editor' 10
 
 # Pad 2, then Ctrl+T: the Create Array dialog.
 click 846 320
