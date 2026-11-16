@@ -66,7 +66,7 @@ KiCad and `kicad-cli` write a few files of their own next to the project (a `.ki
 
 What does SimProc need from a board, pin by pin?
 
-1. Open `pmod.kicad_pro` in KiCad, then the Schematic Editor. Place three Pmod connectors with Place > Add Symbol (A): type `PMOD_PERIPH` in the filter, choose `PMOD_PERIPH_2x6` from `TinyTapeout_PMOD`, and place it three times as J1, J2 and J3.
+1. Open `pmod.kicad_pro` in KiCad, then the Schematic Editor. Place three Pmod connectors with Place > Place Symbols (A): type `PMOD_PERIPH` in the filter, choose `PMOD_PERIPH_2x6` from `TinyTapeout_PMOD`, and place it three times as J1, J2 and J3.
 
    ![The Choose Symbol dialog filtered to PMOD_PERIPH](../assets/img/kicad-symbol-chooser-pmod.png)
 
@@ -74,7 +74,7 @@ What does SimProc need from a board, pin by pin?
 
    J1 will go in the demo board's input socket, J2 in the bidirectional one and J3 in the output one. Each symbol's pins follow the sockets: `IO1` to `IO4` on pins 1 to 4 carry bits 0 to 3, `IO5` to `IO8` on pins 7 to 10 carry bits 4 to 7, pins 5 and 11 are GND and pins 6 and 12 are the demo board's 3.3 V.
 
-2. Connect the pins SimProc uses, with net labels (Place > Add Label, L): J1 pin 1 (`ui[0]`) as `UART_RX`, J3 pin 1 (`uo[0]`) as `UART_TX`, and J2's eight IO pins as `UIO0` to `UIO7`. Put a `+3V3` power symbol on pins 6 and 12 and a `GND` symbol on pins 5 and 11 of all three connectors. The 14 IO pins left over get a no-connect flag (Place > No Connect Flag, Q), which tells ERC you left them open on purpose.
+2. Connect the pins SimProc uses, with net labels (Place > Place Net Labels, L): J1 pin 1 (`ui[0]`) as `UART_RX`, J3 pin 1 (`uo[0]`) as `UART_TX`, and J2's eight IO pins as `UIO0` to `UIO7`. Put a `+3V3` power symbol on pins 6 and 12 and a `GND` symbol on pins 5 and 11 of all three connectors. The 14 IO pins left over get a no-connect flag (Place > Place No Connect Flags, Q), which tells ERC you left them open on purpose.
 
 3. Add the header for the dongle, `Connector_Generic:Conn_01x03` with the footprint `Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical`. (Double-click a symbol to set its Footprint field.) The check expects this pinout: pin 1 GND, pin 2 to the dongle's TXD, pin 3 to the dongle's RXD. So pin 2 goes on `UART_RX` and pin 3 on `UART_TX`. Leave the dongle's VCC wire unconnected, because the board is powered by the demo board.
 
@@ -171,7 +171,7 @@ Can every connection be made on two layers, with the bottom layer kept as a grou
 
 3. Route every connection. Use the default 0.25 mm for signals and 0.4 mm (in the track-width list) for `+3V3`.
 
-4. Add a GND zone on B.Cu over the whole board (Place > Add Filled Zone, net GND), and another on F.Cu if you like, then fill them with B.
+4. Add a GND zone on B.Cu over the whole board (Place > Draw Filled Zones, net GND), and another on F.Cu if you like, then fill them with B.
 
 5. Run DRC (Inspect > Design Rules Checker) with Test for parity between PCB and schematic ticked, and fix everything it reports as an error, including every unconnected item. Commit, and push.
 

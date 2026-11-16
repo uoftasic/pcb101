@@ -3,7 +3,7 @@
 # in the repo. Writes kicad-symbol-chooser-pmod.png, kicad-position-relative-to.png and
 # kicad-symbol-chooser-sp0502.png.
 
-# The symbol chooser (Place > Add Symbol, A), filtered to the Pmod connector, in the template
+# The symbol chooser (Place > Place Symbols, A), filtered to the Pmod connector, in the template
 # a student starts from.
 work labs/lab-03-a-pmod-for-one-projects-pins/template
 launch eeschema pmod.kicad_sch 'pmod.*Schematic Editor'
