@@ -59,6 +59,16 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # Labs whose solution isn't a KiCad project (notes, a library) prove their own
+      # checker instead: each src/selftest.py runs the lab's check on the shipped starter
+      # (must FAIL), on solutions/ (must PASS) and on known-bad variants.
+      - name: Lab checkers against their starters and solutions
+        run: |
+          for t in labs/*/src/selftest.py; do
+            echo "== $t"
+            labs/common/kicad.sh python3 "$t"
+          done
+
       - name: Keep the reports
         if: always()
         uses: actions/upload-artifact@v4
