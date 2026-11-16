@@ -70,10 +70,10 @@ What does your board have to do, in numbers?
 
    ```text
      ok    ci           Lab 05's check passes: the board check, every output, and .gitignore
-     FAIL  design       7 line(s) still say TODO; 1 numbered requirement(s); at least 3 needed; 1 numbered decision(s); at least 3 needed; decision(s) 1 have no 'Meets:' line naming requirements; decision(s) 1 give no value with its unit; requirement(s) 1 aren't met by any decision
+     FAIL  design       7 lines still say TODO; 1 numbered requirement; at least 3 needed; 1 numbered decision; at least 3 needed; decision 1 has no 'Meets:' line naming requirements; decision 1 gives no value with its unit; requirement 1 isn't met by any decision
      FAIL  history      1 commit changes the schematic or the board; at least 2 needed
      ok    pmod         PASS  pmod.kicad_pro: 17 of 17 Pmod checks ok; bring-up plan PASS
-     FAIL  test points  no test point on J4 pin 2 (/DONGLE_TXD), J4 pin 3 (/DONGLE_RXD), or on the other side of its series resistor
+     FAIL  test points  no test point on J4 pin 2 (/DONGLE_TXD) or J4 pin 3 (/DONGLE_RXD), or on the other side of their series resistors
    ```
 
    You should see the design row name what's still missing from your requirements and decisions. Your history row will differ from ours, because a repository carried through Labs 03 to 05 already has several commits that change the board. When we worked through the labs the way you have, it read `ok    history      5 commits change the schematic or the board`.

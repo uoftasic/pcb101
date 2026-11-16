@@ -98,6 +98,16 @@ def numbered(lines):
     return [(it[0], " ".join(s.strip() for s in it[1:])) for it in items]
 
 
+def counted(items, one, many):
+    """'decision 1' or 'decisions 1, 2': a label in the singular or plural, then the numbers."""
+    return f"{one if len(items) == 1 else many} {', '.join(map(str, items))}"
+
+
+def either(items):
+    """'A', 'A or B', 'A, B or C'."""
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " or " + items[-1]
+
+
 def check_design(path, rows):
     if not os.path.exists(path):
         rows.append((False, "design", "no DESIGN.md; copy the capstone's template into your repository"))
@@ -108,7 +118,7 @@ def check_design(path, rows):
     probs = []
     todo = [i + 1 for i, l in enumerate(text.splitlines()) if "TODO" in l]
     if todo:
-        probs.append(f"{len(todo)} line(s) still say TODO")
+        probs.append(f"{len(todo)} line{' still says' if len(todo) == 1 else 's still say'} TODO")
     for name in ("Requirements", "Decisions", "Checks", "Open questions"):
         body = [l for l in secs.get(name, []) if l.strip() and not l.strip().startswith("<!--")]
         if name not in secs:
@@ -118,9 +128,9 @@ def check_design(path, rows):
     reqs = numbered(secs.get("Requirements", []))
     decs = numbered(secs.get("Decisions", []))
     if len(reqs) < 3:
-        probs.append(f"{len(reqs)} numbered requirement(s); at least 3 needed")
+        probs.append(f"{len(reqs)} numbered requirement{'' if len(reqs) == 1 else 's'}; at least 3 needed")
     if len(decs) < 3:
-        probs.append(f"{len(decs)} numbered decision(s); at least 3 needed")
+        probs.append(f"{len(decs)} numbered decision{'' if len(decs) == 1 else 's'}; at least 3 needed")
     met = set()
     no_value, no_meets = [], []
     for n, item in decs:
@@ -133,12 +143,15 @@ def check_design(path, rows):
         if not VALUE.search(body):
             no_value.append(n)
     if no_meets:
-        probs.append(f"decision(s) {', '.join(map(str, no_meets))} have no 'Meets:' line naming requirements")
+        probs.append(f"{counted(no_meets, 'decision', 'decisions')} {'has' if len(no_meets) == 1 else 'have'} "
+                     "no 'Meets:' line naming requirements")
     if no_value:
-        probs.append(f"decision(s) {', '.join(map(str, no_value))} give no value with its unit")
+        probs.append(f"{counted(no_value, 'decision', 'decisions')} give{'s' if len(no_value) == 1 else ''} "
+                     "no value with its unit")
     unmet = [n for n, _ in reqs if n not in met]
     if reqs and decs and unmet:
-        probs.append(f"requirement(s) {', '.join(map(str, unmet))} aren't met by any decision")
+        probs.append(f"{counted(unmet, 'requirement', 'requirements')} {'isn' if len(unmet) == 1 else 'aren'}'t "
+                     "met by any decision")
     rows.append((not probs, "design", f"{len(reqs)} requirements, {len(decs)} decisions, every requirement met"
                  if not probs else "; ".join(probs)))
 
@@ -199,8 +212,9 @@ def check_brief_d(repo, pro, pins, rows):
             else:
                 bad.append(f"{ref} pin {pin} ({net})")
     rows.append((not bad and bool(good), "test points",
-                 ", ".join(good) if not bad else "no test point on " + ", ".join(bad)
-                 + ", or on the other side of its series resistor"))
+                 ", ".join(good) if not bad else "no test point on " + either(bad)
+                 + (", or on the other side of its series resistor" if len(bad) == 1
+                    else ", or on the other side of their series resistors")))
 
 
 def check_brief_a(repo, pro, rows):
@@ -218,7 +232,8 @@ def check_brief_a(repo, pro, rows):
     elif v33 and "3V3" not in v33.upper() and "3.3" not in v33:
         rows.append((False, "connector", f"{j} pin 32 is on {v33}; J13 has +3V3 there"))
     else:
-        rows.append((True, "connector", f"{j} mates J13: GND on its 9 GND pins, pin 32 on {v33 or 'nothing'}"))
+        rows.append((True, "connector", f"{j} mates J13: GND on its 9 GND pins, pin 32 "
+                     + (f"on {v33}" if v33 else "left open")))
 
     driven = [p for p in J13_ANALOG if pins.get(p)]
     shorted = sorted((p for p in J13_SKY_GND if pins.get(p) and pins.get(p) != "GND"), key=int)
