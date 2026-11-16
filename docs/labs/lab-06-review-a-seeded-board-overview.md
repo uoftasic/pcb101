@@ -10,7 +10,7 @@ The lab's files are in [`labs/lab-06-review-a-seeded-board/`](https://github.com
 - Read [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), row 11 of the [course path](../index.md#course-path). Its ten-line checklist is the one you review against, and `REVIEW.md` asks for the number of the line each fault breaks.
 - Don't open `labs/lab-06-review-a-seeded-board/solutions/` until you've finished. It lists the faults.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those are our estimates. What we measured is the checks: on a copy of the seeded board, the board check took 18 s and Lab 04's check 19 s, with one CPU, and the Lab 06 check, which only reads your two files and your board, took under a second.
+The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those are our estimates. The only parts we timed are the checks: on a copy of the seeded board, the board check took 18 s and Lab 04's check 19 s, with one CPU, and the Lab 06 check, which only reads your two files and your board, took under a second.
 
 ## Part 1: What the checks say
 
@@ -69,7 +69,7 @@ What do the checks you already have find on this board?
    <details>
    <summary>Answer</summary>
 
-   Very little. The board check compares the board with its own schematic and with the rules saved in the board, so a fault that is in the schematic, or in the rules, passes it. The bring-up plan check only looks for a filled-in plan with an expected value at every step; it can't tell whether the steps are safe. The rest is the review's job, and [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) starts with two of Tiny Tapeout's own faults that passed their makers' checks.
+   It tells you very little. The board check compares the board with its own schematic and with the rules saved in the board, so a fault that is in the schematic, or in the rules, passes it. The bring-up plan check only looks for a filled-in plan with an expected value at every step; it can't tell whether the steps are safe. The rest is the review's job, and [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) starts with two of Tiny Tapeout's own faults that passed their makers' checks.
 
    </details>
 
@@ -110,7 +110,7 @@ Which faults does a person find that the checks don't?
    ~/pb101/labs/lab-06-review-a-seeded-board/check.sh
    ```
 
-   It prints a line for each row of your table, saying whether it finds a planted fault. A row finds one when its Where names the right part or file and its Line is the line that fault breaks; each row can find one fault. Our reference review's lines look like this:
+   It prints a line for each row of your table and says whether that row finds a planted fault. A row finds one when its Where names the right part or file and its Line is the line that fault breaks; each row can find one fault. Our reference review's lines look like this:
 
    ```text
      REVIEW.md
@@ -140,7 +140,7 @@ What would your board cost to make, how long would it take, and what does the fa
 
    We couldn't do this part ourselves, because the machine we wrote the course on doesn't upload files to outside sites, so there is no quote page or DFM report from us here. The reference `QUOTE.md` in `solutions/` shows the format, with JLCPCB's advertised "From $2.00 / 5 pcs" in place of a real quote.
 
-4. Did the quote page read the size and layer count you predicted? If it didn't, find out why before you go on, because a fabricator makes what it read.
+4. Did the quote page read the size and layer count you predicted? If it didn't, find out why before you go on, because the fabricator will make the board it read from your files.
 
 5. Run the Lab 06 check again. You should see the quote's three rows `ok`, with your own board's numbers in the last:
 
@@ -173,7 +173,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Two: R1's 0 Ω (the `ui[0]` row fails with "its value '0' isn't a resistance the check can read", and a series resistor of 0 Ω doesn't limit the current at all) and D1's common pin on +3V3 (both ESD rows fail, because neither dongle line has a part to GND). With J3 put back, those three rows are the only ones that fail. With J3 itself, the checks find three of the eight faults, and the other five needed a person.
+   Two: R1's 0 Ω (the `ui[0]` row fails with "its value '0' isn't a resistance the check can read", and a series resistor of 0 Ω doesn't limit the current at all) and D1's common pin on +3V3 (both ESD rows fail, because neither dongle line has a part to GND). With J3 put back, those three rows are the only ones that fail. Counting J3 itself, the checks find three of the eight faults, and the other five need a person to find them.
 
    </details>
 
