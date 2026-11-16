@@ -23,7 +23,7 @@ Two runs gave byte-identical PNGs, so a changed screenshot means KiCad or the bo
 
 Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background, and with the Footprint Editor open the process held 2.2 GB in our run with a 2 GB limit (some of it swapped) and 2.4 GB with a 4 GB limit. We ran the shots with `PB101_DOCKER_ARGS="--cpus 1 --memory 2g"`.
 
-### How the rig gets KiCad to start
+### The first-run wizard
 
 KiCad 10 opens a modal "KiCad Setup" wizard before any editor if its settings folder is missing any of these (from `common/startwizard/` in the 10.0.8 source):
 
@@ -40,7 +40,7 @@ The rest of the rig:
 - `capture` waits until the screen hasn't changed for 6 s before it grabs, because KiCad can draw an editor's canvas several seconds before its panels.
 - PNGs are written without timestamps.
 
-### Writing a shot file
+### Shot files
 
 A shot file is a few lines of bash that `rig.sh` sources. [`shots/sky-breakout.sh`](shots/sky-breakout.sh) is the example:
 

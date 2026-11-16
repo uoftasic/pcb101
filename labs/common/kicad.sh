@@ -32,7 +32,7 @@ case "$PWD/" in
 esac
 
 if ! docker image inspect "$image" >/dev/null 2>&1; then
-    echo "pb101: pulling $image (about 800 MB, once)" >&2
+    echo "pb101: pulling $image (812 MB, once)" >&2
     docker pull "$image" >&2
 fi
 

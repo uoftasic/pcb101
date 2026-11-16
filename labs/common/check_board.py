@@ -190,13 +190,10 @@ def main():
     print("PB101 board check")
     print(f"  project   {name}")
     note = ""
-    if not image:
-        note = "  (not the pinned image: counts can differ from the course's)"
-    elif version != want_version:
-        note = f"  (the course pins {want_version})"
+    if version != want_version:
+        note = f"  (the course pins {want_version}, so counts can differ from the lab pages)"
     print(f"  kicad     {version}{note}")
-    if image:
-        print(f"  image     {image}")
+    print(f"  image     {image or 'not recorded (labs/common/kicad.sh records it)'}")
     print(f"  rules     {shown(expect_file) if expect_file else 'no errors, no unconnected items, no parity items'}")
     print()
     print(f"  {'':12}{'errors':>8}{'warnings':>10}{'excluded':>10}")
@@ -225,7 +222,8 @@ def main():
                             if k.startswith(f"{c}.{sev}.")), key=lambda t: (-t[1], t[0]))
             if kinds:
                 label = c.upper() if c in ("erc", "drc") else c
-                print(f"  {label} {sev} by type: " + ", ".join(f"{t} {n}" for t, n in kinds))
+                plural = {"warning": "warnings", "excluded": "excluded"}[sev]
+                print(f"  {label} {plural} by type: " + ", ".join(f"{t} {n}" for t, n in kinds))
     if any(by_type[k] for k in by_type if ".warning." in k or ".excluded." in k):
         print()
 
