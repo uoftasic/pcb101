@@ -118,7 +118,7 @@ Which faults does a person find that the checks don't?
        row 2   SW1                          line 3   finds a planted fault
    ```
 
-   You should see at least five rows that find a planted fault, and `ok    faults    5 of 8 planted faults found (5 needed)` or better. Until you've filled in `QUOTE.md` the last line still says FAIL. The check holds only hashes of the answers, so it says whether a row finds a fault and not which one; if a row you're sure of doesn't, read the checklist line again.
+   You should see at least five rows that find a planted fault, and `ok    faults    5 of 8 planted faults found (5 needed)` or better. Until you've filled in `QUOTE.md` the last line still says FAIL. The check holds only hashes of the answers, so it says whether a row finds a fault and not which one; if a row you're sure of doesn't, check that its Where names the part's reference designator or the file the fault is in, as the template asks, and read the checklist line again.
 
 ## Part 3: Get a quote for your own board
 
@@ -159,7 +159,7 @@ You're done when `~/pb101/labs/lab-06-review-a-seeded-board/check.sh`, run in yo
 
 Questions:
 
-1. Lab 04's check passes every `uio` row on the seeded board, once J3 is back in place. Look at the pin numbers it prints for `uio[6]` and `uio[7]`. What does it check about those lines, and what doesn't it?
+1. In `~/seeded-review`, put J3 back at 22.86 mm from J2 (X 147.72 mm), the way you placed it in Lab 03, save, and run Lab 04's check there again. It now passes every `uio` row. Look at the pin numbers it prints for `uio[6]` and `uio[7]`. What does it check about those lines, and what doesn't it?
 
    <details>
    <summary>Answer</summary>
@@ -173,7 +173,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Two: R1's 0 Ω (the `ui[0]` row fails, because 0 isn't a resistance that limits the current) and D1's common pin on +3V3 (both ESD rows fail, because neither dongle line has a part to GND). With J3 put back, those three rows are the only ones that fail. With J3 itself, the checks find three of the eight faults, and the other five needed a person.
+   Two: R1's 0 Ω (the `ui[0]` row fails with "its value '0' isn't a resistance the check can read", and a 0 Ω part in series limits nothing) and D1's common pin on +3V3 (both ESD rows fail, because neither dongle line has a part to GND). With J3 put back, those three rows are the only ones that fail. With J3 itself, the checks find three of the eight faults, and the other five needed a person.
 
    </details>
 
