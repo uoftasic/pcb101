@@ -1,6 +1,6 @@
 # Agent guide: UofT ASIC course repos
 
-This is PB101, PCB Design with KiCad, a course repository for the UofT ASIC Team (`uoftasic`). It teaches students to design the boards a chip sits on, in KiCad 10: schematics, footprints from datasheets, layout, protection, fabrication outputs in CI, review, and a bring-up board for a team chip. The site under `docs/` is built with Quarto and published on GitHub Pages by `.github/workflows/site.yml`. Everything students run lives outside `docs/`, in the lab packages under `labs/`.
+This is IC103, PCB Design with KiCad, a course repository for the UofT ASIC Team (`uoftasic`). It teaches students to design the boards a chip sits on, in KiCad 10: schematics, footprints from datasheets, layout, protection, fabrication outputs in CI, review, and a bring-up board for a team chip. The site under `docs/` is built with Quarto and published on GitHub Pages by `.github/workflows/site.yml`. Everything students run lives outside `docs/`, in the lab packages under `labs/`.
 
 Write for a student working through the course, not for whoever maintains the template. Concrete labs and pages a student can follow from start to finish are worth more than meta documentation.
 
@@ -19,19 +19,19 @@ Keep each kind of file in the folder listed for it.
 | `docs/index.md` | Yes | Home page with the course path table |
 | `docs/guide/` | Yes | Guide pages: concepts, figures, worked examples. Reading only. |
 | `docs/labs/` | Yes | Lab writeups only (`lab-NN-*-overview.md`, and the capstone's `capstone-*-overview.md`) |
-| `docs/reference/` | Yes | Optional lookup pages: cheat sheets, troubleshooting tables. PB101 has none. |
+| `docs/reference/` | Yes | Optional lookup pages: cheat sheets, troubleshooting tables. IC103 has none. |
 | `docs/assets/img/` | Yes | Figures for the site: diagrams, plots, KiCad renders and screenshots, each made by a script |
 | `labs/<lab-id>/` | No | A lab's package: its checks and generators in `src/` (Python), inputs in `data/`, reference solutions in `solutions/`, local outputs in `results/`, and the templates, KiCad projects and `check.sh` a student uses |
 | `labs/common/` | No | What every lab uses: `kicad.sh` and the pinned image, the board, Pmod and bring-up plan checks, and `fetch_boards.py`, which fetches Tiny Tapeout's boards into `labs/common/upstream/` |
 | `scripts/` | No | `check_site.py`, the KiCad screenshot and render tools in `screenshots/kicad/`, and the scripts in `figures/` that draw the site's figures |
-| `notebooks/` | No | Exploratory or assignment notebooks. PB101 has none. |
-| `data/`, `figures/` | No | Shared datasets and source figures. PB101 keeps none: each lab's inputs are in its own `data/`, and every figure is made by a script. |
+| `notebooks/` | No | Exploratory or assignment notebooks. IC103 has none. |
+| `data/`, `figures/` | No | Shared datasets and source figures. IC103 keeps none: each lab's inputs are in its own `data/`, and every figure is made by a script. |
 
-Three files wire up the site. `docs/_quarto.yml` holds the site settings, sidebar, navbar and per-page PDFs; `docs/_quarto-pdf.yml` builds the whole course as one PDF; and `docs/_filters/course.lua` turns `<details>` answers into collapsed callouts (in PDFs it moves them to an Answers section at the end of each page). Write math as `$inline$` or `$$display$$`. In a repo made from the template, `scripts/init-template.py` fills in the `{{...}}` tokens for the course id, title and description; PB101's are already filled in, and no tokens are left (see `TEMPLATE.md`).
+Three files wire up the site. `docs/_quarto.yml` holds the site settings, sidebar, navbar and per-page PDFs; `docs/_quarto-pdf.yml` builds the whole course as one PDF; and `docs/_filters/course.lua` turns `<details>` answers into collapsed callouts (in PDFs it moves them to an Answers section at the end of each page). Write math as `$inline$` or `$$display$$`. In a repo made from the template, `scripts/init-template.py` fills in the `{{...}}` tokens for the course id, title and description; IC103's are already filled in, and no tokens are left (see `TEMPLATE.md`).
 
 ## Course structure
 
-Every course follows the same shape, so a student always knows whether they should be reading or doing, and what comes next. The sample pages in [course-template](https://github.com/uoftasic/course-template) show it: `docs/index.md`, `docs/guide/getting-started.md` and `docs/labs/lab-01-overview.md`. PB101 removed its copy of the sample lab.
+Every course follows the same shape, so a student always knows whether they should be reading or doing, and what comes next. The sample pages in [course-template](https://github.com/uoftasic/course-template) show it: `docs/index.md`, `docs/guide/getting-started.md` and `docs/labs/lab-01-overview.md`. IC103 removed its copy of the sample lab.
 
 ### Home page
 
@@ -172,11 +172,11 @@ The link check in `.github/workflows/docs-link-check.yml` reads the Markdown wit
 - Repo conventions: `CONTRIBUTING.md`
 - Bootstrap tokens and Pages checklist: `TEMPLATE.md`
 - Sample lab: `labs/lab-01/` and `docs/labs/lab-01-overview.md` in [course-template](https://github.com/uoftasic/course-template)
-- PB101's KiCad tooling: the section below, `labs/common/README.md` and `scripts/screenshots/kicad/README.md`
+- IC103's KiCad tooling: the section below, `labs/common/README.md` and `scripts/screenshots/kicad/README.md`
 
-## PB101 specifics
+## IC103 specifics
 
-PB101 teaches PCB design in KiCad rather than an IC flow, so it departs from the template in a few places. Where this section and the rest of the file disagree, this section wins for this repo.
+IC103 teaches PCB design in KiCad rather than an IC flow, so it departs from the template in a few places. Where this section and the rest of the file disagree, this section wins for this repo.
 
 - No workbench: students install KiCad 10.0 natively ([Getting started](docs/guide/getting-started.md)). Lab 01 Part 1 installs KiCad and checks its version instead of "Load the course".
 - The pinned image: every expected output on a page comes from a run in `kicad/kicad:10.0.8`, by the digest in `labs/common/kicad-image.txt`, through `labs/common/kicad.sh` (as your uid, with the image's default library tables). What a check gets from KiCad itself (ERC, DRC, parity, netlists, plots and renders) comes from `kicad-cli`, and the rest is Python that reads Markdown, git or KiCad's files directly. `check_bringup.py` and Lab 06's `check_lab06.py` are made only of that Python, so they don't use KiCad at all. Warning counts depend on the library tables, so quote them only for that environment; error counts were the same in every setup we tried.

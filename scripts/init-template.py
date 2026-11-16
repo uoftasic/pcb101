@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Replace course placeholders after creating a repo from the UofT ASIC template.
 
-Fills pb101, PB101 — PCB Design with KiCad, and Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip. only.
+Fills ic103, IC103 — PCB Design with KiCad, and Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip. only.
 Does not scaffold or remove docs pages — keep the published site barebones.
 """
 

@@ -1,6 +1,6 @@
 # Scripts
 
-Scripts for PB101 — PCB Design with KiCad (`uoftasic`): the link check for the rendered site, the KiCad screenshot and render tools, the scripts that draw the site's figures, and two small scripts left from the course template.
+Scripts for IC103 — PCB Design with KiCad (`uoftasic`): the link check for the rendered site, the KiCad screenshot and render tools, the scripts that draw the site's figures, and two small scripts left from the course template.
 
 ## Entry points
 
@@ -8,7 +8,7 @@ Scripts for PB101 — PCB Design with KiCad (`uoftasic`): the link check for the
 |--------|---------|
 | `check_site.py` | Check that every local link and `#anchor` in the rendered site resolves; `.github/workflows/site.yml` runs it on `docs/_site` |
 | `hello.py` | Smoke-check that Python runs in this clone |
-| `init-template.py` | The template's bootstrap script, which fills in the course id, title and description in a repo made from the template. PB101's are already filled in; see [`TEMPLATE.md`](../TEMPLATE.md) |
+| `init-template.py` | The template's bootstrap script, which fills in the course id, title and description in a repo made from the template. IC103's are already filled in; see [`TEMPLATE.md`](../TEMPLATE.md) |
 | `screenshots/kicad/shot.sh` | KiCad GUI screenshots in the pinned image under Xvfb; see [`screenshots/kicad/README.md`](screenshots/kicad/README.md) |
 | `screenshots/kicad/render.sh` | `kicad-cli` 3D renders and SVG plots of boards, schematics, footprints and symbols |
 | `figures/kicad_figures.sh`, `figures/board_renders.sh` | The KiCad renders and plots on the guide pages, made with `render.sh`; `board_renders.sh` also renders Lab 03's and the capstone's boards for the lab pages. Both need the fetched boards, and both use ImageMagick in the `ic103/kicad-shot` image, which they build if it isn't there; `kicad_figures.sh` needs `pdftoppm` too |

@@ -1,11 +1,11 @@
-# PB101 — PCB Design with KiCad
+# IC103 — PCB Design with KiCad
 
 Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.
 
 Part of the UofT ASIC Team education materials (`uoftasic`).
-Course site: <https://uoftasic.com/pb101/> · Education hub: <https://edu.uoftasic.com/>
+Course site: <https://uoftasic.com/ic103/> · Education hub: <https://edu.uoftasic.com/>
 
-Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/pb101/guide/getting-started.html) says what to install). The labs' checks run in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt), and every ERC, DRC and parity count that a lab page shows comes from `kicad-cli` there. A few checks don't use KiCad at all. The bring-up plan check (`labs/common/check_bringup.py`) is one of them, and it needs only Python. Unlike the analog and digital courses, PB101 doesn't use the workbench that students set up in IC101.
+Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/ic103/guide/getting-started.html) says what to install). The labs' checks run in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt), and every ERC, DRC and parity count that a lab page shows comes from `kicad-cli` there. A few checks don't use KiCad at all. The bring-up plan check (`labs/common/check_bringup.py`) is one of them, and it needs only Python. Unlike the analog and digital courses, IC103 doesn't use the workbench that students set up in IC101.
 
 ## Quick start
 
@@ -22,13 +22,13 @@ The second command ends with `FAIL  erc.error: 10 (want 0)`, because Tiny Tapeou
 
 | Path | What it is | Writeup |
 |---|---|---|
-| `labs/lab-01-open-a-board-you-didnt-design/` | the notes template for Tiny Tapeout's SKY130 breakout, and the check that compares a student's notes with the board | [Lab 01](https://uoftasic.com/pb101/labs/lab-01-open-a-board-you-didnt-design-overview.html) |
-| `labs/lab-02-a-footprint-from-a-datasheet/` | the RHL0024A drawing data, an empty footprint and symbol library, and the check that compares them with the student's own pad numbers | [Lab 02](https://uoftasic.com/pb101/labs/lab-02-a-footprint-from-a-datasheet-overview.html) |
-| `labs/lab-03-a-pmod-for-one-projects-pins/` | the board template a student copies into their own repository, and the reference SimProc Pmod | [Lab 03](https://uoftasic.com/pb101/labs/lab-03-a-pmod-for-one-projects-pins-overview.html) |
-| `labs/lab-04-protect-and-plan/` | the `BRINGUP.md` template, and the reference board with its protection and plan | [Lab 04](https://uoftasic.com/pb101/labs/lab-04-protect-and-plan-overview.html) |
-| `labs/lab-05-fab-outputs-in-ci/` | the starter workflow and build script, and the check that runs the build in a student's repository and checks what it made and what git tracks | [Lab 05](https://uoftasic.com/pb101/labs/lab-05-fab-outputs-in-ci-overview.html) |
-| `labs/lab-06-review-a-seeded-board/` | the seeded board, the `REVIEW.md` and `QUOTE.md` templates, and their check | [Lab 06](https://uoftasic.com/pb101/labs/lab-06-review-a-seeded-board-overview.html) |
-| `labs/capstone-a-board-for-a-team-chip/` | the `DESIGN.md` template, the check for both briefs, and a reference board for each | [Capstone](https://uoftasic.com/pb101/labs/capstone-a-board-for-a-team-chip-overview.html) |
+| `labs/lab-01-open-a-board-you-didnt-design/` | the notes template for Tiny Tapeout's SKY130 breakout, and the check that compares a student's notes with the board | [Lab 01](https://uoftasic.com/ic103/labs/lab-01-open-a-board-you-didnt-design-overview.html) |
+| `labs/lab-02-a-footprint-from-a-datasheet/` | the RHL0024A drawing data, an empty footprint and symbol library, and the check that compares them with the student's own pad numbers | [Lab 02](https://uoftasic.com/ic103/labs/lab-02-a-footprint-from-a-datasheet-overview.html) |
+| `labs/lab-03-a-pmod-for-one-projects-pins/` | the board template a student copies into their own repository, and the reference SimProc Pmod | [Lab 03](https://uoftasic.com/ic103/labs/lab-03-a-pmod-for-one-projects-pins-overview.html) |
+| `labs/lab-04-protect-and-plan/` | the `BRINGUP.md` template, and the reference board with its protection and plan | [Lab 04](https://uoftasic.com/ic103/labs/lab-04-protect-and-plan-overview.html) |
+| `labs/lab-05-fab-outputs-in-ci/` | the starter workflow and build script, and the check that runs the build in a student's repository and checks what it made and what git tracks | [Lab 05](https://uoftasic.com/ic103/labs/lab-05-fab-outputs-in-ci-overview.html) |
+| `labs/lab-06-review-a-seeded-board/` | the seeded board, the `REVIEW.md` and `QUOTE.md` templates, and their check | [Lab 06](https://uoftasic.com/ic103/labs/lab-06-review-a-seeded-board-overview.html) |
+| `labs/capstone-a-board-for-a-team-chip/` | the `DESIGN.md` template, the check for both briefs, and a reference board for each | [Capstone](https://uoftasic.com/ic103/labs/capstone-a-board-for-a-team-chip-overview.html) |
 | `labs/common/` | the pinned-KiCad wrapper, the board checker, the Pmod and bring-up plan checks, and the script that fetches Tiny Tapeout's boards | used by every lab |
 
 Reference solutions go in each package's `solutions/` folder. `.github/workflows/labs.yml` runs the board checker on every KiCad project there, in the pinned image, on every change to `labs/**` and once a week.

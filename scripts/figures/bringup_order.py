@@ -3,7 +3,7 @@
     pip install -r scripts/figures/requirements.txt
     python3 scripts/figures/bringup_order.py    # writes docs/assets/img/ic103-bringup-order.svg
 
-The steps are the ones a PB101 BRINGUP.md covers (Lab 04): checks before power, a current
+The steps are the ones an IC103 BRINGUP.md covers (Lab 04): checks before power, a current
 limit, a known firmware mode, project select, clock and reset, a first functional test, and
 only then anything with a supply of its own. The right-hand column is what you write down
 before each step.

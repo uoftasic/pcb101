@@ -9,10 +9,10 @@ To start a course or lab-notes repo: create it from this template under `uoftasi
 | GitHub org | `uoftasic` (hardcoded, don't change it) |
 | Team | UofT ASIC Team |
 
-| Fillable value | PB101 | Example |
+| Fillable value | IC103 | Example |
 |----------------|-------|---------|
-| Repo slug and course id | `pb101` | `dd103`, `ic101`, `serdes-lab` |
-| Display name | `PB101 — PCB Design with KiCad` | `DD103 — RTL on FPGAs & ASICs` |
+| Repo slug and course id | `ic103` | `dd103`, `ic101`, `serdes-lab` |
+| Display name | `IC103 — PCB Design with KiCad` | `DD103 — RTL on FPGAs & ASICs` |
 | One-line blurb | `Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.` | `RTL synthesis intro with Yosys` |
 
 ## Init script
@@ -28,7 +28,7 @@ Add `--dry-run` to see what it would change without writing anything.
 
 ## After-clone checklist
 
-- [ ] Repo created under `uoftasic`, named the same as `pb101`
+- [ ] Repo created under `uoftasic`, named the same as `ic103`
 - [ ] `scripts/init-template.py` run (or the three tokens replaced by hand)
 - [ ] Pushed to `main`
 - [ ] Pages: **Settings → Pages → Source: GitHub Actions** (`.github/workflows/site.yml` builds `docs/` with Quarto)
@@ -42,7 +42,7 @@ The sample pages follow the course structure in [AGENTS.md](AGENTS.md). The home
 
 ## Naming
 
-Use a course id the team already follows (`ic###`, `ad###`, `dd###`) or a clear kebab-case lab name. Keep the GitHub repo name equal to `pb101` so the Pages and clone URLs are predictable.
+Use a course id the team already follows (`ic###`, `ad###`, `dd###`) or a clear kebab-case lab name. Keep the GitHub repo name equal to `ic103` so the Pages and clone URLs are predictable.
 
 ## Related
 
