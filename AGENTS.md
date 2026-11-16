@@ -7,7 +7,7 @@ Write for a student working through the course, not for whoever maintains the te
 ## Goals
 
 - Teach PCB design for the boards that carry a chip, in KiCad 10, with Tiny Tapeout's boards as the worked examples.
-- Keep reading and doing apart. Guide pages explain; lab writeups are the only pages that ask the student to run anything; `labs/`, `scripts/` and `notebooks/` hold what they run.
+- Keep reading and doing apart. Guide pages explain; lab writeups are the only pages that ask the student to run anything; `labs/` holds what they run.
 - Never publish grades, solution keys or PII under `docs/`. Put keys in `labs/**/solutions/` and gitignore them on student forks when policy requires.
 
 ## Layout
