@@ -7,7 +7,7 @@ python3 labs/common/fetch_boards.py
 labs/common/kicad.sh python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
 ```
 
-The first command fetches the boards (84 MB, about 7 s). The second checks Tiny Tapeout's SKY130 breakout in about 30 s, and ends like this:
+The first command fetches the boards (84 MB, about 7 s). The second checks Tiny Tapeout's SKY130 breakout. In our runs that took 45 to 58 s with the container limited to one CPU, and 23 s with two, and it ends like this:
 
 ```text
                 errors  warnings  excluded
