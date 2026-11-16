@@ -399,7 +399,7 @@ def main():
             with open(args.board_summary) as f:
                 data = json.load(f)
         else:
-            print("  running labs/common/check_board.py on the breakout (about 20 s) ...", flush=True)
+            print("  running labs/common/check_board.py on the breakout (about a minute with one CPU) ...", flush=True)
             print()
             data = run_board_check(args.board)
         by_type, counts = data.get("by_type", {}), data.get("counts", {})
