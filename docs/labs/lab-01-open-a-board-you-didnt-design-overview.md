@@ -98,7 +98,7 @@ How does each of the chip's three supplies get from the connectors to the chip, 
 
 1. Make a prediction first. The schematic's notes say "For Sky: VCC\* 1v8, VDD\* 3v3", and both regulators, U1 and U2, are AP2112K-1.8s, which make 1.8 V. The chip, U4, has three supply nets: VCCD, VDD_IO and VDDA. Write down which you expect at 1.8 V, which at 3.3 V, and which regulator you expect to feed each.
 
-2. Find U4's pins on each rail. Its symbol names its supply pins `vccd`, `vccd1`, `vccd2`, `vddio`, `vdda`, `vdda1` and `vdda2`. Edit → Find (Ctrl+F), with "Search pin names and numbers" ticked, finds them. Write the pin numbers into the "Chip pins" column.
+2. Find U4's pins on each rail. U4 is the large symbol in the middle of the sheet; zoom in on it and read the numbers beside its supply pins, which are named `vccd`, `vccd1`, `vccd2`, `vddio`, `vdda`, `vdda1` and `vdda2`. (Edit → Find with "Search pin names and numbers" ticked finds them too, but in our run its first match for `vdda` was the value of a VDDA power symbol, so it's slower than reading the symbol.) Write the pin numbers into the "Chip pins" column.
 
 3. Follow VCCD back towards the connectors. VCCD doesn't connect to U1 directly: it comes from the "MUX and Supply Headers" block, on the right of the sheet below its title:
 

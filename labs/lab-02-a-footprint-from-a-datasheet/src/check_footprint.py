@@ -108,15 +108,18 @@ class Pad:
         return "F.Cu" in self.layers or "*.Cu" in self.layers
 
     def paste_box(self):
-        """The paste opening: the pad grown on every side by the paste margin, which KiCad
-        works out as solder_paste_margin + solder_paste_margin_ratio x the pad's smaller side."""
+        """The paste opening: the pad grown on each side by solder_paste_margin plus
+        solder_paste_margin_ratio times the pad's size along that axis. We checked the
+        ratio's meaning by plotting F.Paste with kicad-cli 10.0.8: a 2.05 x 4.05 mm pad with
+        a ratio of -0.1 plotted as a 1.64 x 3.24 mm opening, 64 % of the pad."""
         if "F.Paste" not in self.layers:
             return None
-        m = self.paste_margin + self.paste_ratio * min(self.w, self.h)
+        mx = self.paste_margin + self.paste_ratio * self.w
+        my = self.paste_margin + self.paste_ratio * self.h
         x0, y0, x1, y1 = self.box()
-        if x1 - x0 + 2 * m <= 0 or y1 - y0 + 2 * m <= 0:
+        if x1 - x0 + 2 * mx <= 0 or y1 - y0 + 2 * my <= 0:
             return None
-        return (x0 - m, y0 - m, x1 + m, y1 + m)
+        return (x0 - mx, y0 - my, x1 + mx, y1 + my)
 
 
 def area(b):
