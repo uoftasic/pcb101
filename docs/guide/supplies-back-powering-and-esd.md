@@ -40,7 +40,7 @@ Two things follow. First, a board plugged into the demo board can't set the chip
 
 U1's capacitors are part of its design, not decoupling added afterwards. Diodes Inc.'s [AP2112 datasheet](https://www.diodes.com/assets/Datasheets/AP2112.pdf) describes a 600 mA CMOS low-dropout regulator that is "Stable with 1.0µF Flexible Cap: Ceramic, Tantalum and Aluminum Electrolytic", and its electrical characteristics are specified with 1.0 µF ceramic capacitors on the input and the output. The breakout gives U1 10 µF on its input (C6) and 1 µF and 100 nF on its output (C18 and C21), before the six capacitors on `VCCD` itself.
 
-Not every regulator is that relaxed. Horowitz and Hill's example (*The Art of Electronics*, 3rd ed., p. 611) is the TPS775xx, whose output capacitor "must be at least 10 µF (with an ESR no less than 50 mΩ and no greater than 1.5 Ω)", and whose datasheet plots the regions of stability and instability. So when you put a regulator on a board, its output capacitor comes from its datasheet: the value, and sometimes the type and its series resistance too.
+Other regulators are stricter. Horowitz and Hill's example (*The Art of Electronics*, 3rd ed., p. 611) is the TPS775xx, whose output capacitor "must be at least 10 µF (with an ESR no less than 50 mΩ and no greater than 1.5 Ω)", and whose datasheet plots the regions of stability and instability. So when you put a regulator on a board, its output capacitor comes from its datasheet: the value, and sometimes the type and its series resistance too.
 
 ## The order the supplies come up in
 
@@ -54,13 +54,13 @@ These are written for the designers of the chip's I/O ring, and the guide says t
 
 ## Back-powering
 
-Tiny Tapeout's ETR guide uses "back-powered" for a deliberate thing: a breakout "can be back-powered by feeding 3v3 on a header pin marked as such", in place of the demo board's own supply. This page means something else by it, the accident in which a chip is powered through its own input pins.
+Tiny Tapeout's ETR guide uses "back-powered" for something deliberate. Since none of the breakouts needs the 5 V from USB, it says, "the boards can be back-powered by feeding 3v3 on a header pin marked as such". This page means something else by it: the accident in which a chip is powered through its own input pins.
 
 ![A powered dongle driving an input of an unpowered kit](../assets/img/pb101-back-powering-path.svg)
 
 *The SimProc case. The USB-UART dongle takes its power from the laptop, the kit is switched off, and the dongle's TX line sits high between characters. Current flows through $R_S$ and the pad's upper protection diode into `VDD_IO`, and through the breakout's 0 Ω links onto the demo board's +3V3 net, which the figure lumps into one resistor. The demo board's file has its RP2350, the RP2350's flash memory and the output of its TLV1117LV33 regulator on that net.*
 
-Horowitz and Hill describe both halves of what happens next. A HIGH input on an unpowered chip without tolerant inputs will "partially power the supply rail" through the clamp (p. 795). Their "craziest" example is a CMOS chip whose supply pin was never wired up and which works anyway, "powered by one of its logic inputs (via the chip's internal input-protection diodes from input to VDD)", until the moment all its inputs are low at once (p. 760). Meanwhile, the current through the input diodes is exactly what triggers latch-up (p. 759). Their list of habits for CMOS boards puts it in one line: "be careful whenever mixing supply voltages. Otherwise you may have current flowing through input-protection diodes" (p. 754).
+Horowitz and Hill describe what follows. A HIGH input on an unpowered chip without tolerant inputs will "partially power the supply rail" through the clamp (p. 795). Their "craziest" example is a CMOS chip whose supply pin was never wired up and which works anyway, "powered by one of its logic inputs (via the chip's internal input-protection diodes from input to VDD)", until the moment all its inputs are low at once (p. 760). Current through the input diodes is also what triggers latch-up (p. 759). Their advice for low-power CMOS boards includes the same warning: "be careful whenever mixing supply voltages. Otherwise you may have current flowing through input-protection diodes" (p. 754).
 
 In SkyWater's terms the kit's +3V3 is neither grounded nor floating here: it's held up to whatever voltage the dongle's current and the rail's load make it. So the remedies are about keeping that current small, or zero:
 

@@ -37,9 +37,9 @@ Tiny Tapeout's [GPIO page](https://tinytapeout.com/specs/gpio/) says the chip's 
 | Maximum output frequency | 33 MHz |
 | Maximum input frequency | 66 MHz |
 
-Under the table it adds: "The input pins are not 5V tolerant." On the demo board the pads run from 3.3 V, so a pin can take inputs from 0 to 3.3 V and no more.
+Under the table it adds: "The input pins are not 5V tolerant." On the demo board the pads run from 3.3 V, so keep every input between 0 V and 3.3 V.
 
-SkyWater's [user guide for its I/O cells](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_io/docs/user_guide.html) explains why. Its GPIO cells "use the main Vddio/Vssio connections for their ESD current steering diodes", that is, each pad has a diode up to the I/O supply and a diode down to ground. Its feature list gives "Hot swap & over-voltage tolerant" for two other cells, `sky130_fd_io__sio` and `sky130_fd_io__gpio_ovtv2`, and not for `sky130_fd_io__gpiov2`. We found no rating in that guide for how much current the diodes may carry, so the arithmetic below uses Horowitz and Hill's typical figures and a limit you'll set in Lab 04.
+SkyWater's [user guide for its I/O cells](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_io/docs/user_guide.html) describes the circuit behind that limit. Its GPIO cells "use the main Vddio/Vssio connections for their ESD current steering diodes", that is, each pad has a diode up to the I/O supply and a diode down to ground. Its feature list gives "Hot swap & over-voltage tolerant" for two other cells, `sky130_fd_io__sio` and `sky130_fd_io__gpio_ovtv2`, and not for `sky130_fd_io__gpiov2`. We found no rating in that guide for how much current the diodes may carry, so the arithmetic below uses Horowitz and Hill's typical figures and a limit you'll set in Lab 04.
 
 ## Beyond the rails
 
@@ -66,15 +66,15 @@ where $V_D$ is the diode's forward drop. Horowitz and Hill use about 0.6 V for i
 
 The first row is already past Horowitz and Hill's 20 mA example. Lab 04 sets the limit you design to and has you work out the resistor from it; the next page explains why the unpowered case is also the one where that current does the most mischief.
 
-A series resistor costs speed. With the capacitance at the pin it forms an RC low-pass, and its 10–90 % rise time is $2.2RC$ (Hall and Heck, *Advanced Signal Integrity for High-Speed Digital Designs*, eq. 8-8, give $2.195\tau$). We have no figure for the pad's own capacitance, so suppose the pin, its trace and the connectors add up to 10 pF. Then 1 kΩ gives $\tau$ = 10 ns and an edge of 22 ns. For a UART at 115 200 baud, whose bits last 8.7 µs, that edge doesn't matter at all. For an input near the pads' 66 MHz rating, whose half period is 7.6 ns, it would swallow the signal, so a fast line can only have a small series resistor, of tens of ohms. That small resistor, placed at the driving end, is also the series termination that [Placement and routing](placement-and-routing.md#when-a-trace-stops-being-a-wire) mentions for long lines.
+A series resistor costs speed. With the capacitance at the pin it forms an RC low-pass, and its 10–90 % rise time is $2.2RC$ (Hall and Heck, *Advanced Signal Integrity for High-Speed Digital Designs*, eq. 8-8, give $2.195\tau$). We have no figure for the pad's own capacitance, so suppose the pin, its trace and the connectors add up to 10 pF. Then 1 kΩ gives $\tau$ = 10 ns and an edge of 22 ns. For a UART at 115 200 baud, whose bits last 8.7 µs, that edge doesn't matter at all. For an input near the pads' 66 MHz rating, whose half period is 7.6 ns, the edge would last longer than the signal stays high, so a fast line can only have a small series resistor, of tens of ohms. That small resistor, placed at the driving end, is also the series termination that [Placement and routing](placement-and-routing.md#when-a-trace-stops-being-a-wire) mentions for long lines.
 
-## Outputs need it too
+## Outputs
 
 An output pin can be driven past its rails from outside in the same way, through its own protection diodes, and it can also be asked to drive more than its 4 mA. On the demo board, every `uo_out` line already drives one segment of the 7-segment display through a solder jumper and a 510 Ω resistor. If your Pmod adds an LED on the same line, that's a second load on a pin rated for 4 mA, and both share it. If a `uo_out` pin drives the input of something powered separately, such as the RX pin of a USB-UART dongle, then a powered chip and an unpowered dongle put the chip's output high into the dongle's clamp diode, which loads the output and feeds the dongle's supply. A series resistor on that line limits both.
 
 ## Buffers and translators
 
-A series resistor deals with a source that is the right voltage but may be on when the chip is off. When the other side runs at a different voltage, you need a part in between. Horowitz and Hill's cookbook of connections between logic families (pp. 798–800) has the ones you'd use here:
+A series resistor limits current, but it doesn't change a signal's level. When the other side runs at a different voltage, you need a part in between. Horowitz and Hill's cookbook of connections between logic families (pp. 798–800) has the ones you'd use here:
 
 - **A buffer with 5 V-tolerant inputs.** The 74LVC family accepts inputs up to 5.5 V "regardless of its own supply voltage (including when it is unpowered)" (p. 718), and its output stages are built not to load a shared line when the part is unpowered (p. 794). A single 74LVC buffer powered from your Pmod's 3.3 V turns a 5 V signal into a 3.3 V one for the chip's input.
 - **A dual-supply translator**, such as the 74LVC1T45, which runs from 1.8 V to 5 V on each side and has a direction pin. Use one when the other side is lower than 3.3 V, or when the line goes both ways.

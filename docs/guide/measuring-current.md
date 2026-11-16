@@ -18,7 +18,7 @@
 
 This page answers: *how do you measure the current a board draws, and how much does the measurement change what you're measuring?*
 
-Current is the first thing you read when a new board is powered. A chip that draws far more than it should has a short, a latched-up input or a fault, and a chip that draws nothing isn't powered. [Bringing up a chip](bringing-up-a-chip.md) builds the bring-up plan around such readings; this page is about taking them. In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you'll add a current-sense point to your Pmod and write down what it should read.
+Current is the first thing you read when a new board is powered. A board that draws far more than you expected may have a short, a latched-up chip or a damaged part, and one that draws nothing may not be powered at all. [Bringing up a chip](bringing-up-a-chip.md) builds the bring-up plan around such readings; this page is about taking them. In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you'll add a current-sense point to your Pmod and write down what it should read.
 
 ## A meter in series, or a sense resistor
 
@@ -30,7 +30,7 @@ There are two ordinary ways to measure a current on a bench, and both put a resi
 
 **A meter in series.** Horowitz and Hill explain what's inside the meter (*The Art of Electronics*, 3rd ed., p. 10). Selecting a current range "puts a small resistor across the meter's input terminals", chosen so that it drops 0.1 V to 0.25 V at the range's full-scale current, and the meter displays that voltage as a current. That drop, which they note is sometimes called the "voltage burden", subtracts from the supply your board sees. It's convenient, because nothing on the board has to be built for it, but the board has to have a place where you can break the supply and put the meter in.
 
-**A sense resistor on the board.** You build the resistor in, put a test point at each end, and read the voltage across it with a meter on a volts range. Horowitz and Hill recommend exactly this for CMOS boards: "a 10 Ω resistor in series with VDD on each board" makes it easy to see when a chip damaged by static starts drawing excess current, and they call it a "current spy" (p. 754). Elsewhere they suggest 1 Ω in each chip's supply lead "(with downstream bypassing)", and 0.1 Ω "for power drivers or chips driving many outputs" (p. 760). Keeping the bypass capacitors on the board's side matters, because then the fast pulses of current at each logic edge come from the capacitors and the resistor carries only the average, which is what you want to read.
+**A sense resistor on the board.** You build the resistor in, put a test point at each end, and read the voltage across it with a meter on a volts range. Horowitz and Hill recommend this for CMOS boards: "a 10 Ω resistor in series with VDD on each board" makes it easy to see when a chip damaged by static starts drawing excess current, and they call it a "current spy" (p. 754). Elsewhere they suggest 1 Ω in each chip's supply lead "(with downstream bypassing)", and 0.1 Ω "for power drivers or chips driving many outputs" (p. 760). Keeping the bypass capacitors on the board's side matters, because then the fast pulses of current at each logic edge come from the capacitors and the resistor carries mostly the average, which is what you want to read.
 
 ## Choosing the resistor
 
@@ -44,7 +44,7 @@ Some numbers from the figure:
 
 - A Pmod that draws 1 mA through a 10 Ω spy drops 10 mV, which a multimeter reads easily and the board's 3.3 V doesn't notice.
 - The kit's whole draw, about 200 mA, through the same 10 Ω would drop 2 V, and a 3.3 V rail would be left with 1.3 V. At that current you'd use 1 Ω (0.2 V) or 0.1 Ω (20 mV), the values Horowitz and Hill suggest for single chips and for heavy drivers.
-- A board that idles at 10 µA and runs at 10 mA covers three decades. A resistor that drops 10 mV at the top drops 10 µV at the bottom, which most multimeters can't resolve. Either measure the two cases on different ranges, or accept that one resistor serves one range.
+- A board that idles at 10 µA and runs at 10 mA covers three decades. A resistor that drops 10 mV at the top drops 10 µV at the bottom, and you'd need a meter that resolves microvolts to read it. Either measure the two cases on different ranges, or accept that one resistor serves one range.
 
 ## What you can measure on a Tiny Tapeout kit
 
@@ -60,7 +60,7 @@ Some numbers from the figure:
 
 That rework is on the board that carries the kit's only chip, which is why the course doesn't ask you to do it. If the team needs per-rail readings, practise the rework first on a breakout made from Tiny Tapeout's open files, with its passives and no chip. Tiny Tapeout's [analog page](https://tinytapeout.com/specs/analog/) adds a reason to care about the chip's own currents: "A draw of around 20mA from the power supply will result in a 0.1V drop through the PDN", the chip's internal power network.
 
-**Your Pmod.** The current-sense point you'll add in Lab 04 sits in your Pmod's own supply, the +3V3 it takes from pins 6 and 12 of the sockets. It measures your board's parts, not the chip's, because the chip's rails never reach the Pmod. That's still worth having: you can work out what your Pmod should draw, and a reading far from it means a mistake on your board. For example, if the eight baud-rate switches each have a 10 kΩ pull-down, the value in Horowitz and Hill's switch circuit (p. 802), then every switch that's on draws 3.3 V / 10 kΩ = 0.33 mA, and all eight together draw 2.64 mA.
+**Your Pmod.** The current-sense point you'll add in Lab 04 sits in your Pmod's own supply, the +3V3 it takes from pins 6 and 12 of the sockets. It measures your board's parts, not the chip's, because the chip's rails don't reach the Pmod. That's still worth having: you can work out what your Pmod should draw, and a reading far from it means a mistake on your board. For example, if the eight baud-rate switches each have a 10 kΩ pull-down, the value in Horowitz and Hill's switch circuit (p. 802), then every switch that's on draws 3.3 V / 10 kΩ = 0.33 mA, and all eight together draw 2.64 mA.
 
 ## Reading the voltage
 
@@ -100,7 +100,7 @@ A multimeter on its millivolt range, with its leads on the two test points, is a
    <details>
    <summary>Answer</summary>
 
-   So that the fast current pulses at each logic edge come from the capacitors, and the resistor carries only the average current you want to read. Capacitors on the supply's side would leave the resistor between the board and its nearest charge, in the path of every pulse.
+   So that the fast current pulses at each logic edge come from the capacitors, and the resistor carries mostly the average current you want to read. Capacitors on the supply's side would leave the resistor between the board and its nearest charge, in the path of every pulse.
 
    </details>
 
