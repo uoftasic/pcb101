@@ -3,6 +3,9 @@
 #   kicad-pcb-editor-seeded-board.png    the PCB Editor with labs/lab-06-review-a-seeded-board/board/
 #   kicad-board-setup-constraints.png    Board Setup > Design Rules > Constraints on Lab 04's
 #                                        reference board, which has the template's JLCPCB rules
+#   kicad-properties-j4.png              J4 selected on the same board, its footprint in the
+#                                        Properties panel and the status bar
+#   kicad-footprint-properties-j4.png    J4's Footprint Properties dialog (E)
 
 work labs/lab-06-review-a-seeded-board/board
 launch pcbnew pmod.kicad_pcb 'pmod.*PCB Editor'
@@ -25,5 +28,24 @@ pause 3
 xdotool mousemove 740 600 click --repeat 15 --delay 100 5
 pause 3
 capture kicad-board-setup-constraints
+key Escape
+quit pcbnew
+
+# J4 selected on Lab 04's reference board, where the Properties panel shows a footprint's
+# details; then its Footprint Properties dialog (E).
+launch pcbnew pmod.kicad_pcb 'pmod.*PCB Editor'
+pause 10
+key ctrl+f
+wait_window '^Find$' 20
+type_text J4
+key Return
+key Escape
+wait_window 'pmod.*PCB Editor' 10
+pause 3
+capture kicad-properties-j4
+key e
+wait_window 'Footprint Properties' 30
+pause 3
+capture kicad-footprint-properties-j4
 key Escape
 quit pcbnew
