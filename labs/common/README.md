@@ -19,7 +19,7 @@ The first command fetches the boards (84 MB, about 7 s). The second checks Tiny 
 FAIL  erc.error: 10 (want 0)
 ```
 
-That FAIL is correct. The breakout has 10 ERC errors in KiCad 10.0.8, and the check below explains the rest of its output.
+That FAIL is what should happen, because the breakout has 10 ERC errors in KiCad 10.0.8. The section on the board check below explains the rest of its output.
 
 ## Files
 
@@ -33,7 +33,7 @@ That FAIL is correct. The breakout has 10 ERC errors in KiCad 10.0.8, and the ch
 | `check_pmod.py`, `pins/` | the Pmod check for Labs 03 and 04: the board check, then the Pmod connectors' placement and a project's pin list (`pins/simproc.json` is SimProc's) |
 | `check_bringup.py` | the bring-up plan check for Lab 04: every section of `BRINGUP.md` filled in, and an expected value with its unit at every step |
 | `kicad_sexpr.py` | a small reader for KiCad's S-expression files, which the lab checkers use instead of KiCad's `pcbnew` Python module |
-| `selftest_check.py`, `selftest/` | four boards with known verdicts, which show that the check checks |
+| `selftest_check.py`, `selftest/` | four boards with known verdicts, for testing the check itself |
 | `fetch_boards.py`, `upstream.json` | fetches Tiny Tapeout's boards and libraries at pinned commits |
 | `upstream/` | where the fetched boards go; gitignored |
 | `results/` | reports from `check_solutions.py`; gitignored |
@@ -46,7 +46,7 @@ labs/common/kicad.sh kicad-cli pcb drc --format json -o drc.json board.kicad_pcb
 labs/common/kicad.sh python3 labs/common/check_board.py board.kicad_pro
 ```
 
-`kicad.sh` runs its arguments as a command in `kicad/kicad:10.0.8`, named by digest, so it's the same build on every machine whatever tag Docker Hub moves later. It pulls the image the first time (812 MB to download, 2.6 GB on disk). Before each run it prints the digest Docker resolved, which is the record of exactly which KiCad ran:
+`kicad.sh` runs its arguments as a command in `kicad/kicad:10.0.8`, named by digest, so it's the same build on every machine, even if Docker Hub later moves the tag. It pulls the image the first time (812 MB to download, 2.6 GB on disk). Before each run it prints the digest Docker resolved, which is the record of exactly which KiCad ran:
 
 ```text
 pb101: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
@@ -132,7 +132,7 @@ None has unconnected items. By type:
 - DIP dock. ERC errors: `power_pin_not_driven` 2. Parity: `duplicate_footprints` 1 and `extra_footprint` 2, all for the logo footprint `PSYLOGO01`. DRC warnings: `lib_footprint_issues` 111, `lib_footprint_mismatch` 48. Excluded: six `courtyards_overlap`.
 - Demo board. ERC errors: `pin_not_connected` 4, `power_pin_not_driven` 3, `pin_to_pin` 1. Parity: `footprint_symbol_field_mismatch` 2 (a DigiKey part number on J2 and J3), `missing_footprint` 1 (J17), `extra_footprint` 2 (the logos `PSYLOGO` and `PSYLOGOB`). DRC warnings: `lib_footprint_issues` 166, `lib_footprint_mismatch` 111. Excluded: six `courtyards_overlap` and two `items_not_allowed`.
 
-So none of Tiny Tapeout's boards passes the check as it stands, which is one reason a lab's "You're done when" always runs it on the student's own board.
+So none of these three boards passes the check as it stands, which is one reason a lab's "You're done when" always runs it on the student's own board.
 
 ## The self-test: `selftest_check.py`
 
@@ -154,7 +154,7 @@ ok   SKY130 breakout against its expected counts  PASS
 
 A lab's reference solution is a KiCad project anywhere under `labs/<lab-id>/solutions/`. `check_solutions.py` finds every `.kicad_pro` there, runs the board check on each (reading its `check-expect.json` if it has one), keeps the reports in `results/<lab-id>/<project>/`, and prints a table. With no solutions yet it prints `No reference solutions yet: nothing matches labs/*/solutions/**/*.kicad_pro.` and exits 0.
 
-[`.github/workflows/labs.yml`](../../.github/workflows/labs.yml) runs, on every change to `labs/**`, once a week and by hand: it pulls the pinned image, fetches the boards, runs the self-test, then runs `check_solutions.py` and uploads the reports. It calls `kicad.sh` like everyone else rather than running as a job `container:`, so CI sees the same user setup and library tables as the counts on the lab pages.
+[`.github/workflows/labs.yml`](../../.github/workflows/labs.yml) runs on every change to `labs/**`, once a week, and when started by hand. It pulls the pinned image, fetches the boards, runs the self-test, then runs `check_solutions.py` and uploads the reports. It calls `kicad.sh` like everyone else rather than running as a job `container:`, so CI sees the same user setup and library tables as the counts on the lab pages.
 
 ## Tiny Tapeout's boards: `fetch_boards.py`
 
