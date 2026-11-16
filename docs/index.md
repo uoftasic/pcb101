@@ -8,7 +8,7 @@ PB101 is part of the UofT ASIC Team education materials, published at <https://u
 
 The course is for anyone on the team who will bring up, measure or demonstrate one of the team's chips, from either track. Today that means the people working on SimProc, CrossWalk, Sentry and HART-1, and later it means whoever brings up the next shuttle's chips. The team has no board designs of its own yet, so the course teaches toward the boards those chips need: first a Pmod for one project's pins, and then, on the last reading row, the carriers, motherboards and characterization boards that come after it.
 
-You don't need to have designed a board before. You do need the circuits you learned in class, because the impedance of a capacitor, an RC time constant and the current through a series resistor are what the arguments about decoupling, filtering and protection rest on.
+You don't need to have designed a board before. You do need the circuits you learned in class, because the arguments about decoupling, filtering and protection rest on the impedance of a capacitor, an RC time constant and the current through a series resistor.
 
 | | |
 |---|---|

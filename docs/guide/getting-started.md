@@ -80,7 +80,7 @@ Your own KiCad can run the same ERC and DRC from its menus, and you'll do both i
 | The course's checker | 10 | 103 | 0 | 123 |
 | The same image with no library tables at all, and without Tiny Tapeout's own library beside the board | 10 | 236 | 0 | 130 |
 
-The errors didn't change, and the warnings changed a lot. So the labs give warning counts only for the checker's setup, and ask you about kinds of warning rather than numbers when you look at a board in your own KiCad. If your KiCad shows a different number of errors from the lab page, though, something is different, and it's worth finding out what.
+The error counts are the same in both setups and the warning counts aren't, so the labs give warning counts only for the checker's setup, and ask you about kinds of warning rather than numbers when you look at a board in your own KiCad. If your KiCad shows a different number of errors from the lab page, though, something is different, and it's worth finding out what.
 
 ## Course layout
 
