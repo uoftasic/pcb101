@@ -70,7 +70,7 @@ What does your board have to do, in numbers?
 
    ```text
      ok    ci           Lab 05's check passes: the board check, every output, and .gitignore
-     FAIL  design       7 lines still say TODO; 1 numbered requirement; at least 3 needed; 1 numbered decision; at least 3 needed; decision 1 has no 'Meets:' line naming requirements; decision 1 gives no value with its unit; requirement 1 isn't met by any decision
+     FAIL  design       7 lines still say TODO; only 1 numbered requirement, and at least 3 are needed; only 1 numbered decision, and at least 3 are needed; decision 1 has no 'Meets:' line naming requirements; decision 1 gives no value with its unit; requirement 1 isn't met by any decision
      FAIL  history      1 commit changes the schematic or the board; at least 2 needed
      ok    pmod         PASS  pmod.kicad_pro: 17 of 17 Pmod checks ok; bring-up plan PASS
      FAIL  test points  no test point on J4 pin 2 (/DONGLE_TXD) or J4 pin 3 (/DONGLE_RXD), or on the other side of their series resistors

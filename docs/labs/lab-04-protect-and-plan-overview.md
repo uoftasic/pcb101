@@ -169,7 +169,7 @@ What do you check before power, and what should you read at each step?
      ok    Settings                    5 items; a current limit with its unit
      ok    Before power                4 items, each with an expected value and its unit
      ok    Steps                       7 items, each with an expected value and its unit
-     ok    When a reading is wrong     6 line(s)
+     ok    When a reading is wrong     6 lines
    ```
 
    Your counts will differ. The check wants at least two checks before power and four steps, an `Expect:` with a value on each, a current limit with a unit, and no TODO left anywhere. It can't tell whether your expected values are right, so someone else should read your plan before any kit is powered from your board.

@@ -68,7 +68,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
      FAIL  bom        no BOM in out/assembly/ (a .csv with 'bom' in its name)
      FAIL  position   no position file in out/assembly/ (a .csv with 'pos' in its name)
      FAIL  images     out/review/ is missing top render, bottom render, F.Cu plot, B.Cu plot
-     FAIL  gitignore  no .gitignore; after the build git sees 15 untracked file(s): out/fab/pmod-B_Cu.gbr, out/fab/pmod-B_Mask.gbr, out/fab/pmod-B_Paste.gbr, out/fab/pmod-B_Silkscreen.gbr ...
+     FAIL  gitignore  no .gitignore; after the build git sees 15 untracked files: out/fab/pmod-B_Cu.gbr, out/fab/pmod-B_Mask.gbr, out/fab/pmod-B_Paste.gbr, out/fab/pmod-B_Silkscreen.gbr ...
 
    FAIL  pmod: 3 of 8 Lab 05 checks ok; add --planted REV once you've done Part 5
    ```
@@ -211,7 +211,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
    ~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
-   It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    2e1dabd, an earlier commit of this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
+   It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    c36542d, an earlier commit on this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
 
 ## Finishing
 

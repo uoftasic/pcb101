@@ -52,7 +52,7 @@ Your board lives in a repository of your own from now on, and the course's check
 
    FAIL  drc.error: 1 (want 0)
    ...
-     FAIL  connectors   the schematic has 0 PMOD_PERIPH_2x6 connector(s); this project needs 3, one per socket (input, bidir, output)
+     FAIL  connectors   the schematic has 0 PMOD_PERIPH_2x6 connectors; this project needs 3, one per socket (input, bidir, output)
      FAIL  pins         not checked until the connectors pass
 
    FAIL  pmod.kicad_pro: board check FAIL; 0 of 2 Pmod checks ok
