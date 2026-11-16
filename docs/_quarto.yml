@@ -1,4 +1,4 @@
-# Quarto build of the COURSE-TEMPLATE docs (replacing Docsify's index.html,
+# Quarto build of the PB101 docs (replacing Docsify's index.html,
 # _sidebar.md and _navbar.md).
 #
 #   quarto preview docs          # live site at http://localhost:4200
@@ -30,11 +30,14 @@ website:
       - text: "Guide"
         href: guide/getting-started.md
       - text: "Labs"
-        href: labs/lab-01-overview.md
+        href: labs/lab-01-open-a-board-you-didnt-design-overview.md
     right:
       - text: Course PDF
         icon: file-pdf
         href: "pb101-course.pdf"
+      - icon: discord
+        href: https://discord.gg/hrJnP5UsGz
+        aria-label: Discord
       - icon: github
         href: https://github.com/uoftasic/pb101
         aria-label: GitHub
@@ -43,18 +46,78 @@ website:
     contents:
       - text: "Home"
         href: index.md
-      - section: "Course path"
+      - section: "1. Reading a board"
         contents:
-          - text: "1. Getting started"
+          - text: "Getting started"
             href: guide/getting-started.md
-          - text: "2. Lab 01: Starter script"
-            href: labs/lab-01-overview.md
+          - text: "What a board does for a chip"
+            href: guide/what-a-board-does-for-a-chip.md
+          - text: "Tiny Tapeout's boards, part by part"
+            href: guide/tiny-tapeouts-boards-part-by-part.md
+          - text: "Lab 01: Open a board you didn't design"
+            href: labs/lab-01-open-a-board-you-didnt-design-overview.md
+      - section: "2. Parts and packages"
+        contents:
+          - text: "Schematics other people can read"
+            href: guide/schematics-other-people-can-read.md
+          - text: "Symbols, footprints and libraries"
+            href: guide/symbols-footprints-and-libraries.md
+          - text: "From die to package"
+            href: guide/from-die-to-package.md
+          - text: "Lab 02: A footprint from a datasheet"
+            href: labs/lab-02-a-footprint-from-a-datasheet-overview.md
+      - section: "3. A board of your own"
+        contents:
+          - text: "Layers and fabricator rules"
+            href: guide/layers-and-fabricator-rules.md
+          - text: "Placement and routing"
+            href: guide/placement-and-routing.md
+          - text: "Pins, Pmods and planning a pinout"
+            href: guide/pins-pmods-and-planning-a-pinout.md
+          - text: "Parts you can solder by hand"
+            href: guide/parts-you-can-solder-by-hand.md
+          - text: "Lab 03: A Pmod for one project's pins"
+            href: labs/lab-03-a-pmod-for-one-projects-pins-overview.md
+      - section: "4. Protection and bring-up"
+        contents:
+          - text: "Protecting the chip's I/O"
+            href: guide/protecting-the-chips-io.md
+          - text: "Supplies, back-powering and ESD"
+            href: guide/supplies-back-powering-and-esd.md
+          - text: "Measuring current"
+            href: guide/measuring-current.md
+          - text: "Bringing up a chip"
+            href: guide/bringing-up-a-chip.md
+          - text: "Lab 04: Protect and plan"
+            href: labs/lab-04-protect-and-plan-overview.md
+      - section: "5. Outputs and CI"
+        contents:
+          - text: "Fabrication outputs"
+            href: guide/fabrication-outputs.md
+          - text: "Outputs in CI"
+            href: guide/outputs-in-ci.md
+          - text: "KiCad files in git"
+            href: guide/kicad-files-in-git.md
+          - text: "Lab 05: Fab outputs in CI"
+            href: labs/lab-05-fab-outputs-in-ci-overview.md
+      - section: "6. Review and ordering"
+        contents:
+          - text: "Reviewing and ordering a board"
+            href: guide/reviewing-and-ordering-a-board.md
+          - text: "Lab 06: Review a seeded board"
+            href: labs/lab-06-review-a-seeded-board-overview.md
+      - section: "7. Capstone"
+        contents:
+          - text: "Boards for chips"
+            href: guide/boards-for-chips.md
+          - text: "Capstone: A board for a team chip"
+            href: labs/capstone-a-board-for-a-team-chip-overview.md
       - section: "Repo"
         contents:
           - text: "Lab packages"
             href: https://github.com/uoftasic/pb101/tree/main/labs
-          - text: "Scripts"
-            href: https://github.com/uoftasic/pb101/tree/main/scripts
+          - text: "Checks and boards (labs/common)"
+            href: https://github.com/uoftasic/pb101/tree/main/labs/common
 
 filters:
   - _filters/course.lua

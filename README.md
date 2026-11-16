@@ -2,79 +2,66 @@
 
 Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.
 
-This is the course and lab template for the UofT ASIC Team (`uoftasic`). The published site lives under `./docs`, and runnable labs, scripts, notebooks and data stay outside it, in the repo root. Quarto builds the site from the Markdown in `docs/` (configured in `docs/_quarto.yml`), with MathJax for the math and a PDF of every page, and `.github/workflows/site.yml` deploys it to GitHub Pages.
+Part of the UofT ASIC Team education materials (`uoftasic`).
+Course site: <https://uoftasic.com/pb101/> · Education hub: <https://edu.uoftasic.com/>
 
-Org: [github.com/uoftasic](https://github.com/uoftasic)
-
-## Live docs
-
-- This template: https://uoftasic.com/course-template/
-- Education hub: https://edu.uoftasic.com/
-- A course made from this template, once Pages is enabled: https://uoftasic.com/pb101/
-
-## Use this template
-
-1. On [uoftasic/course-template](https://github.com/uoftasic/course-template), click **Use this template** and create a repo named after the course id (for example `dd103` or `serdes-lab`).
-2. Clone it and fill in the course fields:
-
-```bash
-python3 scripts/init-template.py \
-  --id pb101 \
-  --title "PB101 — PCB Design with KiCad" \
-  --description "Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip."
-```
-
-3. Set **Settings → Pages → Source** to **GitHub Actions**.
-
-[TEMPLATE.md](TEMPLATE.md) has the checklist. The org is always `uoftasic`; only the course id, title and description are filled in.
-
-The sample pages already follow the course structure: a course path table on the home page, guide pages for reading, and lab writeups for doing. [AGENTS.md](AGENTS.md) explains it.
+Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/pb101/guide/getting-started.html) says what to install). Every check, and every count or message a lab page shows, comes from `kicad-cli` in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt). The course doesn't use the workbench.
 
 ## Quick start
 
+You need Docker, git and Python 3. From a clone of this repo:
+
 ```bash
-git clone https://github.com/uoftasic/pb101.git
-cd pb101
-
-# Docs (requires Quarto 1.11)
-quarto preview docs
-# → http://localhost:4200
-quarto render docs --profile pdf --to typst
-# → the whole course as one PDF in docs/_book/
-
-# Sample script
-python3 scripts/hello.py
-
-# Sample lab
-python3 labs/lab-01/src/main.py
+python3 labs/common/fetch_boards.py          # Tiny Tapeout's boards, at pinned commits, into labs/common/upstream/
+labs/common/kicad.sh python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
 ```
 
-Courses that need IIC-OSIC-TOOLS or SKY130 run in the shared [workspace](https://github.com/uoftasic/workspace) that students set up in IC101. Document those setup steps in the course instead of bundling Docker in every repo.
+The second command ends with `FAIL  erc.error: 10 (want 0)`, because Tiny Tapeout's SKY130 breakout has 10 ERC errors in KiCad 10.0.8. [`labs/common/README.md`](labs/common/README.md) explains the output, the checker's rules, and how a lab uses them.
 
-## Layout
+## Lab packages
+
+| Path | What it is | Writeup |
+|---|---|---|
+| `labs/lab-01-open-a-board-you-didnt-design/` | being written | Lab 01 |
+| `labs/lab-02-a-footprint-from-a-datasheet/` | being written | Lab 02 |
+| `labs/lab-03-a-pmod-for-one-projects-pins/` | being written | Lab 03 |
+| `labs/lab-04-protect-and-plan/` | being written | Lab 04 |
+| `labs/lab-05-fab-outputs-in-ci/` | being written | Lab 05 |
+| `labs/lab-06-review-a-seeded-board/` | being written | Lab 06 |
+| `labs/capstone-a-board-for-a-team-chip/` | being written | Capstone |
+| `labs/common/` | the pinned-KiCad wrapper, the board checker, and the script that fetches Tiny Tapeout's boards | used by every lab |
+
+Reference solutions go in each package's `solutions/` folder. `.github/workflows/labs.yml` runs the board checker on every KiCad project there, in the pinned image, on every change to `labs/**` and once a week.
+
+## Screenshots and figures
+
+[`scripts/screenshots/kicad/`](scripts/screenshots/kicad/README.md) takes GUI screenshots of KiCad's editors under Xvfb in the pinned image, and makes 3D renders and SVG plots with `kicad-cli`. Images for the site go in `docs/assets/img/`.
+
+## Docs
+
+The course site is built with Quarto from `./docs`. `docs/_quarto.yml` holds the site, sidebar and navbar, and `docs/_quarto-pdf.yml` builds the whole course as one PDF. To preview it you need [Quarto](https://quarto.org/docs/get-started/) 1.11:
+
+```bash
+quarto preview docs                            # -> http://localhost:4200
+quarto render docs --profile pdf --to typst    # whole course as one PDF in docs/_book/
+```
 
 | Path | On Pages? | Purpose |
 |------|-----------|---------|
-| `docs/` | Yes | The Quarto site students read (`docs/_quarto.yml`) |
-| `docs/guide/` | Yes | Guide pages: reading only |
-| `docs/labs/` | Yes | Lab writeups: the steps students follow |
-| `labs/` | No | Runnable packages (HDL, Python, data, graders) |
-| `scripts/` | No | Team utilities and automation |
-| `notebooks/` | No | Exploratory and assignment notebooks |
-| `data/`, `figures/` | No | Shared datasets and source figures |
+| `docs/` | Yes | The course site; `docs/index.md` is the home page and has the Course path |
+| `docs/guide/` | Yes | Guide pages: reading only, no commands |
+| `docs/labs/` | Yes | Lab writeups: every command a student runs, in numbered parts and steps |
+| `labs/` | No | Lab packages, and the shared checks in `labs/common/` |
+| `scripts/` | No | `check_site.py` (the link check for the rendered site) and the KiCad screenshot tools |
 
-## GitHub Pages
+GitHub Pages is set to Source: GitHub Actions. `.github/workflows/site.yml` renders the site and the course PDF, checks the rendered site's links and anchors with `scripts/check_site.py`, and deploys `docs/_site`.
 
-| Setting | Value |
-|---------|--------|
-| Source | GitHub Actions |
-
-`.github/workflows/site.yml` renders `docs/` with Quarto whenever a push to `main` changes `docs/`, `scripts/check_site.py` or the workflow itself, and deploys `docs/_site`, which includes a PDF of every page and the whole-course PDF.
+This repo was created from [uoftasic/course-template](https://github.com/uoftasic/course-template). `TEMPLATE.md` and `scripts/init-template.py` are that template's bootstrap files and aren't part of the course.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md).
 
 ## License
 
-[MIT](LICENSE). Copyright UofT ASIC Team / `uoftasic`.
+[MIT](LICENSE). Copyright UofT ASIC Team / `uoftasic`. Tiny Tapeout's boards and libraries are fetched from their own repositories and keep their own licences, which [`labs/common/upstream.json`](labs/common/upstream.json) records.

@@ -13,10 +13,46 @@ book:
   output-file: "pb101-course"
   chapters:
     - index.md
-    - part: "Course path"
+    - part: "1. Reading a board"
       chapters:
         - guide/getting-started.md
-        - labs/lab-01-overview.md
+        - guide/what-a-board-does-for-a-chip.md
+        - guide/tiny-tapeouts-boards-part-by-part.md
+        - labs/lab-01-open-a-board-you-didnt-design-overview.md
+    - part: "2. Parts and packages"
+      chapters:
+        - guide/schematics-other-people-can-read.md
+        - guide/symbols-footprints-and-libraries.md
+        - guide/from-die-to-package.md
+        - labs/lab-02-a-footprint-from-a-datasheet-overview.md
+    - part: "3. A board of your own"
+      chapters:
+        - guide/layers-and-fabricator-rules.md
+        - guide/placement-and-routing.md
+        - guide/pins-pmods-and-planning-a-pinout.md
+        - guide/parts-you-can-solder-by-hand.md
+        - labs/lab-03-a-pmod-for-one-projects-pins-overview.md
+    - part: "4. Protection and bring-up"
+      chapters:
+        - guide/protecting-the-chips-io.md
+        - guide/supplies-back-powering-and-esd.md
+        - guide/measuring-current.md
+        - guide/bringing-up-a-chip.md
+        - labs/lab-04-protect-and-plan-overview.md
+    - part: "5. Outputs and CI"
+      chapters:
+        - guide/fabrication-outputs.md
+        - guide/outputs-in-ci.md
+        - guide/kicad-files-in-git.md
+        - labs/lab-05-fab-outputs-in-ci-overview.md
+    - part: "6. Review and ordering"
+      chapters:
+        - guide/reviewing-and-ordering-a-board.md
+        - labs/lab-06-review-a-seeded-board-overview.md
+    - part: "7. Capstone"
+      chapters:
+        - guide/boards-for-chips.md
+        - labs/capstone-a-board-for-a-team-chip-overview.md
 
 format:
   typst:

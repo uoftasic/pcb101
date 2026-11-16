@@ -30,7 +30,7 @@ Three files wire up the site. `docs/_quarto.yml` holds the site settings, sideba
 
 ## Course structure
 
-Every course follows the same shape, so a student always knows whether they should be reading or doing, and what comes next. The sample pages show it: `docs/index.md`, `docs/guide/getting-started.md` and `docs/labs/lab-01-overview.md`.
+Every course follows the same shape, so a student always knows whether they should be reading or doing, and what comes next. The sample pages in [course-template](https://github.com/uoftasic/course-template) show it: `docs/index.md`, `docs/guide/getting-started.md` and `docs/labs/lab-01-overview.md`. PB101 removed its copy of the sample lab.
 
 ### Home page
 
@@ -170,4 +170,16 @@ The link check in `.github/workflows/docs-link-check.yml` reads the Markdown wit
 
 - Repo conventions: `CONTRIBUTING.md`
 - Bootstrap tokens and Pages checklist: `TEMPLATE.md`
-- Sample lab: `labs/lab-01/` and `docs/labs/lab-01-overview.md`
+- Sample lab: `labs/lab-01/` and `docs/labs/lab-01-overview.md` in [course-template](https://github.com/uoftasic/course-template)
+- PB101's KiCad tooling: the section below, `labs/common/README.md` and `scripts/screenshots/kicad/README.md`
+
+## PB101 specifics
+
+PB101 departs from the template in a few places. Where this section and the rest of the file disagree, this section wins for this repo.
+
+- **No workbench.** Students install KiCad 10.0 natively ([Getting started](docs/guide/getting-started.md)). Lab 01 Part 1 installs KiCad and checks its version instead of "Load the course".
+- **The pinned image.** Every check and every expected output on a page comes from `kicad-cli` in `kicad/kicad:10.0.8`, by the digest in `labs/common/kicad-image.txt`, run through `labs/common/kicad.sh` (as your uid, with the image's default library tables). Warning counts depend on the library tables, so quote them only for that environment; error counts were the same in every setup we tried.
+- **The board check.** `labs/common/check_board.py` prints ERC, DRC, unconnected and parity counts and PASS or FAIL. It fails on any parity item, warnings included, because in every project we checked KiCad reported a missing footprint as a warning. A lab's "You're done when" runs it on the student's own files.
+- **Reference solutions** go in `labs/<lab-id>/solutions/`. CI (`.github/workflows/labs.yml`) checks every `.kicad_pro` under them. A board that is meant to have errors carries a `check-expect.json` next to its `.kicad_pro` (format in `check_board.py`'s docstring).
+- **Upstream boards.** Tiny Tapeout's boards are fetched at pinned commits by `labs/common/fetch_boards.py` into `labs/common/upstream/` (gitignored), never copied into the repo. To add one, add it to `labs/common/upstream.json` with its commit and licence.
+- **Images.** GUI screenshots come from `scripts/screenshots/kicad/shot.sh` (KiCad under Xvfb in the pinned image), and 3D renders and plots from `scripts/screenshots/kicad/render.sh`. Use a render or plot wherever it shows what the step needs, and a GUI screenshot where the student has to find something in the editor.
