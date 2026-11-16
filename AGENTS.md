@@ -62,7 +62,7 @@ The sidebar in `docs/_quarto.yml` and the chapter list in `docs/_quarto-pdf.yml`
 2. Before you start: which guide pages to read first, and any setup.
 3. A time estimate. Leave optional parts out of it, or give their time separately ("about 2 h, plus 20 min for the optional part").
 4. Numbered parts, each with numbered steps. Open each part with the one question it answers, and end it with a concrete "You should see …" check. A setup part, such as the sample lab's Part 1, can skip the question.
-5. Optional parts, if any, after all the required parts, with "(optional)" in the header. If a required part depends on an optional one, the optional part isn't optional: fix one or the other.
+5. Optional parts, if any, after all the required parts, with "(optional)" in the header. If a required part depends on an optional one, the optional part is really required: make it required, or change the required part so it no longer depends on it.
 6. Finishing, with these three things in this order:
    1. You're done when: one checkable line tied to the student's own work, such as `make` printing PASS on the deck they edited. A PASS from the shipped package doesn't count, because it passes before the student has done anything.
    2. Questions, if there are any. Ask only what the student can answer from their own work, and give each one a collapsed answer or a pointer to the step that answers it.
@@ -175,11 +175,12 @@ The link check in `.github/workflows/docs-link-check.yml` reads the Markdown wit
 
 ## PB101 specifics
 
-PB101 departs from the template in a few places. Where this section and the rest of the file disagree, this section wins for this repo.
+PB101 teaches PCB design in KiCad rather than an IC flow, so it departs from the template in a few places. Where this section and the rest of the file disagree, this section wins for this repo.
 
-- **No workbench.** Students install KiCad 10.0 natively ([Getting started](docs/guide/getting-started.md)). Lab 01 Part 1 installs KiCad and checks its version instead of "Load the course".
-- **The pinned image.** Every check and every expected output on a page comes from `kicad-cli` in `kicad/kicad:10.0.8`, by the digest in `labs/common/kicad-image.txt`, run through `labs/common/kicad.sh` (as your uid, with the image's default library tables). Warning counts depend on the library tables, so quote them only for that environment; error counts were the same in every setup we tried.
-- **The board check.** `labs/common/check_board.py` prints ERC, DRC, unconnected and parity counts and PASS or FAIL. It fails on any parity item, warnings included, because in every project we checked KiCad reported a missing footprint as a warning. A lab's "You're done when" runs it on the student's own files.
-- **Reference solutions** go in `labs/<lab-id>/solutions/`. CI (`.github/workflows/labs.yml`) checks every `.kicad_pro` under them. A board that is meant to have errors carries a `check-expect.json` next to its `.kicad_pro` (format in `check_board.py`'s docstring).
-- **Upstream boards.** Tiny Tapeout's boards are fetched at pinned commits by `labs/common/fetch_boards.py` into `labs/common/upstream/` (gitignored), never copied into the repo. To add one, add it to `labs/common/upstream.json` with its commit and licence.
-- **Images.** GUI screenshots come from `scripts/screenshots/kicad/shot.sh` (KiCad under Xvfb in the pinned image), and 3D renders and plots from `scripts/screenshots/kicad/render.sh`. Use a render or plot wherever it shows what the step needs, and a GUI screenshot where the student has to find something in the editor.
+- No workbench: students install KiCad 10.0 natively ([Getting started](docs/guide/getting-started.md)). Lab 01 Part 1 installs KiCad and checks its version instead of "Load the course".
+- The pinned image: every check and every expected output on a page comes from `kicad-cli` in `kicad/kicad:10.0.8`, by the digest in `labs/common/kicad-image.txt`, run through `labs/common/kicad.sh` (as your uid, with the image's default library tables). Warning counts depend on the library tables, so quote them only for that environment; error counts were the same in every setup we tried.
+- The board check: `labs/common/check_board.py` prints ERC, DRC, unconnected and parity counts and PASS or FAIL. It fails on any parity item, warnings included, because in every project we checked KiCad reported a missing footprint as a warning. A lab's "You're done when" runs it on the student's own files.
+- Reference solutions go in `labs/<lab-id>/solutions/`. CI (`.github/workflows/labs.yml`) checks every `.kicad_pro` under them. A board that is meant to have errors carries a `check-expect.json` next to its `.kicad_pro` (format in `check_board.py`'s docstring).
+- Upstream boards: Tiny Tapeout's boards are fetched at pinned commits by `labs/common/fetch_boards.py` into `labs/common/upstream/` (gitignored), never copied into the repo. To add one, add it to `labs/common/upstream.json` with its commit and licence.
+- Images: GUI screenshots come from `scripts/screenshots/kicad/shot.sh` (KiCad under Xvfb in the pinned image), and 3D renders and plots from `scripts/screenshots/kicad/render.sh`. Use a render or plot wherever it shows what the step needs, and a GUI screenshot where the student has to find something in the editor.
+- Empty folders: `data/`, `figures/` and `notebooks/` hold only their READMEs. Each lab's inputs are in `labs/<lab-id>/data/`, and every figure is made by a script in `scripts/figures/` or `scripts/screenshots/kicad/` straight into `docs/assets/img/`.

@@ -12,13 +12,13 @@ Thanks for improving the UofT ASIC Team's course materials.
 
 ## Placeholders
 
-Only these three are filled in:
+`scripts/init-template.py` fills in three values and nothing else. In PB101 they're already set:
 
-| Token | Example |
-|-------|---------|
-| `pb101` | `dd103` |
-| `PB101 — PCB Design with KiCad` | `DD103 — RTL on FPGAs & ASICs` |
-| `Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.` | `RTL synthesis intro with Yosys` |
+| Value | PB101 | Example |
+|-------|-------|---------|
+| Course id | `pb101` | `dd103` |
+| Title | `PB101 — PCB Design with KiCad` | `DD103 — RTL on FPGAs & ASICs` |
+| Description | `Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.` | `RTL synthesis intro with Yosys` |
 
 ## Conventions
 

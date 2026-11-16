@@ -9,11 +9,11 @@ To start a course or lab-notes repo: create it from this template under `uoftasi
 | GitHub org | `uoftasic` (hardcoded, don't change it) |
 | Team | UofT ASIC Team |
 
-| Token | Meaning | Example |
-|-------|---------|---------|
-| `pb101` | Repo slug and course id | `dd103`, `ic101`, `serdes-lab` |
-| `PB101 — PCB Design with KiCad` | Display name | `DD103 — RTL on FPGAs & ASICs` |
-| `Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.` | One-line blurb | `RTL synthesis intro with Yosys` |
+| Fillable value | PB101 | Example |
+|----------------|-------|---------|
+| Repo slug and course id | `pb101` | `dd103`, `ic101`, `serdes-lab` |
+| Display name | `PB101 — PCB Design with KiCad` | `DD103 — RTL on FPGAs & ASICs` |
+| One-line blurb | `Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.` | `RTL synthesis intro with Yosys` |
 
 ## Init script
 

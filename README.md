@@ -5,7 +5,7 @@ Design the boards a chip sits on: schematics, footprints from datasheets, layout
 Part of the UofT ASIC Team education materials (`uoftasic`).
 Course site: <https://uoftasic.com/pb101/> · Education hub: <https://edu.uoftasic.com/>
 
-Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/pb101/guide/getting-started.html) says what to install). Every check, and every count or message a lab page shows, comes from `kicad-cli` in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt). The course doesn't use the workbench.
+Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/pb101/guide/getting-started.html) says what to install). Every check, and every count or message a lab page shows, comes from `kicad-cli` in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt). Unlike the analog and digital courses, PB101 doesn't use the workbench that students set up in IC101.
 
 ## Quick start
 

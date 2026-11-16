@@ -21,7 +21,7 @@ Two runs gave byte-identical PNGs, so a changed screenshot means KiCad or the bo
 
 `shot.sh` builds the image `pb101/kicad-shot:10.0.8` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 30 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends, or after 10 minutes where GNU `timeout` is installed. Only the output folder is written.
 
-Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background, and with the Footprint Editor open, `ps` reported 2.2 GB resident for KiCad under a 2 GB limit (the run completed) and 2.4 GB under a 4 GB limit. We ran the shots with `PB101_DOCKER_ARGS="--cpus 1 --memory 2g"`.
+Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background. With the Footprint Editor open, `ps` reported 2.2 GB resident for KiCad under a 2 GB limit (the run completed) and 2.4 GB under a 4 GB limit. We ran the shots with `PB101_DOCKER_ARGS="--cpus 1 --memory 2g"`.
 
 ### The first-run wizard
 
@@ -83,7 +83,7 @@ $R fp  /usr/share/kicad/footprints/Package_DFN_QFN.pretty QFN-64-1EP_9x9mm_P0.5m
 $R sym $B/../tinytapeout-kicad-libs/symbols/TinyTapeout.kicad_sym Openframe_QFN_TT06_REV2 docs/assets/img
 ```
 
-`kicad-cli`'s SVG plots are transparent, and their colours were chosen for the background of the editor they come from, so on a page in the other colour mode they can be hard to read: the footprint's yellow silkscreen (`#F2EDA1`) has a contrast of 1.21:1 on the site's white page, and the symbol's dark red pins (`#840000`) 1.50:1 on its dark one. `--bg COLOR`, before the mode, puts an opaque rectangle of that colour behind a plot. Lab 02's two plots use the background their editors have, white for the symbol and `#001023` for the footprint (sampled from the PCB Editor and Footprint Editor screenshots), and were made from its reference solution, then copied to `docs/assets/img/lab02-rhl0024a-footprint.svg` and `lab02-sn74lvc8t245rhl-symbol.svg`:
+`kicad-cli`'s SVG plots are transparent, and their colours were chosen for the background of the editor they come from, so on a page in the other colour mode they can be hard to read: the footprint's yellow silkscreen (`#F2EDA1`) has a contrast of 1.21:1 on the site's white page, and the symbol's dark red pins (`#840000`) 1.50:1 on its dark one. `--bg COLOR`, before the mode, puts an opaque rectangle of that colour behind a plot. Lab 02's two plots use the backgrounds their editors have: white for the symbol, and `#001023` for the footprint (sampled from the PCB Editor and Footprint Editor screenshots). They were made from Lab 02's reference solution with these commands, then copied to `docs/assets/img/lab02-rhl0024a-footprint.svg` and `lab02-sn74lvc8t245rhl-symbol.svg`:
 
 ```bash
 L=labs/lab-02-a-footprint-from-a-datasheet/solutions
