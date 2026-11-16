@@ -19,13 +19,13 @@ Keep each kind of file in the folder listed for it.
 | `docs/index.md` | Yes | Home page with the course path table |
 | `docs/guide/` | Yes | Guide pages: concepts, figures, worked examples. Reading only. |
 | `docs/labs/` | Yes | Lab writeups only (`lab-NN-*-overview.md`, and the capstone's `capstone-*-overview.md`) |
-| `docs/reference/` | Yes | Optional lookup pages: cheat sheets, troubleshooting tables. PB101 has none yet. |
+| `docs/reference/` | Yes | Optional lookup pages: cheat sheets, troubleshooting tables. PB101 has none. |
 | `docs/assets/img/` | Yes | Figures for the site: diagrams, plots, KiCad renders and screenshots, each made by a script |
 | `labs/<lab-id>/` | No | A lab's package: its checks and generators in `src/` (Python), inputs in `data/`, reference solutions in `solutions/`, local outputs in `results/`, and the templates, KiCad projects and `check.sh` a student uses |
 | `labs/common/` | No | What every lab uses: `kicad.sh` and the pinned image, the board, Pmod and bring-up plan checks, and `fetch_boards.py`, which fetches Tiny Tapeout's boards into `labs/common/upstream/` |
 | `scripts/` | No | `check_site.py`, the KiCad screenshot and render tools in `screenshots/kicad/`, and the scripts in `figures/` that draw the site's figures |
 | `notebooks/` | No | Exploratory or assignment notebooks. PB101 has none. |
-| `data/`, `figures/` | No | Shared datasets and source figures. PB101 keeps none: each lab's inputs are in its own `data/`, and every figure is drawn by a script. |
+| `data/`, `figures/` | No | Shared datasets and source figures. PB101 keeps none: each lab's inputs are in its own `data/`, and every figure is made by a script. |
 
 Three files wire up the site. `docs/_quarto.yml` holds the site settings, sidebar, navbar and per-page PDFs; `docs/_quarto-pdf.yml` builds the whole course as one PDF; and `docs/_filters/course.lua` turns `<details>` answers into collapsed callouts (in PDFs it moves them to an Answers section at the end of each page). Write math as `$inline$` or `$$display$$`. In a repo made from the template, `scripts/init-template.py` fills in the `{{...}}` tokens for the course id, title and description; PB101's are already filled in, and no tokens are left (see `TEMPLATE.md`).
 
