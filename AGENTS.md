@@ -1,12 +1,12 @@
 # Agent guide: UofT ASIC course repos
 
-This is a course repository for the UofT ASIC Team (`uoftasic`). It holds teaching material for IC, RTL, FPGA and open-source ASIC flows. The site under `docs/` is built with Quarto and published on GitHub Pages by `.github/workflows/site.yml`. Everything students run lives outside `docs/`.
+This is PB101, PCB Design with KiCad, a course repository for the UofT ASIC Team (`uoftasic`). It teaches students to design the boards a chip sits on, in KiCad 10: schematics, footprints from datasheets, layout, protection, fabrication outputs in CI, review, and a bring-up board for a team chip. The site under `docs/` is built with Quarto and published on GitHub Pages by `.github/workflows/site.yml`. Everything students run lives outside `docs/`, in the lab packages under `labs/`.
 
 Write for a student working through the course, not for whoever maintains the template. Concrete labs and pages a student can follow from start to finish are worth more than meta documentation.
 
 ## Goals
 
-- Teach IC development skills: RTL (SystemVerilog/Verilog), simulation, synthesis, FPGA bring-up and open ASIC flows (for example Yosys, LibreLane, SKY130), as the course needs them.
+- Teach PCB design for the boards that carry a chip, in KiCad 10, with Tiny Tapeout's boards as the worked examples.
 - Keep reading and doing apart. Guide pages explain; lab writeups are the only pages that ask the student to run anything; `labs/`, `scripts/` and `notebooks/` hold what they run.
 - Never publish grades, solution keys or PII under `docs/`. Put keys in `labs/**/solutions/` and gitignore them on student forks when policy requires.
 
@@ -18,15 +18,16 @@ Keep each kind of file in the folder listed for it.
 |------|------------|----------|
 | `docs/index.md` | Yes | Home page with the course path table |
 | `docs/guide/` | Yes | Guide pages: concepts, figures, worked examples. Reading only. |
-| `docs/labs/` | Yes | Lab writeups only (`lab-NN-*-overview.md`) |
-| `docs/reference/` | Yes | Optional lookup pages: cheat sheets, troubleshooting tables |
-| `docs/assets/img/` | Yes | Small diagrams and waveforms for the site |
-| `labs/<lab-id>/` | No | HDL, Python, testbenches, local data, graders |
-| `scripts/` | No | Course utilities and automation |
-| `notebooks/` | No | Exploratory or assignment notebooks |
-| `data/`, `figures/` | No | Shared datasets and source figures |
+| `docs/labs/` | Yes | Lab writeups only (`lab-NN-*-overview.md`, and the capstone's `capstone-*-overview.md`) |
+| `docs/reference/` | Yes | Optional lookup pages: cheat sheets, troubleshooting tables. PB101 has none yet. |
+| `docs/assets/img/` | Yes | Figures for the site: diagrams, plots, KiCad renders and screenshots, each made by a script |
+| `labs/<lab-id>/` | No | A lab's package: its checks and generators in `src/` (Python), inputs in `data/`, reference solutions in `solutions/`, local outputs in `results/`, and the templates, KiCad projects and `check.sh` a student uses |
+| `labs/common/` | No | What every lab uses: `kicad.sh` and the pinned image, the board, Pmod and bring-up plan checks, and `fetch_boards.py`, which fetches Tiny Tapeout's boards into `labs/common/upstream/` |
+| `scripts/` | No | `check_site.py`, the KiCad screenshot and render tools in `screenshots/kicad/`, and the scripts in `figures/` that draw the site's figures |
+| `notebooks/` | No | Exploratory or assignment notebooks. PB101 has none. |
+| `data/`, `figures/` | No | Shared datasets and source figures. PB101 keeps none: each lab's inputs are in its own `data/`, and every figure is drawn by a script. |
 
-Three files wire up the site. `docs/_quarto.yml` holds the site settings, sidebar, navbar and per-page PDFs; `docs/_quarto-pdf.yml` builds the whole course as one PDF; and `docs/_filters/course.lua` turns `<details>` answers into collapsed callouts (in PDFs it moves them to an Answers section at the end of each page). Write math as `$inline$` or `$$display$$`. The `{{...}}` tokens in the sample pages (course id, title and description) are filled in by `scripts/init-template.py`; see `TEMPLATE.md`.
+Three files wire up the site. `docs/_quarto.yml` holds the site settings, sidebar, navbar and per-page PDFs; `docs/_quarto-pdf.yml` builds the whole course as one PDF; and `docs/_filters/course.lua` turns `<details>` answers into collapsed callouts (in PDFs it moves them to an Answers section at the end of each page). Write math as `$inline$` or `$$display$$`. In a repo made from the template, `scripts/init-template.py` fills in the `{{...}}` tokens for the course id, title and description; PB101's are already filled in, and no tokens are left (see `TEMPLATE.md`).
 
 ## Course structure
 
