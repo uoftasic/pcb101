@@ -456,7 +456,7 @@ PLACE4 = dict(PLACE3, **{
 SIG, PWR = 0.25, 0.4
 
 
-def routes(lab):
+def routes(lab, swapped=False):
     """[(layer, width, [points])]. Nets come from the pads the tracks start or end on."""
     r = []
     # +3V3: pins 12 joined along the top edge, each pin 6 to its pin 12.
@@ -472,7 +472,12 @@ def routes(lab):
         r.append(("B.Cu", SIG, [(x, PMOD_Y), (x, y), (x + 8.89, y), (x + 8.89, 62.5)]))
         r.append(("F.Cu", SIG, [(x + 8.89, 62.5), (x + 8.89, 67.0)]))
     sw_low = [(146.45 - 2.54 * k, 74.62) for k in range(7, -1, -1)]      # SW1 pins 9 .. 16
-    if lab == "03":
+    if lab == "03" and swapped:
+        # The header's pins 2 and 3 swapped in the schematic, and routed to match.
+        r.append(("F.Cu", PWR, [(124.86, PMOD_Y), (124.86, 74.62)] + sw_low))
+        r.append(("F.Cu", SIG, [(114.70, PMOD_Y), (114.70, 71.08), (110.0, 71.08)]))
+        r.append(("F.Cu", SIG, [(160.42, PMOD_Y), (160.42, 79.0), (107.0, 79.0), (107.0, 68.54), (110.0, 68.54)]))
+    elif lab == "03":
         r.append(("F.Cu", PWR, [(124.86, PMOD_Y), (124.86, 74.62)] + sw_low))
         r.append(("F.Cu", SIG, [(114.70, PMOD_Y), (114.70, 68.54), (110.0, 68.54)]))
         r.append(("F.Cu", SIG, [(160.42, PMOD_Y), (160.42, 79.0), (110.0, 79.0), (110.0, 71.08)]))
@@ -533,7 +538,7 @@ def set_field(fp, name, value):
     f.SetText(value)
 
 
-def build_board(pcb_path, comps, pad_net, place, lab, route, zones):
+def build_board(pcb_path, comps, pad_net, place, lab, route, zones, swapped=False):
     import pcbnew
     board = pcbnew.LoadBoard(pcb_path)
     nets = {}
@@ -592,7 +597,7 @@ def build_board(pcb_path, comps, pad_net, place, lab, route, zones):
         return p.GetNet() if p is not None else None
 
     if route:
-        for layer, width, points in routes(lab):
+        for layer, width, points in routes(lab, swapped):
             ni = net_at(points[0]) or net_at(points[-1])
             if ni is None:
                 for q in points:
@@ -644,7 +649,7 @@ def build_board(pcb_path, comps, pad_net, place, lab, route, zones):
         board.BuildConnectivity()
         pcbnew.ZONE_FILLER(board).Fill(board.Zones())
 
-    if place:
+    if route:
         for text, x, y in SILK:
             t = pcbnew.PCB_TEXT(board)
             t.SetText(text)
@@ -802,7 +807,8 @@ def main():
     elif args.stage == "connectors":
         place = {k: v for k, v in place.items() if k in ("J1", "J2", "J3")}
     routed = args.stage in ("routed", "swapped", "protected")
-    build_board(os.path.join(out, NAME + ".kicad_pcb"), comps, pad_net, place, lab, routed, routed)
+    build_board(os.path.join(out, NAME + ".kicad_pcb"), comps, pad_net, place, lab, routed, routed,
+                swapped=args.stage == "swapped")
     for f in (NAME + ".kicad_prl",):
         if os.path.exists(os.path.join(out, f)):
             os.remove(os.path.join(out, f))
