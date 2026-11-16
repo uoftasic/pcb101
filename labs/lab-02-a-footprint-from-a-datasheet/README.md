@@ -14,7 +14,8 @@ labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/check_
 ```
 
 It takes about 20 s once your footprint and symbol exist, and ends with `PASS` or `FAIL`.
-On the folder as shipped it prints `FAIL  4 of 4 parts of the check disagree`.
+On the folder as shipped it prints
+`FAIL  4 of 4 parts have a MISMATCH: pads.md, Footprint, Symbol and Fit`.
 
 ## Files
 

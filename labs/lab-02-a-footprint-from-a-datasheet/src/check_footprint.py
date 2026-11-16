@@ -363,7 +363,9 @@ def check_symbol(path, rows):
             if etype not in ("power_in", "passive"):
                 msgs.append(f"pin {n} ({spec['name']}) is {etype}; make it power_in, or passive if it's stacked")
         elif etype not in TYPE_OK[kind]:
-            msgs.append(f"pin {n} ({spec['name']}) is {etype}")
+            others = sorted(TYPE_OK[kind] - {spec["type"]})
+            msgs.append(f"pin {n} ({spec['name']}) is {etype}; make it {spec['type']}"
+                        + (f" (or {either(others)})" if others else ""))
     for g, types in groups.items():
         if "power_in" not in types:
             msgs.append(f"none of the {g} pins is power_in, so ERC won't know it's a supply")
@@ -385,6 +387,16 @@ def check_symbol(path, rows):
     for c in re.finditer(r'\(property\s+"(Value|Datasheet|Description)"\s+"((?:[^"\\]|\\.)*)"', sym):
         vals.setdefault(c.group(1), c.group(2))
     return vals
+
+
+def either(items):
+    """'A', 'A or B', 'A, B or C'."""
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " or " + items[-1]
+
+
+def both(items):
+    """'A', 'A and B', 'A, B and C'."""
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
 
 
 # --- main ---------------------------------------------------------------------------------
@@ -483,7 +495,9 @@ def main():
     bad = sum(1 for ok, label, _ in rows if not ok and label)
     print()
     if bad:
-        print(f"FAIL  {bad} of {sum(1 for _, label, _ in rows if label)} parts of the check disagree")
+        failing = [label for ok, label, _ in rows if not ok and label]
+        print(f"FAIL  {bad} of {sum(1 for _, label, _ in rows if label)} parts "
+              f"{'has' if bad == 1 else 'have'} a MISMATCH: {both(failing)}")
         return 1
     print(f"PASS  {shown(d)}")
     return 0

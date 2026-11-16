@@ -78,7 +78,7 @@ How big should each pad be, and where does it go?
      MISMATCH  Symbol     no symbol called SN74LVC8T245RHL in labs/lab-02-a-footprint-from-a-datasheet/pb101.kicad_sym
      MISMATCH  Fit        needs both the footprint and the symbol
 
-   FAIL  3 of 4 parts of the check disagree
+   FAIL  3 of 4 parts have a MISMATCH: Footprint, Symbol and Fit
    ```
 
    If a row says a number is more than 0.02 mm from the course's value, recheck that one. Compare your pad length with your prediction.
