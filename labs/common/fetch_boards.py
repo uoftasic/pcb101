@@ -46,7 +46,9 @@ def local_changes(repo):
     """Tracked files that differ from the checked-out commit (untracked files don't count:
     KiCad writes backups, .kicad_prl and fp-info-cache next to a board you open)."""
     out = git(repo, "status", "--porcelain", "--untracked-files=no")
-    return [line[3:] for line in out.splitlines() if line.strip()]
+    # Each line is "XY path". git() strips the output, which takes the leading space off
+    # the first line's status, so cut the two status characters and then the spaces.
+    return [line[2:].strip() for line in out.splitlines() if line.strip()]
 
 
 def fetch(src, root, force):

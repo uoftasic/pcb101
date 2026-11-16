@@ -30,6 +30,7 @@ That FAIL is correct. The breakout has 10 ERC errors in KiCad 10.0.8, and the ch
 | `image-entry.sh` | runs inside the image before the command, and gives your uid the image's default library tables |
 | `check_board.py` | the board check: ERC, DRC, unconnected items and schematic parity, with PASS or FAIL |
 | `check_solutions.py` | runs the board check on every lab's reference solution; CI runs this |
+| `kicad_sexpr.py` | a small reader for KiCad's S-expression files, which the lab checkers use instead of KiCad's `pcbnew` Python module |
 | `selftest_check.py`, `selftest/` | four boards with known verdicts, which show that the check checks |
 | `fetch_boards.py`, `upstream.json` | fetches Tiny Tapeout's boards and libraries at pinned commits |
 | `upstream/` | where the fetched boards go; gitignored |
