@@ -11,7 +11,7 @@ The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uof
 
 The check is bash, as in Labs 03 and 04, so on Windows run it in WSL. It runs git inside the course image as well as KiCad, and we have run it only on Linux.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates. What we measured is the check: with one CPU it took 55 s on our reference repository, and 91 s with `--planted`, because that builds a second commit.
+The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates. The only part we timed is the check, which with one CPU took 55 s on our reference repository, and 91 s with `--planted`, because that builds a second commit.
 
 ## Part 1: Add the workflow
 
@@ -48,7 +48,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
    <details>
    <summary>Answer</summary>
 
-   Green. A step fails only when its command exits with a status other than 0, and the TODOs are comments, so every stage of `build.sh` succeeds and the artifact has no drill file, BOM, position file, renders or copper plots in it. That's why the lab's check looks at the files the build made as well as at its exit status.
+   It would be green. A step fails only when its command exits with a status other than 0, and the TODOs are comments, so every stage of `build.sh` succeeds and the artifact has no drill file, BOM, position file, renders or copper plots in it. That's why the lab's check looks at the files the build made as well as at its exit status.
 
    </details>
 
@@ -98,7 +98,7 @@ Which files in your repository's folder belong in git, and which should git neve
 
 What do a fab, an assembler and a reviewer each need from your CI?
 
-1. Write the five commands the TODOs in `ci/build.sh` ask for. `kicad-cli` documents itself: run, for example,
+1. Write the five commands the TODOs in `ci/build.sh` ask for. Each `kicad-cli` command prints its own options with `--help`; for example, run
 
    ```bash
    ~/pb101/labs/common/kicad.sh kicad-cli pcb export drill --help
@@ -128,7 +128,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
    PASS  pmod: 8 of 8 Lab 05 checks ok; add --planted REV once you've done Part 5
    ```
 
-   The drill row compares every hole with the outline in the Edge.Cuts Gerber, so a drill file made in a different origin from the Gerbers fails it, the mistake [Fabrication outputs](../guide/fabrication-outputs.md) shows on the DIP dock.
+   The drill row compares every hole with the outline in the Edge.Cuts Gerber, so a drill file made in a different origin from the Gerbers fails it. That's the mistake [Fabrication outputs](../guide/fabrication-outputs.md) shows on the DIP dock.
 
 4. Our BOM has 12 rows and our position file only 10 parts. Open `out/assembly/` and find the two that are missing from the position file. Why would KiCad leave them out?
 
@@ -164,7 +164,7 @@ Do the files CI built describe your board?
    <details>
    <summary>Answer</summary>
 
-   The drill file's origin. The Gerbers and the drill file share nothing but their coordinates, so if the board's plot settings use the drill/place origin, the drill file needs `--drill-origin plot`, and if they don't, `absolute`. [Fabrication outputs](../guide/fabrication-outputs.md) shows the DIP dock with exactly this offset.
+   You'd change the drill file's origin. The Gerbers and the drill file share nothing but their coordinates, so if the board's plot settings use the drill/place origin, the drill file needs `--drill-origin plot`, and if they don't, `absolute`. [Fabrication outputs](../guide/fabrication-outputs.md) shows the DIP dock with exactly this offset.
 
    </details>
 
@@ -201,7 +201,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 
    and then six rows fail: `check` (`the board check fails: drc.error 2 (want 0); the fab and images stages didn't run`), and `gerbers`, `drill`, `bom`, `position` and `images`, because `build.sh` stops at the first stage that fails and the later stages never made their files.
 
-5. Commit the broken board with a message that says what you did, and push. On GitHub you should see a red run: the step "ERC, DRC and schematic parity" fails with the same board check output as above, "Fabrication files" and "Review images" are skipped, and the upload step still runs, so the artifact holds `reports/` and nothing else. That's what our local run of the workflow did: the check step exited 1, the next two were skipped, and the artifact had three files, `drc.json`, `erc.json` and `summary.json`.
+5. Commit the broken board with a message that says what you did, and push. On GitHub you should see a red run: the step "ERC, DRC and schematic parity" fails with the same board check output as above, "Fabrication files" and "Review images" are skipped, and the upload step still runs, so the artifact holds `reports/` and nothing else. Our local run of the workflow did the same: the check step exited 1, the next two were skipped, and the artifact had three files, `drc.json`, `erc.json` and `summary.json`.
 
 6. Fix the board: move the track back (or undo with Ctrl+Z before you close the editor), save, run the check until it passes, commit, and push. You should see a green run on GitHub, with the full artifact again.
 
@@ -224,7 +224,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   The renders and the copper plots in `review/`, compared with the ones from the commit before. A board file diff is text, but moving one part changes its position, the tracks you reroute and the zone fills around it, and the lines that record those are hard to read as a change. [KiCad files in git](../guide/kicad-files-in-git.md) shows a "minor" commit to Tiny Tapeout's demo board that changed 5,770 lines.
+   Look first at the renders and the copper plots in `review/`, and compare them with the ones from the commit before. A board file diff is text, but moving one part changes its position, the tracks you reroute and the zone fills around it, and the lines that record those are hard to read as a change. [KiCad files in git](../guide/kicad-files-in-git.md) shows a "minor" commit to Tiny Tapeout's demo board that changed 5,770 lines.
 
    </details>
 
