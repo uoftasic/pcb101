@@ -17,7 +17,7 @@
 #   capstone-brief-a-top.png      the capstone's Brief A reference board, top
 #
 # The two Lab 03 figures are the middle 1060 x 580 pixels of render.sh's 1568 x 984 render,
-# cut out by ImageMagick in pb101/kicad-shot (scripts/screenshots/kicad/build.sh builds it),
+# cut out by ImageMagick in ic103/kicad-shot (scripts/screenshots/kicad/build.sh builds it),
 # because the 64 x 32 mm board fills only the middle of the full render. The intermediate
 # files go in Lab 03's results/figures/ (gitignored).
 #
@@ -50,10 +50,10 @@ labs/common/kicad.sh python3 "$L3/src/make_reference.py" connectors "$T/connecto
 "$R" 3d "$T/connectors/pmod.kicad_pcb" "$T/pmod-connectors-top.png" top >/dev/null
 "$R" 3d "$L3/solutions/simproc-pmod/pmod.kicad_pcb" "$T/pmod-simproc-lab03-top.png" top >/dev/null
 base="$(head -n 1 labs/common/kicad-image.txt | tr -d '[:space:]')"
-shot_image="pb101/kicad-shot:$(echo "${base%@*}" | sed 's/.*://')"
+shot_image="ic103/kicad-shot:$(echo "${base%@*}" | sed 's/.*://')"
 docker image inspect "$shot_image" >/dev/null 2>&1 || scripts/screenshots/kicad/build.sh >/dev/null
 for f in pmod-connectors-top pmod-simproc-lab03-top; do
-    docker run --rm ${PB101_DOCKER_ARGS:-} --user "$(id -u):$(id -g)" -e HOME=/tmp/h \
+    docker run --rm ${IC103_DOCKER_ARGS:-} --user "$(id -u):$(id -g)" -e HOME=/tmp/h \
         -v "$root":/w -w /w --entrypoint convert "$shot_image" \
         "$T/$f.png" -crop 1060x580+254+202 +repage -strip "$I/$f.png"
 done

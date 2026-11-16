@@ -19,9 +19,9 @@ That writes three PNGs into `docs/assets/img/`, each 1600 × 1000, in about 80 s
 
 Two runs gave byte-identical PNGs, so a changed screenshot means KiCad or the board changed.
 
-`shot.sh` builds the image `pb101/kicad-shot:10.0.8` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 30 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends, or after 10 minutes where GNU `timeout` is installed. Only the output folder is written.
+`shot.sh` builds the image `ic103/kicad-shot:10.0.8` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 30 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends, or after 10 minutes where GNU `timeout` is installed. Only the output folder is written.
 
-Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background. With the Footprint Editor open, `ps` reported 2.2 GB resident for KiCad under a 2 GB limit (the run completed) and 2.4 GB under a 4 GB limit. We ran the shots with `PB101_DOCKER_ARGS="--cpus 1 --memory 2g"`.
+Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background. With the Footprint Editor open, `ps` reported 2.2 GB resident for KiCad under a 2 GB limit (the run completed) and 2.4 GB under a 4 GB limit. We ran the shots with `IC103_DOCKER_ARGS="--cpus 1 --memory 2g"`.
 
 ### The first-run wizard
 
@@ -106,6 +106,6 @@ The top-view render took 12 s. The header of [`render.sh`](render.sh) lists the 
 | `shot.sh` | runs one shot file in the screenshot image (host side) |
 | `rig.sh` | runs inside the container: settings, Xvfb, openbox, and the functions shot files use |
 | `shots/` | shot files, one per set of screenshots |
-| `build.sh`, `Dockerfile` | build `pb101/kicad-shot:<version>` from the pinned KiCad image |
+| `build.sh`, `Dockerfile` | build `ic103/kicad-shot:<version>` from the pinned KiCad image |
 | `openbox-rc.xml` | maximizes editor windows |
 | `render.sh` | `kicad-cli` renders and plots through `labs/common/kicad.sh` |

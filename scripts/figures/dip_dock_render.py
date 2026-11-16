@@ -1,7 +1,7 @@
 """Placement and routing: a 3D render of Tiny Tapeout's 2-layer DIP dock from above.
 
     python3 labs/common/fetch_boards.py
-    PB101_DOCKER_ARGS="--cpus 1 --memory 2g" python3 scripts/figures/dip_dock_render.py
+    IC103_DOCKER_ARGS="--cpus 1 --memory 2g" python3 scripts/figures/dip_dock_render.py
 
 Runs `kicad-cli pcb render` in the pinned image through scripts/screenshots/kicad/render.sh
 and writes docs/assets/img/ic103-dip-dock-top.png. The image has no 3D models of parts,

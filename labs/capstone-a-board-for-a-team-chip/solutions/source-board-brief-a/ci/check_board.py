@@ -131,7 +131,7 @@ def main():
               "which runs it in the course's pinned KiCad image.", file=sys.stderr)
         return 2
 
-    image = os.environ.get("PB101_KICAD_IMAGE", "")
+    image = os.environ.get("IC103_KICAD_IMAGE", "")
     want_version = pinned_version(pinned_image())
     seed_library_tables()
     _, version = run(["kicad-cli", "version"])

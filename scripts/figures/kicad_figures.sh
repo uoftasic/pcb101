@@ -10,18 +10,18 @@
 # through scripts/screenshots/kicad/render.sh. The 3D renders are written as they come.
 # The SVG plots go to labs/common/results/figures/ (gitignored), are cropped here where a
 # figure shows part of a sheet, and are turned into PNGs on a white background by
-# ImageMagick in pb101/kicad-shot (scripts/screenshots/kicad/build.sh builds it), so they
+# ImageMagick in ic103/kicad-shot (scripts/screenshots/kicad/build.sh builds it), so they
 # read the same in the light and dark site themes. The schematic goes through PDF and
 # needs pdftoppm (poppler-utils) on the host.
 #
-# Environment: PB101_DOCKER_ARGS as for labs/common/kicad.sh. We ran it with
-# PB101_DOCKER_ARGS="--cpus 1 --memory 2g"; the whole script takes about a minute.
+# Environment: IC103_DOCKER_ARGS as for labs/common/kicad.sh. We ran it with
+# IC103_DOCKER_ARGS="--cpus 1 --memory 2g"; the whole script takes about a minute.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root="$(cd "$here/../.." && pwd)"
 cd "$root"
-export PB101_QUIET=1
+export IC103_QUIET=1
 
 R=scripts/screenshots/kicad/render.sh
 U=labs/common/upstream
@@ -36,7 +36,7 @@ DEMO=$U/tt-demo-pcb
 mkdir -p "$TMP"
 
 base="$(head -n 1 labs/common/kicad-image.txt | tr -d '[:space:]')"
-shot_image="pb101/kicad-shot:$(echo "${base%@*}" | sed 's/.*://')"
+shot_image="ic103/kicad-shot:$(echo "${base%@*}" | sed 's/.*://')"
 docker image inspect "$shot_image" >/dev/null 2>&1 || scripts/screenshots/kicad/build.sh >/dev/null
 
 # crop SVG X Y W H: show only that rectangle of an SVG plot (in the plot's own units,
@@ -57,7 +57,7 @@ EOF
 # png IN.svg OUT.png DENSITY: rasterize on white, with a 2 % white border.
 png() {
     local in="$1" out="$2" density="$3"
-    docker run --rm ${PB101_DOCKER_ARGS:-} --user "$(id -u):$(id -g)" -e HOME=/tmp/h \
+    docker run --rm ${IC103_DOCKER_ARGS:-} --user "$(id -u):$(id -g)" -e HOME=/tmp/h \
         -v "$root":/w -w /w --entrypoint convert "$shot_image" \
         -density "$density" "$in" -background white -flatten \
         -bordercolor white -border 2% -depth 8 -strip "$out"

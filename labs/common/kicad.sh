@@ -14,8 +14,8 @@
 # command ends.
 #
 # Environment:
-#   PB101_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
-#   PB101_QUIET=1       don't print the image line on stderr
+#   IC103_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
+#   IC103_QUIET=1       don't print the image line on stderr
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -37,27 +37,27 @@ case "$PWD/" in
 esac
 
 if ! docker image inspect "$image" >/dev/null 2>&1; then
-    echo "pb101: pulling $image (812 MB, once)" >&2
+    echo "ic103: pulling $image (812 MB, once)" >&2
     docker pull "$image" >&2
 fi
 
 # Record exactly which image ran: the digest from the pin file, as Docker resolved it.
-if [ "${PB101_QUIET:-0}" != "1" ]; then
+if [ "${IC103_QUIET:-0}" != "1" ]; then
     digest="$(docker image inspect --format '{{range .RepoDigests}}{{println .}}{{end}}' "$image" \
               | grep -m1 "${image#*@}" || true)"
-    echo "pb101: KiCad image ${digest:-$image}" >&2
+    echo "ic103: KiCad image ${digest:-$image}" >&2
 fi
 
-name="pb101-kicad-$$-${RANDOM}"
+name="ic103-kicad-$$-${RANDOM}"
 trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT INT TERM
 
 tty_flags=()
 [ -t 0 ] && [ -t 1 ] && tty_flags=(-it)
 
-# shellcheck disable=SC2086  # PB101_DOCKER_ARGS is a list of flags on purpose
-docker run --rm --name "$name" ${tty_flags[@]+"${tty_flags[@]}"} ${PB101_DOCKER_ARGS:-} \
+# shellcheck disable=SC2086  # IC103_DOCKER_ARGS is a list of flags on purpose
+docker run --rm --name "$name" ${tty_flags[@]+"${tty_flags[@]}"} ${IC103_DOCKER_ARGS:-} \
     --user "$(id -u):$(id -g)" \
     -e HOME=/tmp/home \
-    -e PB101_KICAD_IMAGE="$image" \
+    -e IC103_KICAD_IMAGE="$image" \
     -v "$root":/w ${extra[@]+"${extra[@]}"} -w "$workdir" \
     "$image" bash /w/labs/common/image-entry.sh "$@"

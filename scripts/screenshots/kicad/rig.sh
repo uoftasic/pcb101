@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs inside pb101/kicad-shot (started by shot.sh). Sets up a KiCad that starts straight
+# Runs inside ic103/kicad-shot (started by shot.sh). Sets up a KiCad that starts straight
 # into its editor, starts a virtual screen, then sources one shot file, which drives KiCad
 # with the functions below and captures PNGs into /out.
 #

@@ -52,7 +52,7 @@ labs/common/kicad.sh python3 labs/common/check_board.py board.kicad_pro
 pb101: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
 ```
 
-The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `PB101_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `PB101_QUIET=1` to drop the digest line.
+The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `IC103_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `IC103_QUIET=1` to drop the digest line.
 
 Running as your uid means starting with an empty home folder, and so with no KiCad library tables. Without them, ERC and DRC report every standard library as missing, and the SKY130 breakout's ERC warnings go from 103 to 236 and its DRC warnings from 123 to 130 (the errors stay 10 and 0). The image's own user, `kicad`, has the two tables in `/home/kicad/.config/kicad/10.0/`, but that folder is readable only by `kicad`. Its `fp-lib-table` and `sym-lib-table` are byte-for-byte the defaults KiCad ships in `/usr/share/kicad/template/` (we compared them with `cmp`), so `image-entry.sh` copies those. Every run then sees the same libraries as the image's default user, whoever runs it.
 
