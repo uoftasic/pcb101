@@ -170,7 +170,10 @@ class Sheet:
             self.syms[lib_id] = Sym(lib_id, self.workdir)
         return self.syms[lib_id]
 
-    def place(self, ref, lib_id, x, y, angle=0, value=None, footprint=None, fields=None, hide_value=False):
+    def place(self, ref, lib_id, x, y, angle=0, value=None, footprint=None, fields=None, hide_value=False,
+              ref_at=None, value_at=None):
+        """Place a symbol. The reference goes above its pins and the value below them, unless
+        ref_at or value_at give (x, y, justify) for them."""
         s = self.sym(lib_id)
         props = dict(s.props)
         props["Reference"] = ref
@@ -182,34 +185,39 @@ class Sheet:
             props.setdefault(k, "")
         if fields:
             props.update(fields)
+        pts = []
+        for num, (px, py, pa) in s.pins.items():
+            rx, ry = rot(px, py, angle)
+            self.points[(ref, num)] = (round(x + rx, 4), round(y - ry, 4), int((pa + 180 + angle) % 360))
+            pts.append(self.points[(ref, num)][1])
+        ref_at = ref_at or (x, min(pts) - 2.54, None)
+        value_at = value_at or (x, max(pts) + 2.54, None)
         tag = ref
         out = [f'\t(symbol\n\t\t(lib_id "{lib_id}")\n\t\t(at {fmt(x)} {fmt(y)} {angle})\n\t\t(unit 1)\n'
                f'\t\t(exclude_from_sim no)\n\t\t(in_bom yes)\n\t\t(on_board yes)\n\t\t(dnp no)\n'
                f'\t\t(uuid "{uid("sym", tag)}")\n']
         power = ref.startswith("#")
-        for i, (k, v) in enumerate(props.items()):
+        for k, v in props.items():
             if k.startswith("ki_"):
                 continue
             hide = k not in ("Reference", "Value") or (k == "Reference" and power) or (k == "Value" and hide_value)
-            # Reference above the part, value below, the rest hidden at the origin.
+            just = None
             if k == "Reference":
-                px, py = (x, y - 3.81) if not power else (x, y)
+                px, py, just = ref_at
             elif k == "Value":
-                px, py = (x, y + 3.81) if not power else (x, y - 3.81 if angle in (0,) else y + 3.81)
+                px, py, just = value_at
             else:
                 px, py = x, y
             v = v.replace("\\", "\\\\").replace('"', '\\"')
             out.append(f'\t\t(property "{k}" "{v}"\n\t\t\t(at {fmt(px)} {fmt(py)} 0)\n\t\t\t(effects\n'
                        f'\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n'
+                       + (f"\t\t\t\t(justify {just})\n" if just else "")
                        + ("\t\t\t\t(hide yes)\n" if hide else "") + "\t\t\t)\n\t\t)\n")
         for num in s.pins:
             out.append(f'\t\t(pin "{num}"\n\t\t\t(uuid "{uid("pin", tag, num)}")\n\t\t)\n')
         out.append(f'\t\t(instances\n\t\t\t(project "{NAME}"\n\t\t\t\t(path "/{self.root}"\n'
                    f'\t\t\t\t\t(reference "{ref}")\n\t\t\t\t\t(unit 1)\n\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)\n')
         self.instances.append("".join(out))
-        for num, (px, py, pa) in s.pins.items():
-            rx, ry = rot(px, py, angle)
-            self.points[(ref, num)] = (round(x + rx, 4), round(y - ry, 4), int((pa + 180 + angle) % 360))
         return s
 
     def wire(self, a, b):
@@ -238,10 +246,13 @@ class Sheet:
                           f'\t\t\t(justify left top)\n\t\t)\n\t\t(uuid "{uid("text", s)}")\n\t)\n')
 
     def power(self, net, p, outward):
-        """A power symbol (+3V3 or GND) at p, its graphic pointing `outward` (degrees, y up)."""
+        """A power symbol (+3V3 or GND) at p, its graphic pointing `outward` (degrees, y up),
+        and its name written level, beyond the end of the graphic."""
         self.npwr += 1
         default = 90 if net != "GND" else 270
-        self.place(f"#PWR0{self.npwr:02d}", f"power:{net}", p[0], p[1], (outward - default) % 360)
+        at = {0: (p[0] + 3.81, p[1], "left"), 180: (p[0] - 3.81, p[1], "right"),
+              90: (p[0], p[1] - 3.81, None), 270: (p[0], p[1] + 3.81, None)}[outward]
+        self.place(f"#PWR0{self.npwr:02d}", f"power:{net}", p[0], p[1], (outward - default) % 360, value_at=at)
 
     def flag(self, p, angle):
         self.npwr += 1
@@ -338,7 +349,8 @@ def schematic(sheet, lab, flags=True, swap=False):
     s.text("SW1: uio[7:0] sets SimProc's UART bit period,\nclk_per_bit = uio x 4. A switch that is on reads 1.",
            (152.4, 116.84))
     s.place("RN1", "Device:R_Network08", 165.1, 139.7, 180, value="10k",
-            footprint="Resistor_THT:R_Array_SIP9")
+            footprint="Resistor_THT:R_Array_SIP9",
+            ref_at=(151.13, 138.43, "right"), value_at=(151.13, 140.97, "right"))
     for k in range(2, 10):
         s.attach("RN1", str(k), f"L:UIO{9 - k}")
     s.attach("RN1", "1", "P:GND")
@@ -363,22 +375,25 @@ def schematic(sheet, lab, flags=True, swap=False):
         s.attach("R2", "2", "L:DONGLE_RXD")
         s.text("R1, R2: series resistors. With the kit off and the dongle on,\n"
                "R1 limits the current into ui_in[0] to (3.3 - 0.6) V / 1k = 2.7 mA.", (198.12, 101.6))
-        s.place("D1", "Power_Protection:SP0502BAHT", 266.7, 50.8, 0, value="SP0502BAHT")
+        s.place("D1", "Power_Protection:SP0502BAHT", 266.7, 50.8, 0, value="SP0502BAHT",
+                ref_at=(271.78, 49.53, "left"), value_at=(271.78, 52.07, "left"))
         s.attach("D1", "1", "L:DONGLE_TXD")
         s.attach("D1", "2", "L:DONGLE_RXD")
         s.attach("D1", "3", "P:GND")
-        s.text("D1: ESD protection on the pins a cable plugs into.", (248.92, 66.04))
-        s.place("R3", "Device:R", 215.9, 152.4, 90, value="10", footprint=R_FP)
+        s.text("D1: ESD protection on the\npins a cable plugs into.", (256.54, 63.5))
+        s.place("R3", "Device:R", 215.9, 147.32, 90, value="10", footprint=R_FP)
         s.attach("R3", "1", "P:+3V3")
         s.attach("R3", "2", "L:+3V3_PMOD")
-        s.place("TP1", "Connector:TestPoint", 241.3, 157.48, 180, value="TP_3V3",
-                footprint="TestPoint:TestPoint_Pad_D1.5mm")
+        s.place("TP1", "Connector:TestPoint", 241.3, 152.4, 180, value="TestPoint",
+                footprint="TestPoint:TestPoint_Pad_D1.5mm", hide_value=True,
+                ref_at=(243.84, 154.94, "left"))
         s.attach("TP1", "1", "P:+3V3")
-        s.place("TP2", "Connector:TestPoint", 254.0, 147.32, 0, value="TP_3V3_PMOD",
-                footprint="TestPoint:TestPoint_Pad_D1.5mm")
+        s.place("TP2", "Connector:TestPoint", 254.0, 142.24, 0, value="TestPoint",
+                footprint="TestPoint:TestPoint_Pad_D1.5mm", hide_value=True,
+                ref_at=(256.54, 139.7, "left"))
         s.attach("TP2", "1", "L:+3V3_PMOD")
         s.text("R3: a 10 ohm current spy in the Pmod's own supply.\n"
-               "The voltage between TP1 and TP2 is 10 ohm x the current.", (198.12, 165.1))
+               "The voltage between TP1 and TP2 is 10 ohm x the current.", (198.12, 157.48))
 
     if flags:
         s.power("+3V3", (25.4, 177.8), 90)

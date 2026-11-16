@@ -17,7 +17,7 @@ rm -rf "$S/template"
 cp -r $L/template "$S/template"
 
 cp labs/lab-04-protect-and-plan/BRINGUP.md "$S/routed/BRINGUP.md"
-cp labs/lab-04-protect-and-plan/solutions/BRINGUP.md "$S/protected/BRINGUP.md"
+cp labs/lab-04-protect-and-plan/solutions/simproc-pmod/BRINGUP.md "$S/protected/BRINGUP.md"
 
 check() {   # check NAME STAGE ARGS...: run the check in the stage's folder, as a student would
     local name="$1" stage="$2"; shift 2
