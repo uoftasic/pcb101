@@ -11,8 +11,9 @@ Utilities for PB101 — PCB Design with KiCad under the UofT ASIC org (`uoftasic
 | `init-template.py` | Fill `pb101` / title / description after using the template |
 | `screenshots/kicad/shot.sh` | KiCad GUI screenshots in the pinned image under Xvfb; see [`screenshots/kicad/README.md`](screenshots/kicad/README.md) |
 | `screenshots/kicad/render.sh` | `kicad-cli` 3D renders and SVG plots of boards, schematics, footprints and symbols |
-| `figures/kicad_figures.sh` | The KiCad renders and plots on the guide pages, made with `render.sh` (needs the fetched boards and `pdftoppm`) |
-| `figures/*.py` | The diagrams and plots on the guide pages, drawn into `docs/assets/img/` with schemdraw and matplotlib. `pip install -r scripts/figures/requirements.txt`, then `python3 scripts/figures/<name>.py` rewrites that figure; each script's docstring says which page it's for. Scripts that read Tiny Tapeout's boards need `python3 labs/common/fetch_boards.py` first, and the two that run KiCad (`dip_dock_render.py`, `footprint_sizes.py`) need Docker |
+| `figures/kicad_figures.sh`, `figures/board_renders.sh` | The KiCad renders and plots on the guide pages, made with `render.sh` (both need the fetched boards, and `kicad_figures.sh` needs `pdftoppm` too) |
+| `figures/shots/fab-outputs-dip-dock.sh` | A shot file for `screenshots/kicad/shot.sh`: the DIP dock's Plot dialog and its Gerbers in GerbView, for the Fabrication outputs and KiCad files in git pages |
+| `figures/*.py` | The diagrams and plots on the guide pages, drawn into `docs/assets/img/` with schemdraw and matplotlib. `pip install -r scripts/figures/requirements.txt`, then `python3 scripts/figures/<name>.py` rewrites that figure; each script's docstring says which page it's for. Scripts that read Tiny Tapeout's boards need `python3 labs/common/fetch_boards.py` first, and the four that run KiCad (`dip_dock_layers.py`, `dip_dock_render.py`, `footprint_sizes.py`, `review_diff.py`) need Docker |
 
 ## Usage
 
