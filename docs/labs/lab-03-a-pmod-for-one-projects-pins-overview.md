@@ -12,7 +12,7 @@ The lab's files are in [`labs/lab-03-a-pmod-for-one-projects-pins/`](https://git
 
 The check scripts are bash. On Windows, run them in WSL; the lab's [README](https://github.com/uoftasic/pb101/tree/main/labs/lab-03-a-pmod-for-one-projects-pins) has a plain `docker run` for PowerShell, which we haven't tested on Windows.
 
-The lab takes about 4 hours: roughly 15 minutes for Part 1, an hour for the schematic, half an hour to place the connectors, an hour and 45 minutes to place and route the rest, and half an hour for Part 5. Those are our estimates for a first board. The one thing we measured is the check, which took 17 to 35 seconds in our runs, once Docker had the image.
+The lab takes about 4 hours: roughly 15 minutes for Part 1, an hour for the schematic, half an hour to place the connectors, an hour and 45 minutes to place and route the rest, and half an hour for Part 5. Those are our estimates for a first board. The only part we timed is the check, which took 17 to 35 seconds in our runs once Docker had the image.
 
 ## Part 1: Start your board repository
 
@@ -58,7 +58,7 @@ Your board lives in a repository of your own from now on, and the course's check
    FAIL  pmod.kicad_pro: board check FAIL; 0 of 2 Pmod checks ok
    ```
 
-   An empty schematic gives ERC nothing to object to, so the board check can't tell you whether a board does anything. The Pmod check reads SimProc's pin list, [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json), and fails until your board does what that list asks.
+   An empty schematic has nothing in it for ERC to object to, so the board check on its own can't tell you whether a board does anything. The Pmod check reads SimProc's pin list, [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json), and fails until your board does what that list asks.
 
 KiCad and `kicad-cli` write a few files of their own next to the project (a `.kicad_prl` of local settings and a folder of backups). `git status` lists them as untracked; leave them out of your commits for now, by committing with `git commit -am`, and Lab 05 adds the `.gitignore` that deals with them.
 
@@ -165,7 +165,7 @@ Can every connection be made on two layers, with the bottom layer kept as a grou
    <details>
    <summary>Answer</summary>
 
-   Not without detours around the end of the connector. J2's signal pins are in two rows of four, so bits 0 to 3 and bits 4 to 7 are interleaved along it, and tracks that leave it side by side on one layer can't change their order without crossing. To bring the lines out to a single row in order, put one row's four tracks on the top layer and the other row's on the bottom, where they can cross. Keep the bottom-layer tracks short, because each one cuts a slot in the ground plane there.
+   They can't, unless they detour around the end of the connector. J2's signal pins are in two rows of four, so bits 0 to 3 and bits 4 to 7 are interleaved along it, and tracks that leave it side by side on one layer can't change their order without crossing. To bring the lines out to a single row in order, put one row's four tracks on the top layer and the other row's on the bottom, where they can cross. Keep the bottom-layer tracks short, because each one cuts a slot in the ground plane there.
 
    </details>
 
@@ -200,7 +200,7 @@ Look at your board in KiCad's 3D viewer (View > 3D Viewer, Alt+3). If your KiCad
 
 ![The Lab 03 reference Pmod for SimProc, from the top](../assets/img/pmod-simproc-lab03-top.png)
 
-*One layout among many: our Lab 03 board, rendered by `kicad-cli` 10.0.8 without 3D models. The `uio` lines from J2's upper row run straight down on the top layer, and those from its lower row cross to the right on the bottom layer, to the pull-down network RN1 and the switches SW1.*
+*Our Lab 03 board, which is one of many layouts that would do, rendered by `kicad-cli` 10.0.8 without 3D models. The `uio` lines from J2's upper row run straight down on the top layer, and those from its lower row cross to the right on the bottom layer, to the pull-down network RN1 and the switches SW1.*
 
 ## Part 5: Check the connections against SimProc's pin list
 
@@ -213,7 +213,7 @@ Does your board connect SimProc's pins the way its pin list says?
    <details>
    <summary>Answer</summary>
 
-   Only the Pmod check. We made exactly that board, and its board check passed with 0 errors and 0 unconnected items, because ERC, DRC and parity compare the board with your schematic, and here the schematic itself is wrong. The Pmod check compares the schematic with SimProc's pin list:
+   Only the Pmod check catches it. We made exactly that board, and its board check passed with 0 errors and 0 unconnected items, because ERC, DRC and parity compare the board with your schematic, and here the schematic itself is wrong. The Pmod check compares the schematic with SimProc's pin list:
 
    ```text
      FAIL  ui[0]        J1 pin 1 reaches J4 pin 3 (the dongle's RXD), not pin 2 (the dongle's TXD): are TX and RX swapped?
