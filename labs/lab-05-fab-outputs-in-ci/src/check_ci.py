@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PB101 Lab 05 check: does your board repository's CI check the board and build everything a
+"""IC103 Lab 05 check: does your board repository's CI check the board and build everything a
 fab and a reviewer need, and does it go red on a broken board?
 
     labs/common/kicad.sh python3 /w/labs/lab-05-fab-outputs-in-ci/src/check_ci.py REPO [--planted REV]
@@ -260,7 +260,7 @@ def check_planted(repo, rev, rows):
     if run(["git", "cat-file", "-e", f"{sha}:ci/build.sh"], repo).returncode != 0:
         rows.append((False, "planted", f"{sha[:7]} has no ci/build.sh; plant the error after the workflow is in"))
         return
-    tmp = tempfile.mkdtemp(prefix="pb101-planted-")
+    tmp = tempfile.mkdtemp(prefix="ic103-planted-")
     try:
         r = subprocess.run(["git", "archive", "--format=tar", sha], cwd=repo, stdout=subprocess.PIPE)
         with tarfile.open(fileobj=io.BytesIO(r.stdout)) as t:
@@ -328,7 +328,7 @@ def main():
         print("check_ci: no ci/build.sh; copy the lab's starter/ into your repository first", file=sys.stderr)
         return 2
     shutil.rmtree(os.path.join(repo, "out"), ignore_errors=True)
-    print("PB101 Lab 05: bash ci/build.sh all, as your workflow runs it", flush=True)
+    print("IC103 Lab 05: bash ci/build.sh all, as your workflow runs it", flush=True)
     print("-" * 72, flush=True)
     b = subprocess.run(["bash", "ci/build.sh", "all"], cwd=repo, stdout=subprocess.PIPE,
                        stderr=subprocess.STDOUT, text=True)
@@ -355,7 +355,7 @@ def main():
         check_planted(repo, args.planted, rows)
 
     print()
-    print("PB101 Lab 05 check")
+    print("IC103 Lab 05 check")
     print(f"  repository  {repo}")
     print()
     for ok, what, detail in rows:

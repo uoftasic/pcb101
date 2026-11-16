@@ -35,7 +35,7 @@ CHECK = os.path.join(HERE, "check_ci.py")
 sys.path.insert(0, HERE)
 import planted  # noqa: E402
 
-GIT = ["git", "-c", "user.name=PB101 selftest", "-c", "user.email=selftest@example.com",
+GIT = ["git", "-c", "user.name=IC103 selftest", "-c", "user.email=selftest@example.com",
        "-c", "init.defaultBranch=main", "-c", "commit.gpgsign=false"]
 
 

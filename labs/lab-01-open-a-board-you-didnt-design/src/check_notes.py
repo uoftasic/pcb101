@@ -250,7 +250,7 @@ def main():
     with open(args.notes, encoding="utf-8") as f:
         notes = sections(strip_comments(f.read()))
 
-    print("PB101 Lab 01 check")
+    print("IC103 Lab 01 check")
     print(f"  notes     {shown(args.notes)}")
     print(f"  board     {shown(facts['file'])} (rev {facts['rev']}, {facts['date']})")
     print()

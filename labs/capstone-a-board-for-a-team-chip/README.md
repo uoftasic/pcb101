@@ -1,14 +1,14 @@
 # Capstone: A board for a team chip
 
 Writeup: [`docs/labs/capstone-a-board-for-a-team-chip-overview.md`](../../docs/labs/capstone-a-board-for-a-team-chip-overview.md)
-· live: <https://uoftasic.com/pb101/labs/capstone-a-board-for-a-team-chip-overview.html>
+· live: <https://uoftasic.com/ic103/labs/capstone-a-board-for-a-team-chip-overview.html>
 
 You take one board to an orderable state in a repository of your own, under one of two briefs: D, a bring-up Pmod for a digital project, or A, a source board for one analog pin on the demo board's analog header J13. Check it with:
 
 ```bash
 cd ~/simproc-pmod                                                     # your board repository
-cp ~/pb101/labs/capstone-a-board-for-a-team-chip/DESIGN.md .          # once
-~/pb101/labs/capstone-a-board-for-a-team-chip/check.sh --brief D      # or --brief A; --pins FILE for Brief D
+cp ~/ic103/labs/capstone-a-board-for-a-team-chip/DESIGN.md .          # once
+~/ic103/labs/capstone-a-board-for-a-team-chip/check.sh --brief D      # or --brief A; --pins FILE for Brief D
 ```
 
 `check.sh --brief D|A [--pins FILE]` runs [`src/check_capstone.py`](src/check_capstone.py) in the course's pinned KiCad image. It prints one row per check and a last line, `PASS` or `FAIL`. Exit status 0 is PASS, 1 FAIL, 2 couldn't run.

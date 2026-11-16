@@ -1,7 +1,7 @@
 # Bring-up plan: SimProc Pmod
 
 <!--
-  The bring-up plan of the board PB101 Lab 06 asks you to review, as its designer wrote it.
+  The bring-up plan of the board IC103 Lab 06 asks you to review, as its designer wrote it.
   Read it against the board and the course checklist like the rest of the design.
 -->
 

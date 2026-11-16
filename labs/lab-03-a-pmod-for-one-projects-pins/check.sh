@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # The Lab 03 check, run on your own board repository:
 #
-#   ~/pb101/labs/lab-03-a-pmod-for-one-projects-pins/check.sh [BOARD_FOLDER]
+#   ~/ic103/labs/lab-03-a-pmod-for-one-projects-pins/check.sh [BOARD_FOLDER]
 #
-# BOARD_FOLDER is the folder with your .kicad_pro (default: the current folder), and ~/pb101
+# BOARD_FOLDER is the folder with your .kicad_pro (default: the current folder), and ~/ic103
 # is wherever you cloned the course. It runs labs/common/check_pmod.py in the course's pinned
 # KiCad image: the board check (ERC, DRC, unconnected items, schematic parity), then the Pmod
 # connectors' placement and SimProc's pin list. Extra arguments go to check_pmod.py, for

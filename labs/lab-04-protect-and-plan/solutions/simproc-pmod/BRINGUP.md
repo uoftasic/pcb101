@@ -1,13 +1,13 @@
 # Bring-up plan: SimProc Pmod
 
 <!--
-  PB101 Lab 04 reference. The board is solutions/simproc-pmod/ next to this file. Every
+  IC103 Lab 04 reference. The board is solutions/simproc-pmod/ next to this file. Every
   expected value is worked out from the schematic's part values, SimProc's RTL
   (clk_per_bit = uio x 4, PING answers 0xAA, uo_out = 3 while idle) and Tiny Tapeout's ETR
   demo board guide (180-200 mA at 5 V on the factory test). Nothing here has been measured.
 -->
 
-The board: the SimProc Pmod from PB101 Labs 03 and 04, for `tt_um_ieeeuoftasic_simproc` on a TTSKY25b kit, with series resistors R1 and R2, the ESD array D1 and the current spy R3.
+The board: the SimProc Pmod from IC103 Labs 03 and 04, for `tt_um_ieeeuoftasic_simproc` on a TTSKY25b kit, with series resistors R1 and R2, the ESD array D1 and the current spy R3.
 
 ## Lines that leave the board
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PB101 bring-up plan check: is every part of BRINGUP.md filled in, and does every step say
+"""IC103 bring-up plan check: is every part of BRINGUP.md filled in, and does every step say
 what you expect to read?
 
     python3 labs/common/check_bringup.py BRINGUP.md
@@ -130,7 +130,7 @@ def main():
         else:
             rows.append((True, name, f"{len(content)} line{'' if len(content) == 1 else 's'}"))
 
-    print("PB101 bring-up plan check")
+    print("IC103 bring-up plan check")
     print(f"  file      {path}")
     print()
     for ok, what, detail in rows:

@@ -1,14 +1,14 @@
 # Bring-up plan: SimProc Pmod
 
 <!--
-  PB101 capstone, Brief D reference: Lab 04's plan, with steps 5 and 6 read at the test
+  IC103 capstone, Brief D reference: Lab 04's plan, with steps 5 and 6 read at the test
   points TP4 and TP3 that the capstone board adds. Every
   expected value is worked out from the schematic's part values, SimProc's RTL
   (clk_per_bit = uio x 4, PING answers 0xAA, uo_out = 3 while idle) and Tiny Tapeout's ETR
   demo board guide (180-200 mA at 5 V on the factory test). Nothing here has been measured.
 -->
 
-The board: the SimProc Pmod from PB101 Labs 03 and 04 and the capstone, for `tt_um_ieeeuoftasic_simproc` on a TTSKY25b kit, with series resistors R1 and R2, the ESD array D1, the current spy R3, and test points TP3 on `ui[0]` and TP4 on `uo[0]`.
+The board: the SimProc Pmod from IC103 Labs 03 and 04 and the capstone, for `tt_um_ieeeuoftasic_simproc` on a TTSKY25b kit, with series resistors R1 and R2, the ESD array D1, the current spy R3, and test points TP3 on `ui[0]` and TP4 on `uo[0]`.
 
 ## Lines that leave the board
 

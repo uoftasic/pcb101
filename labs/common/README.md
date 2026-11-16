@@ -1,6 +1,6 @@
 # `labs/common`: the pinned KiCad, the board check and Tiny Tapeout's boards
 
-Every PB101 lab uses the files in this folder. They run KiCad's command-line program, `kicad-cli`, in one pinned build of KiCad's official Docker image, check a board with it, and fetch the Tiny Tapeout boards the labs open. Students draw in their own KiCad ([Getting started](https://uoftasic.com/pb101/guide/getting-started.html)); everything here is for checking and doesn't need KiCad installed on your machine, only Docker. The fetch script also needs git and Python 3, or you can run it in the image.
+Every IC103 lab uses the files in this folder. They run KiCad's command-line program, `kicad-cli`, in one pinned build of KiCad's official Docker image, check a board with it, and fetch the Tiny Tapeout boards the labs open. Students draw in their own KiCad ([Getting started](https://uoftasic.com/ic103/guide/getting-started.html)); everything here is for checking and doesn't need KiCad installed on your machine, only Docker. The fetch script also needs git and Python 3, or you can run it in the image.
 
 ```bash
 python3 labs/common/fetch_boards.py
@@ -49,7 +49,7 @@ labs/common/kicad.sh python3 labs/common/check_board.py board.kicad_pro
 `kicad.sh` runs its arguments as a command in `kicad/kicad:10.0.8`, named by digest, so it's the same build on every machine, even if Docker Hub later moves the tag. It pulls the image the first time (812 MB to download, 2.6 GB on disk). Before each run it prints the digest Docker resolved, which is the record of exactly which KiCad ran:
 
 ```text
-pb101: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
+ic103: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
 ```
 
 The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `IC103_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `IC103_QUIET=1` to drop the digest line.
@@ -60,7 +60,7 @@ From Lab 03 on, your board lives in a repository of your own, outside the course
 
 ```bash
 cd ~/simproc-pmod
-~/pb101/labs/common/kicad.sh python3 /w/labs/common/check_pmod.py .
+~/ic103/labs/common/kicad.sh python3 /w/labs/common/check_pmod.py .
 ```
 
 `kicad.sh` is a bash script, for Linux, macOS and WSL. Without bash, the plain `docker run` below does the same check. It runs as the image's own user, which already has the library tables, and on Linux it printed the same counts as `kicad.sh`. We haven't run it on Windows.

@@ -1,7 +1,7 @@
 # Bring-up plan: TODO (your board's name)
 
 <!--
-  PB101 Lab 04. labs/common/check_bringup.py reads this file. Keep the five "##" headings,
+  IC103 Lab 04. labs/common/check_bringup.py reads this file. Keep the five "##" headings,
   give every numbered item under "Before power" and "Steps" an "Expect:" with a value and
   its unit (3.3 V, 1.26 kΩ, 0.99 mA, 0xAA), and fill in every placeholder.
 -->

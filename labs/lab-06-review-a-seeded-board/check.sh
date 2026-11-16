@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # The Lab 06 check, run on your own board repository:
 #
-#   ~/pb101/labs/lab-06-review-a-seeded-board/check.sh [BOARD_FOLDER]
+#   ~/ic103/labs/lab-06-review-a-seeded-board/check.sh [BOARD_FOLDER]
 #
 # BOARD_FOLDER is the folder with your REVIEW.md, QUOTE.md and .kicad_pro (default: the
-# current folder), and ~/pb101 is wherever you cloned the course. It checks your review of
+# current folder), and ~/ic103 is wherever you cloned the course. It checks your review of
 # the seeded board against the faults we planted, and your quote record against your board.
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

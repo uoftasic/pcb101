@@ -1,7 +1,7 @@
 # Design note: TODO (your board's name)
 
 <!--
-  PB101 capstone. labs/capstone-a-board-for-a-team-chip/src/check_capstone.py reads this file.
+  IC103 capstone. labs/capstone-a-board-for-a-team-chip/src/check_capstone.py reads this file.
   Keep the four "##" headings, and number the requirements and the decisions. Every decision
   says which requirements it meets on a line starting "Meets:", and gives a value with its
   unit (1 kΩ, 2.7 mA, 22 ns, 10 nF, 113,636 baud); every requirement is met by at least one

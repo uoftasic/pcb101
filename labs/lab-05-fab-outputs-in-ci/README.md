@@ -1,15 +1,15 @@
 # Lab 05: Fab outputs in CI
 
 Writeup: [`docs/labs/lab-05-fab-outputs-in-ci-overview.md`](../../docs/labs/lab-05-fab-outputs-in-ci-overview.md)
-· live: <https://uoftasic.com/pb101/labs/lab-05-fab-outputs-in-ci-overview.html>
+· live: <https://uoftasic.com/ic103/labs/lab-05-fab-outputs-in-ci-overview.html>
 
 You copy `starter/` into your board repository, finish its build script, write a `.gitignore`, and push, so that GitHub Actions checks your board and builds its fabrication files and review images on every push. Then you break the board on purpose and fix it. Check it with:
 
 ```bash
 cd ~/simproc-pmod                                                   # your board repository
-cp -r ~/pb101/labs/lab-05-fab-outputs-in-ci/starter/. .             # once
-~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh                      # Parts 1 to 4
-~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <commit>   # after Part 5
+cp -r ~/ic103/labs/lab-05-fab-outputs-in-ci/starter/. .             # once
+~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh                      # Parts 1 to 4
+~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh --planted <commit>   # after Part 5
 ```
 
 `check.sh [--planted REV]` runs [`src/check_ci.py`](src/check_ci.py) in the course's pinned KiCad image, through `labs/common/kicad.sh`. It runs your `ci/build.sh all` (the same script and stages your workflow runs, in one container instead of three), prints its output, then one row per check and a last line, `PASS` or `FAIL`. Exit status 0 is PASS, 1 FAIL, 2 couldn't run.

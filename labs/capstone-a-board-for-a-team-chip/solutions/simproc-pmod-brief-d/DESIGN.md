@@ -1,7 +1,7 @@
 # Design note: SimProc Pmod
 
 <!--
-  PB101 capstone, Brief D reference. The numbers come from Labs 03 and 04, Tiny Tapeout's
+  IC103 capstone, Brief D reference. The numbers come from Labs 03 and 04, Tiny Tapeout's
   GPIO spec and demo board files, and SimProc's RTL, as the course pages cite them. Nothing
   on this board has been built or measured.
 -->

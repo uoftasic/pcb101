@@ -1,7 +1,7 @@
 # Design note: source board for an0
 
 <!--
-  PB101 capstone, Brief A reference. The figures for the analog pin's path come from Tiny
+  IC103 capstone, Brief A reference. The figures for the analog pin's path come from Tiny
   Tapeout's analog spec and ETR demo board guide, as "Boards for chips" quotes them; J13's
   pins come from TinyTapeout/tt-demo-pcb at bbf3dd1 and the SKY130 breakout's J1 at
   breakout-pcb 91a2bf1. The sample rate in decision 5 is our assumption. Nothing here has

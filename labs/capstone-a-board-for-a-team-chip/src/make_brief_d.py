@@ -63,9 +63,9 @@ def main():
         if f.startswith(mr.NAME + ".kicad_") or f.startswith(mr.NAME + "-backups") or \
                 f in ("fp-info-cache", "lib", "fp-lib-table", "sym-lib-table"):
             shutil.rmtree(path) if os.path.isdir(path) else os.remove(path)
-    work = tempfile.mkdtemp(prefix="pb101-brief-d-")
+    work = tempfile.mkdtemp(prefix="ic103-brief-d-")
     mr.write_template(out)
-    sheet = mr.Sheet(work, "SimProc Pmod, capstone", "PB101 capstone, Brief D reference")
+    sheet = mr.Sheet(work, "SimProc Pmod, capstone", "IC103 capstone, Brief D reference")
     schematic(sheet)
     sch = os.path.join(out, mr.NAME + ".kicad_sch")
     sheet.write(sch)

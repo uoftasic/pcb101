@@ -8,8 +8,8 @@
 		(title "Source board for an0")
 		(date "2026-11-16")
 		(rev "1")
-		(company "UofT ASIC Team, PB101")
-		(comment 1 "PB101 capstone, Brief A reference")
+		(company "UofT ASIC Team, IC103")
+		(comment 1 "IC103 capstone, Brief A reference")
 	)
 	(lib_symbols
 		(symbol "Connector:TestPoint"

@@ -67,7 +67,7 @@ def check(project, expect=None):
 
 
 def main():
-    work = tempfile.mkdtemp(prefix="pb101-selftest-")
+    work = tempfile.mkdtemp(prefix="ic103-selftest-")
     results = []
 
     def case(label, project, want_rc, want_key=None, expect=None):

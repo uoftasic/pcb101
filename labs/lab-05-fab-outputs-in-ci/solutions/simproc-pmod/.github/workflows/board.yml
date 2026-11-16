@@ -1,6 +1,6 @@
 # Checks the board and builds its fabrication files and review images on every push and pull
 # request. Every step runs ci/build.sh in the KiCad image named in ci/kicad-image.txt, by
-# digest, so CI runs the same KiCad as the PB101 checks on your own machine.
+# digest, so CI runs the same KiCad as the IC103 checks on your own machine.
 name: Board
 
 on:

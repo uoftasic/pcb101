@@ -1,7 +1,7 @@
 # Quote: TODO (your board's name)
 
 <!--
-  PB101 Lab 06. labs/lab-06-review-a-seeded-board/src/check_lab06.py reads this file and
+  IC103 Lab 06. labs/lab-06-review-a-seeded-board/src/check_lab06.py reads this file and
   compares it with the board in the same folder. Fill in every field from the fabricator's
   quote page as it was when you read it, and put your board's name in the title. Where the
   page doesn't show something, say so ("not shown").

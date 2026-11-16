@@ -1,15 +1,15 @@
 # Lab 06: Review a seeded board
 
 Writeup: [`docs/labs/lab-06-review-a-seeded-board-overview.md`](../../docs/labs/lab-06-review-a-seeded-board-overview.md)
-· live: <https://uoftasic.com/pb101/labs/lab-06-review-a-seeded-board-overview.html>
+· live: <https://uoftasic.com/ic103/labs/lab-06-review-a-seeded-board-overview.html>
 
 You review `board/`, a SimProc Pmod with faults planted in it, against the course checklist and write your findings in `REVIEW.md`; then you get a fabricator's quote for your own board and record it in `QUOTE.md`. Both files go in your board repository. Check them with:
 
 ```bash
-cp -r ~/pb101/labs/lab-06-review-a-seeded-board/board ~/seeded-review          # a copy to open and poke at
+cp -r ~/ic103/labs/lab-06-review-a-seeded-board/board ~/seeded-review          # a copy to open and poke at
 cd ~/simproc-pmod                                                              # your board repository
-cp ~/pb101/labs/lab-06-review-a-seeded-board/REVIEW.md ~/pb101/labs/lab-06-review-a-seeded-board/QUOTE.md .   # once
-~/pb101/labs/lab-06-review-a-seeded-board/check.sh
+cp ~/ic103/labs/lab-06-review-a-seeded-board/REVIEW.md ~/ic103/labs/lab-06-review-a-seeded-board/QUOTE.md .   # once
+~/ic103/labs/lab-06-review-a-seeded-board/check.sh
 ```
 
 `check.sh [FOLDER]` runs [`src/check_lab06.py`](src/check_lab06.py) on the folder (default: the current one) in the course's pinned KiCad image. It needs only Python and git there, and reads your board's outline and layers with [`labs/common/kicad_sexpr.py`](../common/kicad_sexpr.py). It prints one line per row of your findings table, then the review's rows and the quote's rows, and ends with `PASS` or `FAIL`. Exit status 0 is PASS, 1 FAIL, 2 couldn't run.

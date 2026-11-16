@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Everything this board's CI does, in one script. It runs inside the pinned KiCad image named
-# in ci/kicad-image.txt: .github/workflows/board.yml runs one stage per step, and the PB101
+# in ci/kicad-image.txt: .github/workflows/board.yml runs one stage per step, and the IC103
 # Lab 05 check runs all of them on your own machine the same way.
 #
 #   bash ci/build.sh check     ERC, DRC and schematic parity; fails if the board check fails

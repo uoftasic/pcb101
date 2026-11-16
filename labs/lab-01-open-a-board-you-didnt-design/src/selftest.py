@@ -31,7 +31,7 @@ def main():
     if not os.path.isdir(BOARD):
         print("selftest: fetch the boards first: python3 labs/common/fetch_boards.py")
         return 2
-    work = tempfile.mkdtemp(prefix="pb101-lab01-")
+    work = tempfile.mkdtemp(prefix="ic103-lab01-")
     summary = os.path.join(work, "board.json")
     r = subprocess.run([sys.executable, os.path.join(ROOT, "labs", "common", "check_board.py"), BOARD,
                         "--summary", summary, "--show", "0"], stdout=subprocess.PIPE, text=True)
