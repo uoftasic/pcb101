@@ -2,7 +2,7 @@
 
 This page answers: *what does a review find that ERC and DRC can't, and what happens, at what cost, between a clean board and a box of them arriving in Toronto?*
 
-By the end of Lab 05 your board passes every automatic check and CI builds its fabrication files on every push. Those checks compare the board with its own schematic and with a set of rules, and none of them knows what the board is *for*, so a board can pass all of them and still be wrong. This page is about the review that does, and then about ordering: what a fabricator asks for, what it costs, how long it takes, and what Canada charges at the border. In [Lab 06](../labs/lab-06-review-a-seeded-board-overview.md) you review a board we seeded with faults, then get a real quote and DFM report for your own.
+By the end of Lab 05 your board passes every automatic check and CI builds its fabrication files on every push. Those checks compare the board with its own schematic and with a set of rules, and none of them knows what the board is *for*, so a board can pass all of them and still be wrong. This page is about the review that checks a board against what it's for, and then about ordering: what a fabricator asks for, what it costs, how long it takes, and what Canada charges at the border. In [Lab 06](../labs/lab-06-review-a-seeded-board-overview.md) you review a board we seeded with faults, then get a real quote and DFM report for your own.
 
 ## Mistakes the checks don't look for
 
@@ -43,9 +43,9 @@ Every fabricator publishes minimum sizes. These are the ones for an ordinary 2-l
 | [OSH Park](https://docs.oshpark.com/services/), 2 layers | 0.1524 / 0.1524 mm (6 mil) | 0.254 mm (10 mil) | 0.127 mm (5 mil) | |
 | KLC (KiCad's footprints) | | | at least 0.15 mm (rule F7.5) | nominally 0.12 mm (rule F5.1) |
 
-JLCPCB also gives a minimum text height of 1.0 mm and 0.15 mm from a pad to silkscreen. The last two columns are where KiCad and the fabricators part ways: KiCad's own footprints are drawn to KiCad's convention, which isn't the same as any one fabricator's limits. Tiny Tapeout's DIP dock shows how far apart they can be. We counted its silkscreen: 441 lines, arcs and circles in its footprints are 0.12 mm wide, 98 of the 139 pieces of text placed on the board itself have 0.14 mm strokes, and 38 are less than 1.0 mm tall. By JLCPCB's published numbers, all of those are below its minimums, and the board's own DRC reports no errors, because its rules don't ask about them.
+JLCPCB also gives a minimum text height of 1.0 mm and 0.15 mm from a pad to silkscreen. The last two columns are where KiCad's numbers and the fabricators' differ: KiCad's own footprints are drawn to KiCad's convention, which isn't the same as any one fabricator's limits. Tiny Tapeout's DIP dock shows how far apart they can be. We counted its silkscreen: 441 lines, arcs and circles in its footprints are 0.12 mm wide, 98 of the 139 pieces of text placed on the board itself have 0.14 mm strokes, and 38 are less than 1.0 mm tall. By JLCPCB's published numbers, all of those are below its minimums, and the board's own DRC reports no errors, because its rules don't ask about them.
 
-What a fabricator does with a 0.12 mm line, whether it prints it anyway, thickens it, or flags it, is what its DFM (design for manufacture) report tells you, which is one reason Lab 06 has you get one. When your board's design rules carry your fabricator's numbers, its DRC catches what KiCad can check, and the DFM report covers the rest.
+A fabricator's DFM (design for manufacture) report tells you what it does with a 0.12 mm line: whether it prints it anyway, thickens it, or flags it. That's one reason Lab 06 has you get one. When your board's design rules carry your fabricator's numbers, its DRC catches what KiCad can check, and the DFM report covers the rest.
 
 ## Ordering
 
@@ -93,7 +93,7 @@ JLCPCB's own page says "All duties and taxes for international shipments are the
    <details>
    <summary>Answer</summary>
 
-   Nothing about the footprints is wrong by KiCad's convention, but 0.12 mm is below JLCPCB's published 0.15 mm minimum line width. Read what JLCPCB's DFM report says about the upload, and if it flags the silkscreen, widen the lines or accept that some legend may not print.
+   The footprints are right by KiCad's convention, but 0.12 mm is below JLCPCB's published 0.15 mm minimum line width. Read what JLCPCB's DFM report says about the upload, and if it flags the silkscreen, widen the lines or accept that some legend may not print.
 
    </details>
 
