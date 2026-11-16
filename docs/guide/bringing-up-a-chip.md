@@ -12,13 +12,21 @@ In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you write a `BRINGUP.md
 
 ## Before any power
 
-**The review.** Nobody powers a kit from a board whose `BRINGUP.md` hasn't been read by a second member against the checklist in [Reviewing and ordering a board](reviewing-and-ordering-a-board.md). Until the team has someone who has reviewed boards before, that second reader is the review.
+### The review
 
-**Handling.** Static can damage a chip before it has ever been powered. The standard model of a person touching a part, the human body model, is 100 pF discharged through 1.5 kΩ, charged to typically 1 to 2.5 kV and sometimes to 15 kV (Horowitz and Hill, *The Art of Electronics*, 3rd ed., §12.1.5). At 1 kV that's a peak of 0.67 A into whatever pin you touch first. At team sessions, work on an ESD mat with a wrist strap, and hold the breakout by its edges.
+Nobody powers a kit from a board whose `BRINGUP.md` hasn't been read by a second member against the checklist in [Reviewing and ordering a board](reviewing-and-ordering-a-board.md). Until the team has someone who has reviewed boards before, that second reader is the review.
 
-**Unpowered checks.** With nothing connected, measure the resistance from each supply rail of your board to ground with a multimeter. A rail that reads close to 0 Ω is a short, and you stop there: a short found with an ohmmeter costs nothing, and the same short found with a power supply may cost a trace or a part. Write down beforehand what you expect from the schematic, so that you're comparing the reading with something.
+### Handling
 
-**Orientation.** Check that every connector goes in the right way round. Tiny Tapeout's breakouts are keyed, "such that direction of insertion onto hosts is made clear", in their README's words; your Pmod's connectors and any header you add may not be, so mark pin 1 on the silkscreen and look at it before you plug anything in.
+Static can damage a chip before it has ever been powered. The standard model of a person touching a part, the human body model, is 100 pF discharged through 1.5 kΩ, charged to typically 1 to 2.5 kV and sometimes to 15 kV (Horowitz and Hill, *The Art of Electronics*, 3rd ed., §12.1.5). At 1 kV that's a peak of 0.67 A into whatever pin you touch first. At team sessions, work on an ESD mat with a wrist strap, and hold the breakout by its edges.
+
+### Unpowered checks
+
+With nothing connected, measure the resistance from each supply rail of your board to ground with a multimeter. A rail that reads close to 0 Ω is a short, and you stop there: a short found with an ohmmeter costs nothing, and the same short found with a power supply may cost a trace or a part. Write down beforehand what you expect from the schematic, so that you're comparing the reading with something.
+
+### Orientation
+
+Check that every connector goes in the right way round. Tiny Tapeout's breakouts are keyed, "such that direction of insertion onto hosts is made clear", in their README's words; your Pmod's connectors and any header you add may not be, so mark pin 1 on the silkscreen and look at it before you plug anything in.
 
 ## The kit alone, with a current limit
 
