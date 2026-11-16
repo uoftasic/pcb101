@@ -433,7 +433,7 @@ PLACE3 = {
     "SW1": (146.45, 67.0, 270),
 }
 PLACE4 = dict(PLACE3, **{
-    "R1": (114.70, 61.5, 90), "R2": (160.42, 61.5, 90), "R3": (124.86, 66.4, 90),
+    "R1": (114.70, 61.5, 270), "R2": (160.42, 61.5, 270), "R3": (124.86, 66.4, 270),
     "D1": (113.9, 69.49, 0),
     "TP1": (121.5, 63.0, 0), "TP2": (121.5, 70.0, 0),
 })
@@ -556,6 +556,7 @@ def build_board(pcb_path, comps, pad_net, place, lab, route, zones):
             if k in ("Footprint", "Reference", "Value"):
                 continue
             set_field(fp, k, v)
+        fp.SetExcludedFromBOM(False)      # every symbol here is in the BOM, test points too
         fp.SetPath(pcbnew.KIID_PATH("/" + c["tstamp"]))
         fp.SetSheetname("/")
         fp.SetSheetfile(NAME + ".kicad_sch")
@@ -623,6 +624,9 @@ def build_board(pcb_path, comps, pad_net, place, lab, route, zones):
             for x, y in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)):
                 ol.Append(mm(x), mm(y))
             board.Add(z)
+        # The filler drops every island that touches no pad of its net, and it can only tell
+        # which pads those are once the board's connectivity has been built.
+        board.BuildConnectivity()
         pcbnew.ZONE_FILLER(board).Fill(board.Zones())
 
     if place:
@@ -751,7 +755,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("stage", choices=["template", "noflags", "schematic", "connectors", "placed", "routed",
                                       "swapped", "protected"])
-    ap.add_argument("out", help="folder to write the project into (emptied first, except for the template)")
+    ap.add_argument("out", help="folder to write the project into; its KiCad files are replaced")
     args = ap.parse_args()
     out = args.out
 
@@ -760,8 +764,13 @@ def main():
         print(f"wrote the template into {out}")
         return 0
 
+    # Replace the KiCad files in OUT and leave anything else there (a BRINGUP.md, a README).
     if os.path.isdir(out):
-        shutil.rmtree(out)
+        for f in os.listdir(out):
+            path = os.path.join(out, f)
+            if f.startswith(NAME + ".kicad_") or f.startswith(NAME + "-backups") or \
+                    f in ("fp-lib-table", "sym-lib-table", "lib", "fp-info-cache"):
+                shutil.rmtree(path) if os.path.isdir(path) else os.remove(path)
     work = tempfile.mkdtemp(prefix="pb101-ref-")
     write_template(out)
     lab = "04" if args.stage == "protected" else "03"

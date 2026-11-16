@@ -5,7 +5,7 @@
   "parts": {
     "dongle": {
       "what": "a 1 x 3 header for a 3.3 V USB-UART dongle",
-      "pins": {"1": "GND", "2": "the dongle's TXD (into the board)", "3": "the dongle's RXD (out of the board)"},
+      "pins": {"1": "GND", "2": "the dongle's TXD", "3": "the dongle's RXD"},
       "external": true
     }
   },
