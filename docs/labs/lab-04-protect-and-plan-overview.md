@@ -33,7 +33,7 @@ It runs everything Lab 03's check runs, then the Lab 04 rows and the bring-up pl
 FAIL  pmod.kicad_pro: board check PASS; 12 of 17 Pmod checks ok; bring-up plan FAIL
 ```
 
-The bring-up plan fails on all six of its parts, because the template is full of TODOs. Each part of this lab turns some of these rows green.
+The bring-up plan fails on all six of its parts, because the template is full of TODOs. Parts 2 to 4 fix the five Pmod rows, and Parts 1 and 5 fill in the plan.
 
 ## Part 1: Every line that leaves the board
 
@@ -46,7 +46,7 @@ For each line between your board and something else, what drives it, what does i
    <details>
    <summary>Answer</summary>
 
-   Nothing on your board. The current flows from the dongle's TXD through the pad's upper protection diode into `VDD_IO`, and from there onto the demo board's +3V3, and only the dongle's own output stage limits it. Horowitz and Hill warn that 20 to 50 mA through those diodes can damage the part or latch it up. [Supplies, back-powering and ESD](../guide/supplies-back-powering-and-esd.md) follows the path.
+   Nothing on your board. The current flows from the dongle's TXD through the pad's upper protection diode into `VDD_IO`, and from there onto the demo board's +3V3, and only the dongle's own output stage and the diode's drop limit it. Horowitz and Hill warn that 20 to 50 mA through those diodes can damage the part or latch it up. [Supplies, back-powering and ESD](../guide/supplies-back-powering-and-esd.md) follows the path.
 
    </details>
 
@@ -172,7 +172,7 @@ What do you check before power, and what should you read at each step?
      ok    When a reading is wrong     6 line(s)
    ```
 
-   Your counts will differ. The check wants at least two checks before power and four steps, an `Expect:` with a value on each, a current limit with a unit, and no TODO left anywhere. It can't tell whether your expected values are right, which is why someone reads your plan before any kit is powered from your board.
+   Your counts will differ. The check wants at least two checks before power and four steps, an `Expect:` with a value on each, a current limit with a unit, and no TODO left anywhere. It can't tell whether your expected values are right, so someone else should read your plan before any kit is powered from your board.
 
 ## Finishing
 

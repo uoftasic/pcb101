@@ -28,7 +28,7 @@ Your board lives in a repository of your own from now on, and the course's check
    git commit -m "Start from the PB101 board template"
    ```
 
-   The template is a KiCad 10 project named `pmod`. Its `pmod.kicad_pro` holds JLCPCB's published limits for a 2-layer board in Board Setup (tracks and gaps of 0.10 mm, holes of 0.15 mm, vias of 0.25 mm, silkscreen text 1.0 mm high and 0.15 mm thick), with 0.25 mm tracks and 0.2 mm clearance as the defaults you draw with. `pmod.kicad_dru` adds the one JLCPCB limit Board Setup can't hold, an annular ring of at least 0.18 mm around every plated hole. `lib/` holds Tiny Tapeout's Pmod connector symbol and footprint, copied from their library under its Apache 2.0 licence, and the project's library tables point at it, so the project opens the same way on any computer.
+   The template is a KiCad 10 project named `pmod`. Its Board Setup already holds JLCPCB's published limits for a 2-layer board (0.10 mm tracks and gaps, 0.15 mm holes, 0.25 mm vias, silkscreen text at least 1.0 mm high and 0.15 mm thick), `pmod.kicad_dru` adds their 0.18 mm minimum annular ring, and you draw with 0.25 mm tracks and 0.2 mm clearance. `lib/` holds Tiny Tapeout's Pmod symbol and footprint (Apache 2.0), and the project's library tables point at it, so the project opens the same way on any computer.
 
 2. Make a public repository called `simproc-pmod` in your own GitHub account and push to it, the way you did in IC102 (with the GitHub CLI, `gh repo create simproc-pmod --public --source . --push`).
 
@@ -58,7 +58,7 @@ Your board lives in a repository of your own from now on, and the course's check
    FAIL  pmod.kicad_pro: board check FAIL; 0 of 2 Pmod checks ok
    ```
 
-   An empty schematic has nothing for ERC to object to, which is why the board check alone would be a poor test of this lab. The Pmod check reads SimProc's pin list, [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json), and fails until your board does what that list asks.
+   An empty schematic gives ERC nothing to object to, so the board check can't tell you whether a board does anything. The Pmod check reads SimProc's pin list, [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pb101/blob/main/labs/common/pins/simproc.json), and fails until your board does what that list asks.
 
 KiCad and `kicad-cli` write a few files of their own next to the project (a `.kicad_prl` of local settings and a folder of backups). `git status` lists them as untracked; leave them out of your commits for now, by committing with `git commit -am`, and Lab 05 adds the `.gitignore` that deals with them.
 
@@ -131,7 +131,7 @@ Where exactly do the three connectors have to be?
    <details>
    <summary>Answer</summary>
 
-   It's 0.9 in, the spacing of the demo board's three I/O sockets. Tiny Tapeout's Pmod library asks for it, with the input connector on the left, the bidirectional one in the middle and the output one on the right, looking at the board from the top. A Pmod whose connectors are 0.1 mm off won't plug into all three sockets at once.
+   It's 0.9 in, the spacing of the demo board's three I/O sockets. Tiny Tapeout's Pmod library asks for it, with the input connector on the left, the bidirectional one in the middle and the output one on the right, looking at the board from the top. The check allows 0.02 mm either way, which a drag by hand won't reliably hit.
 
    </details>
 
@@ -165,7 +165,7 @@ Can every connection be made on two layers, with the bottom layer kept as a grou
    <details>
    <summary>Answer</summary>
 
-   No. J2's signal pins are in two rows of four, so bits 0 to 3 and bits 4 to 7 are interleaved along the connector, and any set of tracks on one layer keeps that order. To bring the lines out to a single row in order, put one row's four tracks on the top layer and the other row's on the bottom, where they can cross. Keep the bottom-layer tracks short, because each one cuts a slot in the ground plane there.
+   Not without detours around the end of the connector. J2's signal pins are in two rows of four, so bits 0 to 3 and bits 4 to 7 are interleaved along it, and tracks that leave it side by side on one layer can't change their order without crossing. To bring the lines out to a single row in order, put one row's four tracks on the top layer and the other row's on the bottom, where they can cross. Keep the bottom-layer tracks short, because each one cuts a slot in the ground plane there.
 
    </details>
 
@@ -192,11 +192,11 @@ Can every connection be made on two layers, with the bottom layer kept as a grou
    <details>
    <summary>Answer</summary>
 
-   On our board, all of them come from Tiny Tapeout's Pmod footprint. Its silkscreen draws the six pins sticking out of each connector, so on a board whose edge crosses the connector, seven segments and the reference text of each connector lie past the edge (24 `silk_edge_clearance` warnings for three connectors). It also outlines pads 5 and 11, the GND pads, with silkscreen that touches their copper (6 `silk_over_copper`). Fabricators clip silkscreen to the board and to solder-mask openings, so these are warnings rather than errors, but your own count can differ if your edge crosses the connectors somewhere else.
+   On our board, all of them come from Tiny Tapeout's Pmod footprint. Its silkscreen draws the six pins sticking out of each connector, so on a board whose edge crosses the connector, seven segments and the reference text of each connector lie past the edge (24 `silk_edge_clearance` warnings for three connectors). It also outlines pads 5 and 11, the GND pads, with silkscreen that touches their copper (6 `silk_over_copper`). KiCad reports both kinds as warnings, which the check lists without failing on. Your own count can differ if your edge crosses the connectors somewhere else.
 
    </details>
 
-Look at your board in KiCad's 3D viewer (View > 3D Viewer, Alt+3). Your KiCad has the 3D models, so you'll see the parts; the course image doesn't, which is why our render below shows only pads and silkscreen.
+Look at your board in KiCad's 3D viewer (View > 3D Viewer, Alt+3). If your KiCad has its 3D models (the Linux Lite AppImage doesn't), you'll see the parts; the course image has none, which is why our render below shows only pads and silkscreen.
 
 ![The Lab 03 reference Pmod for SimProc, from the top](../assets/img/pmod-simproc-lab03-top.png)
 
@@ -236,15 +236,6 @@ Questions:
    <summary>Answer</summary>
 
    Each `uo_out` line already drives a display segment through a 510 Ω resistor, and the pad is rated for 4 mA. An LED on your board would be a second load on the same pin, and the display already shows both flags. [Pins, Pmods and planning a pinout](../guide/pins-pmods-and-planning-a-pinout.md) has the details.
-
-   </details>
-
-2. Your board connects the 3.3 V pins of all three connectors together. Would it work if only J2's were connected?
-
-   <details>
-   <summary>Answer</summary>
-
-   Electrically, yes, for this board: only the switches use 3.3 V, and they hang off J2. The check asks for all six power pins and all six ground pins anyway, because the demo board has the same 3.3 V and ground on every socket, and joining them gives the board's current more than one path back.
 
    </details>
 
