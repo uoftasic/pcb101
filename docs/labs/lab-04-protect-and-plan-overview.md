@@ -130,7 +130,7 @@ What should your board draw from the demo board's 3.3 V, and how will you read i
    <details>
    <summary>Answer</summary>
 
-   Each switch that's on draws 0.33 mA. With three on, the board draws 0.99 mA, which drops 9.9 mV across 10 Ω; with all eight, it draws 2.64 mA and drops 26.4 mV. A multimeter on its millivolt range can read either.
+   Each switch that's on draws 0.33 mA. With three on, the board draws 0.99 mA, which drops 9.9 mV across 10 Ω; with all eight, it draws 2.64 mA and drops 26.4 mV. A multimeter on its millivolt range reads either.
 
    </details>
 

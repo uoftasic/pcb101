@@ -11,7 +11,7 @@ The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uof
 
 The check is bash, as in Labs 03 and 04, so on Windows run it in WSL. It runs git inside the course image as well as KiCad, and we have run it only on Linux.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates. The only part we timed is the check, which with one CPU took 55 s on our reference repository, and 91 s with `--planted`, because that builds a second commit.
+The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates. We did time the check, which with one CPU took 55 s on our reference repository, and 91 s with `--planted`, because that builds a second commit.
 
 ## Part 1: Add the workflow
 

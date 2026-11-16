@@ -10,7 +10,7 @@ The capstone's files are in [`labs/capstone-a-board-for-a-team-chip/`](https://g
 - Read [Boards for chips: carriers, motherboards and characterization boards](../guide/boards-for-chips.md), row 13 of the [course path](../index.md#course-path). Its section on a board for an analog pin has the arithmetic Brief A asks for.
 - Decide on your brief, from the two below.
 
-The capstone takes about 4 hours for Brief D on the SimProc board you already have: roughly 30 minutes for the requirements, 1 hour for the board's changes, 1 hour 30 minutes for the decisions and the bring-up plan, and 1 hour to review, commit and push. Those are our estimates. Brief A starts a new board, so expect it to take longer; we haven't timed it. The only part we timed is the check, which took 43 s on our Brief D reference with one CPU.
+The capstone takes about 4 hours for Brief D on the SimProc board you already have: roughly 30 minutes for the requirements, 1 hour for the board's changes, 1 hour 30 minutes for the decisions and the bring-up plan, and 1 hour to review, commit and push. Those are our estimates. Brief A starts a new board, so expect it to take longer; we haven't timed it. We did time the check, which took 43 s on our Brief D reference with one CPU.
 
 ## The two briefs
 

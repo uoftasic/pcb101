@@ -13,7 +13,7 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
 
 ## Part 1: Install KiCad and get the boards
 
-1. Install KiCad 10.0 on your own computer, as [Getting started](../guide/getting-started.md) describes for Windows, macOS and Linux. Start KiCad and open Help → About KiCad. You should see a version that starts with `10.0`. Any 10.0 release can open the course's files, but the course's checks always run 10.0.8.
+1. Install KiCad 10.0 on your own computer, as [Getting started](../guide/getting-started.md) describes for Windows, macOS and Linux. Start KiCad and open Help → About KiCad. You should see a version that starts with `10.0`. Any 10.0 release opens the course's files, but the course's checks always run 10.0.8.
 
 2. Clone the course and go into it:
 
