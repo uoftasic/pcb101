@@ -1,7 +1,5 @@
 # Notebooks
 
-Exploratory or assignment notebooks for PB101 — PCB Design with KiCad.
+PB101 has no notebooks, so this folder is empty apart from this file; it's left from the course template. What students run is in `labs/`: the shared checks in `labs/common/` and each lab's own scripts in `labs/<lab-id>/src/`.
 
-- Strip heavy outputs before you commit (or gitignore the checkpoints).
-- When students should see a rendered notebook, link to it on nbviewer or Colab from the docs.
-- Fixed lab packages belong under `labs/<id>/` instead.
+If a notebook is added later, strip heavy outputs before you commit it (`.gitignore` already ignores `.ipynb_checkpoints/`), and keep anything a lab depends on in that lab's package under `labs/<lab-id>/` instead.
