@@ -167,7 +167,7 @@ Questions:
 
    </details>
 
-2. For Brief A, why put a 10 nF capacitor right at the pin, when the RC corner it makes with 1 kΩ, 12.7 kHz, is far above anything a hand-turned trimmer does?
+2. For Brief A, why put a 10 nF capacitor right at the pin, when the RC corner it makes with the source's 1.25 kΩ at most, 12.7 kHz, is far above anything a hand-turned trimmer does?
 
    <details>
    <summary>Answer</summary>

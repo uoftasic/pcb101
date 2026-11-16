@@ -15,7 +15,7 @@ Brief: A. Project: CrossWalk, the team's 8-bit SAR ADC (uoftasic/crosswalk, `clo
 2. Mate J13, a 2 × 16 header with a 2.54 mm pitch, from above, pad for pad, with GND on its nine ground pins and power from its 3.3 V pin 32.
 3. Set the voltage anywhere from 0 V to 3.3 V, the demo board's supply.
 4. Keep the error from the demo board's 10 MΩ pull-down under a tenth of one 8-bit step (0.04 %).
-5. Keep the error from the pin's sampling capacitance, under 5 pF behind under 500 Ω and an analog switch, under half a step: 1/512, or 0.2 %.
+5. Keep the error from the pin's sampling capacitance, under 5 pF behind under 500 Ω and an analog switch, under half a step for one sample (1/512, or 0.2 %), and under one step (1/256, or 0.39 %) on average while the converter samples.
 6. Keep the current into the pin under the path's 4 mA maximum, even if the chip holds the pin at 0 V.
 7. Give a probe a place on the source and on the pin.
 8. Use parts a student can solder with an iron.
@@ -30,7 +30,7 @@ Brief: A. Project: CrossWalk, the team's 8-bit SAR ADC (uoftasic/crosswalk, `clo
    Meets: 3, 8
 4. R1 is 1 kΩ from SET to AN0. The source's resistance is at most 1 kΩ / 4 = 250 Ω from the trimmer (wiper in the middle) plus 1 kΩ, 1.25 kΩ in all, and against the 10 MΩ pull-down that's an error of 1.25 kΩ / 10 MΩ = 0.0125 %. If the chip held the pin at 0 V, at most 3.3 V / 1 kΩ = 3.3 mA would flow, under 4 mA.
    Meets: 4, 6
-5. C1 is 10 nF from AN0 to GND, at the pin. When the pin's switch connects up to 5 pF, the charge it takes from C1 moves the voltage by 5 pF / 10 nF = 0.05 %. On average, sampling at an assumed 400 kS/s (one sample every 10 clocks at 4 MHz) draws 5 pF × 3.3 V × 400 kHz = 6.6 µA, which drops 6.6 µA × 1.25 kΩ = 8.3 mV, 0.64 of one step of 3.3 V / 256 = 12.9 mV. R1 and C1 make a 12.5 µs time constant, a 12.7 kHz corner, and settle to half a step in 6.2 × 12.5 µs = 78 µs after the trimmer moves.
+5. C1 is 10 nF from AN0 to GND, at the pin. When the pin's switch connects up to 5 pF, the charge it takes from C1 moves the voltage by 5 pF / 10 nF = 0.05 %. On average, sampling at an assumed 400 kS/s (one sample every 10 clocks at 4 MHz) draws 5 pF × 3.3 V × 400 kHz = 6.6 µA, which drops 6.6 µA × 1.25 kΩ = 8.3 mV, 0.64 of one step of 3.3 V / 256 = 12.9 mV. So one sample moves the pin by 0.05 %, under half a step, and the average droop is under one step. With the source's resistance at its largest, 1.25 kΩ, C1 makes a time constant of 12.5 µs, a 12.7 kHz corner, and the pin settles to half a step in 6.2 × 12.5 µs = 78 µs after the trimmer moves.
    Meets: 5
 6. TP1 is on SET and TP2 on AN0, each a 1.5 mm pad, on either side of R1.
    Meets: 7
