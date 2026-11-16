@@ -16,11 +16,14 @@
 # Environment:
 #   IC103_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
 #   IC103_QUIET=1       don't print the image line on stderr
+#   IC103_IMAGE         run this image (name@digest) instead of the pinned one; the course's
+#                       render script uses it for 3D renders, which need KiCad's 3D models
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root="$(cd "$here/../.." && pwd)"
-image="$(head -n 1 "$here/kicad-image.txt" | tr -d '[:space:]')"
+pinned="$(head -n 1 "$here/kicad-image.txt" | tr -d '[:space:]')"
+image="${IC103_IMAGE:-$pinned}"
 
 if [ "$#" -eq 0 ]; then
     sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//'
@@ -37,7 +40,11 @@ case "$PWD/" in
 esac
 
 if ! docker image inspect "$image" >/dev/null 2>&1; then
-    echo "ic103: pulling $image (812 MB, once)" >&2
+    if [ "$image" = "$pinned" ]; then
+        echo "ic103: pulling $image (808 MB, once)" >&2
+    else
+        echo "ic103: pulling $image" >&2
+    fi
     docker pull "$image" >&2
 fi
 

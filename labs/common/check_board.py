@@ -54,7 +54,7 @@ def pinned_image():
 
 
 def pinned_version(image):
-    # "kicad/kicad:10.0.8@sha256:..." -> "10.0.8"
+    # "kicad/kicad:10.0.5@sha256:..." -> "10.0.5"
     tag = image.split("@")[0]
     return tag.rsplit(":", 1)[1] if ":" in tag else ""
 
