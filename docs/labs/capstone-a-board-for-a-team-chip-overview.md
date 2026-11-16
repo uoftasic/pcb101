@@ -10,13 +10,13 @@ The capstone's files are in [`labs/capstone-a-board-for-a-team-chip/`](https://g
 - Read [Boards for chips: carriers, motherboards and characterization boards](../guide/boards-for-chips.md), row 13 of the [course path](../index.md#course-path). Its section on a board for an analog pin has the arithmetic Brief A asks for.
 - Decide on your brief, from the two below.
 
-The capstone takes about 4 hours for Brief D on the SimProc board you already have: roughly 30 minutes for the requirements, 1 hour for the board's changes, 1 hour 30 minutes for the decisions and the bring-up plan, and 1 hour to review, commit and push. Those are our estimates. Brief A starts a new board, so expect it to take longer; we haven't timed it. What we measured is the check, which took 43 s on our Brief D reference with one CPU.
+The capstone takes about 4 hours for Brief D on the SimProc board you already have: roughly 30 minutes for the requirements, 1 hour for the board's changes, 1 hour 30 minutes for the decisions and the bring-up plan, and 1 hour to review, commit and push. Those are our estimates. Brief A starts a new board, so expect it to take longer; we haven't timed it. The only part we timed is the check, which took 43 s on our Brief D reference with one CPU.
 
 ## The two briefs
 
 ### Brief D: a bring-up Pmod for a digital project
 
-For SimProc, Sentry, or a Tiny Tapeout project of your own. The board plugs into the demo board's I/O sockets and gives the project what the demo board doesn't. It must have:
+Brief D is for SimProc, Sentry, or a Tiny Tapeout project of your own. The board plugs into the demo board's I/O sockets and gives the project what the demo board doesn't. It must have:
 
 - every pin the project uses brought to the right socket, as its pin list says;
 - a series resistor, or a translator, on every line that crosses from another supply, since the chip's inputs aren't 5 V tolerant;
@@ -29,7 +29,7 @@ For a project other than SimProc, write its pin list in the form of [`labs/commo
 
 ### Brief A: a source board for one analog pin
 
-For CrossWalk or an ASIC Zoo cell. The board plugs onto the demo board's analog header, J13, a 2 × 16 header with a 2.54 mm pitch, and drives one analog pin from a known, filtered source: a trimmer, or a DAC, with a buffer if you want one, and an RC filter at the pin. It must have:
+Brief A is for CrossWalk or an ASIC Zoo cell. The board plugs onto the demo board's analog header, J13, a 2 × 16 header with a 2.54 mm pitch, and drives one analog pin from a known, filtered source: a trimmer, or a DAC, with a buffer if you want one, and an RC filter at the pin. It must have:
 
 - a 2 × 16 connector that mates J13, with GND on J13's ground pins (1, 6, 9, 14, 17, 22, 25, 30 and 31) and, if the board needs power, 3.3 V from pin 32;
 - exactly one of J13's analog lines driven, and nothing on the lines that are ground on the SKY130 breakout;
@@ -60,7 +60,7 @@ What does your board have to do, in numbers?
 
 3. Fill in the line at the top and write the Requirements: a numbered list of what the board has to do, from the brief and from your project, each with its number where it has one (a pin, a voltage, a current, a rate). Leave the Decisions for Part 3.
 
-4. Commit `DESIGN.md`: the check runs Lab 05's check first, and that fails on any file git doesn't track. Then write down which rows you expect to fail, and run the check with your brief:
+4. Commit `DESIGN.md`, because the check runs Lab 05's check first, and that fails on any file git doesn't track. Then write down which rows you expect to fail, and run the check with your brief:
 
    ```bash
    ~/pb101/labs/capstone-a-board-for-a-team-chip/check.sh --brief D
@@ -125,7 +125,7 @@ Why is each part there, and what will you read at each step?
 
 1. Write the Decisions in `DESIGN.md`: one numbered item per part or choice, with the value that justifies it and its unit, and a line `Meets:` naming the requirements it meets. Every requirement needs at least one decision. Work every number out in the note itself, as our references do: for example, "(3.3 V − 0.6 V) / 1 kΩ = 2.7 mA into an unpowered pin" for a series resistor, or, for Brief A with a 1.25 kΩ source, "1.25 kΩ / 10 MΩ = 0.0125 %" for the pull-down.
 
-2. For Brief A, one number deserves care: the current the pin's sampling capacitor draws on average, which is roughly $C \cdot V \cdot f_s$ and drops across your source's resistance. Before you work it out, write down whether you think it matters for an 8-bit converter. Our reference assumes 400 kS/s, which CrossWalk's documentation doesn't yet confirm: 5 pF × 3.3 V × 400 kHz = 6.6 µA, and across 1.25 kΩ that's 8.3 mV, 0.64 of one step of 12.9 mV. That's why our trimmer is 1 kΩ and not 10 kΩ.
+2. For Brief A, take care over the current that the pin's sampling capacitor draws on average, which is roughly $C \cdot V \cdot f_s$ and drops across your source's resistance. Before you work it out, write down whether you think it matters for an 8-bit converter. Our reference assumes 400 kS/s, which CrossWalk's documentation doesn't yet confirm: 5 pF × 3.3 V × 400 kHz = 6.6 µA, and across 1.25 kΩ that's 8.3 mV, 0.64 of one step of 12.9 mV. That's why our trimmer is 1 kΩ and not 10 kΩ.
 
    <details>
    <summary>Answer</summary>
@@ -172,7 +172,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Mostly as a reservoir. When the pin's analog switch closes, its capacitance, up to 5 pF, takes its charge from whatever is closest, and 10 nF at the pin gives it that charge with a 0.05 % change in voltage. The filtering is a bonus: it also keeps noise picked up on the board, and the trimmer's wiper noise, out of the pin.
+   It's there mostly as a reservoir. When the pin's analog switch closes, its capacitance, up to 5 pF, takes its charge from whatever is closest, and 10 nF at the pin gives it that charge with a 0.05 % change in voltage. The filtering is a bonus: it also keeps noise picked up on the board, and the trimmer's wiper noise, out of the pin.
 
    </details>
 
