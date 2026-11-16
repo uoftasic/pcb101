@@ -51,7 +51,7 @@ What do the checks you already have find on this board?
    ~/pb101/labs/lab-04-protect-and-plan/check.sh
    ```
 
-   You should see the board check and the bring-up plan check pass, and the Pmod check stop at its first row:
+   You should see the board check and the bring-up plan check pass. In the Pmod check the connectors row fails and the power row passes, and the pins row says the pins aren't checked until the connectors pass:
 
    ```text
      FAIL  connectors   J1 (102.00, 56.35), J2 (124.86, 56.35), J3 (148.22, 56.35)
@@ -64,7 +64,7 @@ What do the checks you already have find on this board?
 
    That's your first finding. Write it as row 1 of the table in `REVIEW.md`: `J3` under Where, `10` under Line (mechanical fit), what's wrong, and what to change.
 
-4. Two of the three checks passed, and the third checked nothing past the connectors. What does that tell you about the rest of the board?
+4. Two of the three checks passed, and the third checked only the connectors and the power pins. What does that tell you about the rest of the board?
 
    <details>
    <summary>Answer</summary>
