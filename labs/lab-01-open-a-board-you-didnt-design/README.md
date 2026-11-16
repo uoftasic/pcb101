@@ -23,7 +23,7 @@ with the board`.
 |---|---|
 | `breakout-notes.md` | the file you fill in: the parts that aren't fitted, the three supply rails, and the ERC and DRC counts |
 | `src/check_notes.py` | the check; it works out its answers from the board file and from `labs/common/check_board.py`, and stores no answer key |
-| `src/selftest.py` | five sets of notes with known verdicts, which show that the check checks |
+| `src/selftest.py` | five sets of notes with known verdicts, for testing the check itself |
 | `solutions/breakout-notes.md` | the reference notes; open them after your own check says PASS |
 | `results/` | local outputs; never committed |
 

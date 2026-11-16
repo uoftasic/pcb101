@@ -23,7 +23,7 @@ cd ~/simproc-pmod                                              # your board repo
 docker run --rm -v "${PWD}:/work" -v "<path to pb101>:/w" -w /work kicad/kicad:10.0.8@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34 python3 /w/labs/common/check_pmod.py .
 ```
 
-## What the check recognises
+## Rows of the check
 
 | Row | Passes when |
 |---|---|
@@ -45,5 +45,5 @@ A resistor is a two-pin part whose reference starts with R, one element of a bus
 | `solutions/` | the reference board; see its README |
 | `src/make_reference.py` | writes the template's KiCad files and every stage of the reference boards, in the pinned image |
 | `src/stages.sh` | writes every stage into `results/stages/` and runs the checks on each; the writeup's outputs come from there |
-| `src/selftest.py` | boards with known verdicts, which show that the check checks |
+| `src/selftest.py` | boards with known verdicts, for testing the check itself |
 | `results/` | local outputs; never committed |

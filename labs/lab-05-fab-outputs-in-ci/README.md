@@ -40,8 +40,8 @@ cp -r ~/pb101/labs/lab-05-fab-outputs-in-ci/starter/. .             # once
 | `solutions/` | the files Lab 05 adds to Lab 04's reference board, finished; see its README |
 | `src/check_ci.py` | the check itself |
 | `src/planted.py` | the error the self-test plants: Lab 04's +3V3 track along the top edge dragged 1 mm down |
-| `src/run_workflow.py` | runs a workflow's steps on this machine, the way a GitHub runner would; how the workflow was tested without pushing |
-| `src/selftest.py` | repositories with known verdicts, which show that the check checks |
+| `src/run_workflow.py` | runs a workflow's steps on this machine, the way a GitHub runner would; we used it to test the workflow without pushing |
+| `src/selftest.py` | repositories with known verdicts, for testing the check itself |
 | `results/` | local outputs; never committed |
 
 ```bash

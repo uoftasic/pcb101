@@ -29,7 +29,7 @@ On the folder as shipped it prints `FAIL  4 of 4 parts of the check disagree`.
 | `src/check_footprint.py` | the check: your numbers, your footprint, your symbol, and a one-part board built from them through `labs/common/check_board.py` |
 | `src/fit_project.py` | writes that one-part board into `results/fit/` |
 | `src/make_reference.py` | writes the reference solution from `land_pattern.py` |
-| `src/selftest.py` | seven folders with known verdicts, which show that the check checks |
+| `src/selftest.py` | seven folders with known verdicts, for testing the check itself |
 | `solutions/` | the reference `pads.md`, footprint and symbol |
 | `results/` | local outputs; never committed |
 

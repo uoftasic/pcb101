@@ -26,7 +26,7 @@ cp ~/pb101/labs/capstone-a-board-for-a-team-chip/DESIGN.md .          # once
 | test points | A | a test point on the pin's net and on the source net |
 | bringup | A | `BRINGUP.md` passes [`labs/common/check_bringup.py`](../common/check_bringup.py) |
 
-J13's pinout is from `TinyTapeout/tt-demo-pcb` at bbf3dd1, where J13 is a `PinHeader_2x16_P2.54mm_Vertical` marked DNP, and the analog pad behind each line from the SKY130 breakout's J1 at `breakout-pcb` 91a2bf1.
+J13's pinout is from `TinyTapeout/tt-demo-pcb` at bbf3dd1, where J13 is a `PinHeader_2x16_P2.54mm_Vertical` marked DNP, and the analog pad behind each line comes from the SKY130 breakout's J1 at `breakout-pcb` 91a2bf1.
 
 | Repository | Last line of the check |
 |---|---|
@@ -44,7 +44,7 @@ J13's pinout is from `TinyTapeout/tt-demo-pcb` at bbf3dd1, where J13 is a `PinHe
 | `src/check_capstone.py` | the check itself |
 | `src/make_brief_d.py` | writes the Brief D reference board: Lab 04's, with TP3 and TP4 |
 | `src/make_brief_a.py` | writes the Brief A reference board, and checks its socket's pads against J13's when the demo board is fetched |
-| `src/selftest.py` | repositories with known verdicts, which show that the check checks (4 of 4, 97 s with one CPU) |
+| `src/selftest.py` | repositories with known verdicts, for testing the check itself (4 of 4, 97 s with one CPU) |
 | `results/` | local outputs; never committed |
 
 ```bash

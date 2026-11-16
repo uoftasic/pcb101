@@ -18,7 +18,7 @@ cp ~/pb101/labs/lab-04-protect-and-plan/BRINGUP.md .     # once
 | Lab 03's `solutions/simproc-pmod/` with `BRINGUP.md` from here, as a student starts | `FAIL  pmod.kicad_pro: board check PASS; 12 of 17 Pmod checks ok; bring-up plan FAIL` |
 | `solutions/simproc-pmod/` | `PASS  pmod.kicad_pro: board check PASS; 17 of 17 Pmod checks ok; bring-up plan PASS` |
 
-## What the check adds to Lab 03's
+## Rows Lab 04 adds to Lab 03's check
 
 | Row | Passes when |
 |---|---|
@@ -36,7 +36,7 @@ A buffer in place of a series resistor fails the `ui[0]` and `uo[0]` rows, becau
 | `check.sh` | the lab's check, on a board repository |
 | `BRINGUP.md` | the bring-up plan's template; copy it into your repository |
 | `solutions/` | the reference board and its bring-up plan; see its README |
-| `src/selftest.py` | boards and plans with known verdicts, which show that the check checks |
+| `src/selftest.py` | boards and plans with known verdicts, for testing the check itself |
 | `results/` | local outputs; never committed |
 
 The reference board is written by Lab 03's [`src/make_reference.py`](../lab-03-a-pmod-for-one-projects-pins/src/make_reference.py) (`protected` stage).
