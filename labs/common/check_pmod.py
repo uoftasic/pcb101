@@ -423,7 +423,7 @@ def check(stem, spec, protect):
             for r, a, b, val in res:
                 for x, y in ((a, b), (b, a)):
                     if nl.net(r, x) in line and nl.net(r, y) == "GND":
-                        pd = f"pull-down {r} ({val}{', element ' + x if r.startswith('RN') else ''}) to GND"
+                        pd = f"pull-down {r} ({val}{', pin ' + x if r.startswith('RN') else ''}) to GND"
             (found if pd else missing).append(pd or "a pull-down resistor to GND")
         if missing:
             rep.add(False, name, f"{here} ({n0}) has no {' and no '.join(missing)}")
