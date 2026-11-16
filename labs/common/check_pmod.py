@@ -278,8 +278,10 @@ def check(stem, spec, protect):
                     problems.append("their spacing is " + " and ".join(f"{g:.2f}" for g in gaps) +
                                     f" mm; it must be {SPACING} mm")
                 if any(abs(o) > TOL for o in offs):
-                    problems.append("they aren't in a row: one sits " +
-                                    " and ".join(f"{o:+.2f}" for o in offs) + " mm out of line")
+                    problems.append("they aren't in a row: along the pins, " +
+                                    " and ".join(f"{q} is {o:+.2f} mm from {p}"
+                                                 for (p, q), o in zip(zip(order, order[1:]), offs)) +
+                                    " (+ is the way the pins point)")
                 for r in pmods:
                     pads_in = all(bd.inside(bd.place(r, *xy)) for xy in bd.fps[r]["pads"].values())
                     tip = bd.place(r, PIN_TIP, 6.35)
@@ -311,7 +313,7 @@ def check(stem, spec, protect):
         else:
             rep.add(False, "power", "pins 6 and 12 of every Pmod connector must share one net (the demo "
                                     "board's 3.3 V), and pins 5 and 11 must be on GND; found "
-                                    f"{sorted(str(v) for v in vccs)} and {sorted(str(g) for g in gnds)}")
+                                    f"{net_names(vccs)} on pins 6 and 12, and {net_names(gnds)} on pins 5 and 11")
 
     if not role:
         rep.add(False, "pins", "not checked until the connectors pass")
@@ -417,14 +419,14 @@ def check(stem, spec, protect):
                                             nl.net(rr, pb) == vcc and nl.net(rr, pa) == yn
                                             for rr, pa, pb, _ in res):
                             sw = f"switch {r} (pins {x}-{y}) to {yn}"
-            (found if sw else missing).append(sw or "a switch to the 3.3 V supply")
+            (found if sw else missing).append(sw or "switch to the 3.3 V supply")
         if rule.get("pull") == "down":
             pd = None
             for r, a, b, val in res:
                 for x, y in ((a, b), (b, a)):
                     if nl.net(r, x) in line and nl.net(r, y) == "GND":
                         pd = f"pull-down {r} ({val}{', pin ' + x if r.startswith('RN') else ''}) to GND"
-            (found if pd else missing).append(pd or "a pull-down resistor to GND")
+            (found if pd else missing).append(pd or "pull-down resistor to GND")
         if missing:
             rep.add(False, name, f"{here} ({n0}) has no {' and no '.join(missing)}")
         else:
@@ -468,6 +470,16 @@ def check(stem, spec, protect):
             else:
                 rep.add(True, "sense", msg + f", test points {tps[vcc][0]} and {tps[yn][0]}")
     return rep, nl
+
+
+def net_names(nets):
+    """'+3V3 and no net (a pin connected to nothing)': the nets a set of pins are on, as text.
+    Netlist.net() gives None for a pin that's on no net, because KiCad puts an unconnected
+    pin on a net of its own named unconnected-(...), which Netlist leaves out."""
+    names = sorted(n for n in nets if n is not None)
+    if None in nets:
+        names.append("no net (a pin connected to nothing)")
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
 
 
 def fmt_ohms(r):
