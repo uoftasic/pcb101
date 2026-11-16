@@ -1,6 +1,6 @@
 # Lab 04: Protect and plan
 
-In this lab you make your Lab 03 board safe to plug into a kit that holds the team's only chip, and you write down how it will be brought up. You'll put a series resistor on each UART line, an ESD array on the dongle header and a current-sense point in the board's own supply, and you'll write `BRINGUP.md`: what drives each line when one side is unpowered, the checks before anything is powered, and the reading you expect at every step.
+In this lab you make your Lab 03 board safe to plug into a Tiny Tapeout kit, which comes with a single chip, and you write down how it will be brought up. You'll put a series resistor on each UART line, an ESD array on the dongle header and a current-sense point in the board's own supply, and you'll write `BRINGUP.md`: what drives each line when one side is unpowered, the checks before anything is powered, and the reading you expect at every step.
 
 The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoftasic/pb101/tree/main/labs/lab-04-protect-and-plan) in the course repo.
 
@@ -9,7 +9,7 @@ The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoft
 - Finish [Lab 03](lab-03-a-pmod-for-one-projects-pins-overview.md): its check passes on your own repository.
 - Read the pages on row 7 of the [course path](../index.md#course-path): [Protecting the chip's I/O](../guide/protecting-the-chips-io.md), [Supplies, back-powering and ESD](../guide/supplies-back-powering-and-esd.md), [Measuring current](../guide/measuring-current.md) and [Bringing up a chip](../guide/bringing-up-a-chip.md). The numbers this lab asks you to work out come from them.
 
-The lab takes about 1 hour 30 minutes: roughly 20 minutes for Part 1, 15 each for Parts 2 to 4, and 25 for the bring-up plan. Those are our estimates. The check took 17 to 23 seconds in our runs.
+The lab takes about 1 hour 30 minutes: roughly 20 minutes for Part 1, 15 each for Parts 2 to 4, and 25 for the bring-up plan. Those are our estimates. The check took 17 to 47 seconds in our runs, depending on how busy the computer was.
 
 Copy the bring-up plan's template into your repository and run the Lab 04 check on the board as Lab 03 left it:
 
@@ -65,7 +65,7 @@ You should see the check's `Lines that leave the board` row go to `ok` once no c
 
 How big a resistor keeps the current into an unpowered chip small, and still lets the UART's edges through?
 
-1. Choose a limit for the current into a pin of an unpowered chip, and write it in your plan with its reason. SkyWater's I/O guide gives no rating for the protection diodes, so the limit is your choice. Horowitz and Hill's 20 to 50 mA is where damage starts, which makes it a ceiling rather than a target.
+1. Choose a limit for the current into a pin of an unpowered chip, and write it in your plan with its reason. We found no rating for the protection diodes in SkyWater's I/O guide, so the limit is your choice. Horowitz and Hill's 20 to 50 mA is where damage starts, which makes it a ceiling rather than a target.
 
 2. Work out the smallest resistor that meets your limit when the chip's `VDD_IO` is near 0 V, $R \ge (3.3\ \text{V} - 0.6\ \text{V}) / I_{max}$, and write it down before you choose a standard value.
 

@@ -12,7 +12,7 @@ The lab's files are in [`labs/lab-03-a-pmod-for-one-projects-pins/`](https://git
 
 The check scripts are bash. On Windows, run them in WSL; the lab's [README](https://github.com/uoftasic/pb101/tree/main/labs/lab-03-a-pmod-for-one-projects-pins) has a plain `docker run` for PowerShell, which we haven't tested on Windows.
 
-The lab takes about 4 hours: roughly 15 minutes for Part 1, an hour for the schematic, half an hour to place the connectors, an hour and 45 minutes to place and route the rest, and half an hour for Part 5. Those are our estimates for a first board. The one thing we measured is the check, which took 17 to 34 seconds in our runs, once Docker had the image.
+The lab takes about 4 hours: roughly 15 minutes for Part 1, an hour for the schematic, half an hour to place the connectors, an hour and 45 minutes to place and route the rest, and half an hour for Part 5. Those are our estimates for a first board. The one thing we measured is the check, which took 17 to 35 seconds in our runs, once Docker had the image.
 
 ## Part 1: Start your board repository
 
