@@ -46,7 +46,7 @@ For each line between your board and something else, what drives it, what does i
    <details>
    <summary>Answer</summary>
 
-   Nothing on your board. The current flows from the dongle's TXD through the pad's upper protection diode into `VDD_IO`, and from there onto the demo board's +3V3, and only the dongle's own output stage and the diode's drop limit it. Horowitz and Hill warn that 20 to 50 mA through those diodes can damage the part or latch it up. [Supplies, back-powering and ESD](../guide/supplies-back-powering-and-esd.md) follows the path.
+   Nothing on your board limits it. The current flows from the dongle's TXD through the pad's upper protection diode into `VDD_IO`, and from there onto the demo board's +3V3, and only the dongle's own output stage and the diode's drop limit it. Horowitz and Hill warn that 20 to 50 mA through those diodes can damage the part or latch it up. [Supplies, back-powering and ESD](../guide/supplies-back-powering-and-esd.md) follows the path.
 
    </details>
 
@@ -87,7 +87,7 @@ How big a resistor keeps the current into an unpowered chip small, and still let
    <details>
    <summary>Answer</summary>
 
-   The dongle. With the kit on and the dongle unplugged from the laptop, SimProc's TX idles high into the dongle's unpowered RXD, and the current flows through the dongle's own clamp diode into its supply. R2 limits it the same way R1 limits the current into the chip.
+   It protects the dongle. With the kit on and the dongle unplugged from the laptop, SimProc's TX idles high into the dongle's unpowered RXD, and the current flows through the dongle's own clamp diode into its supply. R2 limits it the same way R1 limits the current into the chip.
 
    </details>
 
@@ -130,7 +130,7 @@ What should your board draw from the demo board's 3.3 V, and how will you read i
    <details>
    <summary>Answer</summary>
 
-   0.33 mA per switch that's on. With three on, 0.99 mA, which drops 9.9 mV across 10 Ω; with all eight, 2.64 mA and 26.4 mV. A multimeter on its millivolt range reads either.
+   Each switch that's on draws 0.33 mA. With three on, the board draws 0.99 mA, which drops 9.9 mV across 10 Ω; with all eight, it draws 2.64 mA and drops 26.4 mV. A multimeter on its millivolt range can read either.
 
    </details>
 
@@ -185,7 +185,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Part 4, step 2: 0.99 mA, and 9.9 mV across the 10 Ω resistor.
+   The supply reads 0.99 mA, and the test points 9.9 mV across the 10 Ω resistor, which you worked out in Part 4, step 2.
 
    </details>
 
