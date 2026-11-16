@@ -13,7 +13,7 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
 
 ## Part 1: Install KiCad and get the boards
 
-1. Install KiCad 10.0 on your own computer, as [Getting started](../guide/getting-started.md) describes for Windows, macOS and Linux. Start KiCad and open Help → About KiCad. You should see a version that starts with `10.0`. Any 10.0 release opens the course's files; the checks always use 10.0.8.
+1. Install KiCad 10.0 on your own computer, as [Getting started](../guide/getting-started.md) describes for Windows, macOS and Linux. Start KiCad and open Help → About KiCad. You should see a version that starts with `10.0`. Any 10.0 release can open the course's files, but the course's checks always run 10.0.8.
 
 2. Clone the course and go into it:
 
@@ -24,7 +24,7 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
 
    Run every command in this lab from that folder.
 
-3. Fetch Tiny Tapeout's boards. The course doesn't store copies of them; this script checks each one out of Tiny Tapeout's own repositories at a fixed commit:
+3. Fetch Tiny Tapeout's boards. The course doesn't keep its own copies of them, so this script checks each one out of Tiny Tapeout's own repositories at a fixed commit:
 
    ```bash
    python3 labs/common/fetch_boards.py
@@ -53,7 +53,7 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
    10.0.8
    ```
 
-   The first line is the digest Docker resolved, which records exactly which build of KiCad ran. `kicad.sh` is a bash script, so it runs on Linux, macOS and WSL. Without bash, [`labs/common/README.md`](https://github.com/uoftasic/pb101/tree/main/labs/common) has a plain `docker run` command that runs Part 4's board check without `kicad.sh`; we have run it on Linux but not on Windows.
+   The first line is the digest that Docker resolved, which records exactly which build of KiCad ran. `kicad.sh` is a bash script, so it runs on Linux, macOS and WSL. If you don't have bash, [`labs/common/README.md`](https://github.com/uoftasic/pb101/tree/main/labs/common) has a plain `docker run` command that runs Part 4's board check without `kicad.sh`; we have run it on Linux but not on Windows.
 
 Check: KiCad's About box says 10.0, `kicad-cli version` prints `10.0.8`, and `labs/common/upstream/breakout-pcb/breakout-sky-qfn/` exists.
 
@@ -61,7 +61,7 @@ Check: KiCad's About box says 10.0, `kicad-cli version` prints `10.0.8`, and `la
 
 Which of the parts drawn on this board does the factory actually solder on?
 
-1. In KiCad, open `labs/common/upstream/breakout-pcb/breakout-sky-qfn/breakout-sky-qfn.kicad_pro`, then open its schematic. A bar across the top says the file was created by an older version of KiCad and will be converted when saved. Don't save it. The fetch script would then refuse to update the board until you put the original back with `--force`.
+1. In KiCad, open `labs/common/upstream/breakout-pcb/breakout-sky-qfn/breakout-sky-qfn.kicad_pro`, then open its schematic. A bar across the top says the file was created by an older version of KiCad and will be converted when saved. Don't save it: if you do, the fetch script will refuse to update the board until you put the original back with `--force`.
 
 2. Open `breakout-notes.md` in the lab folder in a text editor. It's the file you'll fill in during this lab, and the check reads its headings and table columns, so keep those as they are.
 
@@ -69,7 +69,7 @@ Which of the parts drawn on this board does the factory actually solder on?
 
    ![The Core Voltage Selection block of the breakout's schematic in KiCad 10.0.8. R1, R7, R3 and the whole of U2 are drawn with a red cross.](../assets/img/kicad-schematic-sky-breakout-core-voltage.png)
 
-   KiCad draws a part marked DNP (do not populate) with a red cross. Its footprint is still on the board, so the copper is there, but nothing is soldered to it. Here you can see four: R1, R7, R3 and the second regulator, U2.
+   KiCad draws a part marked DNP (do not populate) with a red cross. Its footprint is still on the board, so the copper is there, but nothing is soldered to it. This block has four of them: R1, R7, R3 and the second regulator, U2.
 
 4. Look over the rest of the sheet for crossed-out parts, and list every one under "## Not fitted" in your notes. The "Presence Detection", "EEPROM ID" and "MUX and Supply Headers" blocks have some, and so does the corner beside the title block. You can confirm any one by opening its properties (double-click it) and looking for the "Do not populate" box.
 
@@ -124,7 +124,7 @@ How does each of the chip's three supplies get from the connectors to the chip, 
    <details>
    <summary>Answer</summary>
 
-   Nowhere on this build. The only parts that +5V reaches are R1 and R3, which would take it to the regulators' inputs, and both are DNP. The schematic's note says the breakout "is fed 3v3 (guaranteed) and 5V (assumes USB supply)", and R1 and R3 are the source-select links that would let either regulator run from 5 V instead.
+   On this build it goes nowhere. The only parts that +5V reaches are R1 and R3, which would take it to the regulators' inputs, and both are DNP. The schematic's note says the breakout "is fed 3v3 (guaranteed) and 5V (assumes USB supply)", and R1 and R3 are the source-select links that would let either regulator run from 5 V instead.
 
    </details>
 
@@ -176,14 +176,14 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
    FAIL  erc.error: 10 (want 0)
    ```
 
-   The FAIL is correct: the check's default rule is no ERC errors, and this board has ten.
+   That FAIL is what should happen here: by default the check allows no ERC errors, and this board has ten.
 
 4. Eight of the errors are `power_pin_not_driven`. The six `#PWR` symbols are the power symbols for VCCD, GND, +5V, +3V3, VDD_IO and VDDA, and the last two are the regulators' VIN pins. Why does ERC think nothing drives them?
 
    <details>
    <summary>Answer</summary>
 
-   ERC treats a net with a power-input pin as driven only if a power-output pin is on the same net. +3V3, +5V and GND arrive through the DF12 connectors, whose pins are passive, and VCCD, VDD_IO, VDDA and the two regulator inputs are each fed through a 0 Ω resistor, which is passive too. ERC can't see the demo board on the far side of the connector, and it doesn't follow a supply through a resistor, so none of these nets has a driver as far as it can tell. The usual fix is a PWR_FLAG symbol on each such net, which tells ERC that power comes from somewhere it can't see. None of this is a fault in the board itself.
+   ERC treats a net with a power-input pin as driven only if a power-output pin is on the same net. +3V3, +5V and GND arrive through the DF12 connectors, whose pins are passive, and VCCD, VDD_IO, VDDA and the two regulator inputs are each fed through a 0 Ω resistor, which is passive too. ERC can't see the demo board on the far side of the connector, and it doesn't follow a supply through a resistor, so as far as ERC can tell, none of these nets has a driver. The usual fix is a PWR_FLAG symbol on each such net, which tells ERC that power comes from somewhere it can't see. None of this means the board itself is faulty.
 
    </details>
 
@@ -192,7 +192,7 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
    <details>
    <summary>Answer</summary>
 
-   PWR_FLAG is a symbol with one power-output pin. The designer put the two flags on VCC_REG and VDD_REG, the regulators' output nets, which the regulators' VOUT pins already drive, so each of those nets has two power outputs on it. The flags would have done their job on the nets in the previous question instead. Here too, the board is fine; the errors are about how the schematic tells ERC where power comes from.
+   PWR_FLAG is a symbol with one power-output pin. The designer put the two flags on VCC_REG and VDD_REG, the regulators' output nets, which the regulators' VOUT pins already drive, so each of those nets has two power outputs on it. On the nets in the previous question the flags would have done their job. Here too the board itself is fine, and the errors are about how the schematic tells ERC where power comes from.
 
    </details>
 
@@ -205,12 +205,12 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
 
    </details>
 
-7. Look at the kinds of warning, which are listed by type above. Most compare the design with the libraries: `lib_footprint_mismatch` and `lib_symbol_mismatch` mean the copy of a part saved in the design differs from today's library version, and `lib_footprint_issues` and `lib_symbol_issues` mean the design names a library this setup doesn't have. 74 of the 76 `lib_footprint_issues` name `flyingcarsfootprints`, which supplies the board's 73 stitching vias and one logo. Will installing Tiny Tapeout's libraries make those 74 go away?
+7. Now look at the kinds of warning, which the check listed by type above. Most of them compare the design with the libraries: `lib_footprint_mismatch` and `lib_symbol_mismatch` mean the copy of a part saved in the design differs from today's library version, and `lib_footprint_issues` and `lib_symbol_issues` mean the design names a library this setup doesn't have. 74 of the 76 `lib_footprint_issues` name `flyingcarsfootprints`, which supplies the board's 73 stitching vias and one logo. Will installing Tiny Tapeout's libraries make those 74 go away?
 
    <details>
    <summary>Answer</summary>
 
-   No. `flyingcarsfootprints` isn't in the board's own library table or in `tinytapeout-kicad-libs`, which the fetch script put beside the board, so no setup you can make has it. That's harmless, because KiCad saves a copy of every footprint inside the board file, and the board opens and plots without the library. The other two `lib_footprint_issues` name `Logos`, for the two Tiny Tapeout logos.
+   No. `flyingcarsfootprints` isn't in the board's own library table or in `tinytapeout-kicad-libs`, which the fetch script put beside the board, so neither of them gives you a copy to install. That's harmless, because KiCad saves a copy of every footprint inside the board file, and the board opens and plots without the library. The other two `lib_footprint_issues` name `Logos`, for the two Tiny Tapeout logos.
 
    </details>
 
