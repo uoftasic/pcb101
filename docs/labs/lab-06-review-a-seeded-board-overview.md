@@ -10,7 +10,7 @@ The lab's files are in [`labs/lab-06-review-a-seeded-board/`](https://github.com
 - Read [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), row 11 of the [course path](../index.md#course-path). Its ten-line checklist is the one you review against, and `REVIEW.md` asks for the number of the line each fault breaks.
 - Don't open `labs/lab-06-review-a-seeded-board/solutions/` until you've finished. It lists the faults.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those are our estimates. We did time the checks. On a copy of the seeded board, the board check took 18 s and Lab 04's check 19 s, with one CPU, and the Lab 06 check, which only reads your two files and your board, took under a second.
+The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those are our estimates, but we timed the checks themselves on a copy of the seeded board, with one CPU: the board check took 18 s and Lab 04's check 19 s, and the Lab 06 check, which only reads your two files and your board, took under a second.
 
 ## Part 1: What the checks say
 
@@ -51,7 +51,7 @@ What do the checks you already have find on this board?
    ~/pb101/labs/lab-04-protect-and-plan/check.sh
    ```
 
-   You should see the board check and the bring-up plan check pass. In the Pmod check the connectors row fails and the power row passes, and the pins row says the pins aren't checked until the connectors pass:
+   You should see the board check and the bring-up plan check pass. In the Pmod check, the connectors row fails, the power row passes, and the pins row says that the pins aren't checked until the connectors pass:
 
    ```text
      FAIL  connectors   J1 (102.00, 56.35), J2 (124.86, 56.35), J3 (148.22, 56.35)
@@ -136,7 +136,7 @@ What would your board cost to make, how long would it take, and what does the fa
 
 2. Before you upload, write down the board size and the number of layers you expect the quote page to read from your files. Our board's outline is 64 × 32 mm on 2 layers.
 
-3. Choose a fabricator from [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) (JLCPCB, PCBWay or OSH Park), upload the zip on its quote page, and leave the options at a plain 2-layer board unless you have a reason to change one. Don't order. Read the price, the build time, the shipping choices to Toronto, and the result of the fabricator's file check, the DFM report, and copy each into `QUOTE.md`, the DFM warnings word for word. Record whether the site asked you to make an account before it showed a price; we haven't checked that for any of them.
+3. Choose a fabricator from [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) (JLCPCB, PCBWay or OSH Park), upload the zip on its quote page, and leave the options at a plain 2-layer board unless you have a reason to change one. Don't order. Read the price, the build time, the shipping choices to Toronto, and the result of the fabricator's file check (the DFM report), and copy each into `QUOTE.md`, with the DFM warnings word for word. Record whether the site asked you to make an account before it showed a price; we haven't checked that for any of them.
 
    We couldn't do this part ourselves, because the machine we wrote the course on doesn't upload files to outside sites, so there is no quote page or DFM report from us here. The reference `QUOTE.md` in `solutions/` shows the format, with JLCPCB's advertised "From $2.00 / 5 pcs" in place of a real quote.
 
