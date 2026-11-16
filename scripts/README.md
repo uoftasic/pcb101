@@ -11,6 +11,7 @@ Utilities for PB101 — PCB Design with KiCad under the UofT ASIC org (`uoftasic
 | `init-template.py` | Fill `pb101` / title / description after using the template |
 | `screenshots/kicad/shot.sh` | KiCad GUI screenshots in the pinned image under Xvfb; see [`screenshots/kicad/README.md`](screenshots/kicad/README.md) |
 | `screenshots/kicad/render.sh` | `kicad-cli` 3D renders and SVG plots of boards, schematics, footprints and symbols |
+| `figures/` | The scripts that draw the guide pages' diagrams and plots into `docs/assets/img/`, with schemdraw and matplotlib. `pip install -r scripts/figures/requirements.txt`, then `python3 scripts/figures/<name>.py` rewrites that figure. Scripts that read Tiny Tapeout's boards need `python3 labs/common/fetch_boards.py` first, and the two that run KiCad (`dip_dock_render.py`, `footprint_sizes.py`) need Docker |
 
 ## Usage
 
