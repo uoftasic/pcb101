@@ -1,0 +1,4 @@
+# Local outputs from the checks; never committed.
+*
+!.gitignore
+!.gitkeep
