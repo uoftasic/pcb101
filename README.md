@@ -2,7 +2,7 @@
 
 Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.
 
-Part of the UofT ASIC Team education materials (`uoftasic`).
+Part of the UofT ASIC Team education materials (`uoftasic`), in the IC track after IC101 and IC102.
 Course site: <https://uoftasic.com/ic103/> · Education hub: <https://edu.uoftasic.com/>
 
 Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/ic103/guide/getting-started.html) says what to install). The labs' checks run in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt), and every ERC, DRC and parity count that a lab page shows comes from `kicad-cli` there. A few checks don't use KiCad at all. The bring-up plan check (`labs/common/check_bringup.py`) is one of them, and it needs only Python. Unlike the analog and digital courses, IC103 doesn't use the workbench that students set up in IC101.

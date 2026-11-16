@@ -1,6 +1,6 @@
 # Agent guide: UofT ASIC course repos
 
-This is IC103, PCB Design with KiCad, a course repository for the UofT ASIC Team (`uoftasic`). It teaches students to design the boards a chip sits on, in KiCad 10: schematics, footprints from datasheets, layout, protection, fabrication outputs in CI, review, and a bring-up board for a team chip. The site under `docs/` is built with Quarto and published on GitHub Pages by `.github/workflows/site.yml`. Everything students run lives outside `docs/`, in the lab packages under `labs/`.
+This is IC103, PCB Design with KiCad, a course repository for the UofT ASIC Team (`uoftasic`). The course comes third in the IC track, after IC101 and IC102. It teaches students to design the boards a chip sits on, in KiCad 10: schematics, footprints from datasheets, layout, protection, fabrication outputs in CI, review, and a bring-up board for a team chip. The site under `docs/` is built with Quarto and published on GitHub Pages by `.github/workflows/site.yml`. Everything students run lives outside `docs/`, in the lab packages under `labs/`.
 
 Write for a student working through the course, not for whoever maintains the template. Concrete labs and pages a student can follow from start to finish are worth more than meta documentation.
 
