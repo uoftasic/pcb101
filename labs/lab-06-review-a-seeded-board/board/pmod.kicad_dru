@@ -1,0 +1,10 @@
+(version 1)
+# JLCPCB's limit for the annular ring of a plated through hole on a 2-layer board with
+# 1 oz copper: "absolute minimum 0.18 mm" (https://jlcpcb.com/capabilities/pcb-capabilities,
+# read Nov 16, 2026). The limits Board Setup can hold itself (track width and clearance
+# 0.10 mm, drill 0.15 mm, via 0.25 mm, silkscreen text 1.0 mm high and 0.15 mm thick) are
+# in pmod.kicad_pro, under Board Setup > Design Rules > Constraints.
+
+(rule "JLCPCB 2-layer PTH annular ring"
+   (condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+   (constraint annular_width (min 0.18mm)))
