@@ -14,11 +14,11 @@ A symbol is a drawing with **pins**. Each pin has a number, a name and an electr
 
 The breakout's chip uses `Openframe_QFN_TT06_REV2`, whose description is "Openframe QFN packaging, with TinyTapeout 6+ pin mapping". It's a single unit with 65 pins. Pins 1 to 64 are the package's pins, and pin 65, named `ThermalPad`, is the exposed pad underneath it. Of the 65, 19 are power inputs (the supply and ground pins, and the thermal pad), 12 inputs, 11 bidirectional, 10 outputs, 12 passive and 1 not connected. Its footprint field already names a footprint, `Package_DFN_QFN:QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm`, which is the form every footprint reference takes: a library's nickname, a colon, and the footprint's name in that library.
 
-A symbol's pin types are part of its correctness. If a supply pin were drawn as passive, ERC couldn't tell you when the supply was missing, and if two outputs were drawn as bidirectional, it couldn't tell you when they fought. When you make a symbol from a datasheet, the pin types deserve as much care as the pin numbers.
+ERC works from the pin types in the symbol, so a wrong type hides a mistake from it. If a supply pin were drawn as passive, ERC couldn't tell you when the supply was missing, and if two outputs were drawn as bidirectional, it couldn't tell you when they fought. When you make a symbol from a datasheet, the pin types deserve as much care as the pin numbers.
 
 ## Footprints and their layers
 
-A footprint is a set of numbered **pads** plus drawings on the board's technical layers. The pad numbers are what join it to the symbol: symbol pin 17 connects to whatever pad is numbered 17, so the symbol's pin 65, `ThermalPad`, lands on the footprint's pad 65, the exposed pad. KiCad doesn't check that the pin and pad mean the same thing, only that the numbers match, which is why a footprint and a symbol made from two different datasheets can disagree without any check noticing.
+A footprint is a set of numbered **pads** plus drawings on the board's technical layers. The pad numbers are what join it to the symbol: symbol pin 17 connects to whatever pad is numbered 17, so the symbol's pin 65, `ThermalPad`, lands on the footprint's pad 65, the exposed pad. KiCad doesn't check that the pin and pad mean the same thing, only that the numbers match, which is why a footprint and a symbol made from two different datasheets can disagree without any check reporting it.
 
 The layers a footprint draws on each have one job:
 
@@ -31,7 +31,7 @@ The layers a footprint draws on each have one job:
 | `F.Fab` | the part's body outline and its reference | assembly drawings, not the board itself |
 | `F.CrtYd` | the courtyard, the area the part and its pads need | nothing on the board; DRC checks that courtyards don't overlap |
 
-A part on the back of the board uses the `B.` layers instead. The copper, mask and paste layers are what the fabricator and the assembler work from, so a mistake there gets made. The fab and courtyard layers are for people and for DRC.
+A part on the back of the board uses the `B.` layers instead. The copper, mask and paste layers are what the fabricator and the assembler work from, so a mistake on them ends up on the real board. The fab and courtyard layers are for people and for DRC.
 
 ![KiCad's footprint for a 9 × 9 mm QFN-64 with a 7.65 mm exposed pad](../assets/img/kicad-qfn64-9x9-ep7.65-footprint.png){fig-alt="A square footprint drawn in several colours. Sixteen narrow pads line each side. The large square exposed pad fills most of the middle and is covered by a 6 by 6 grid of smaller rounded squares, the paste openings. A thin outline around everything is the courtyard, and short silkscreen corner marks sit just outside the pads, with a small filled triangle at the top-left corner."}
 
@@ -55,11 +55,11 @@ KiCad's own libraries follow the **KiCad Library Convention** (KLC), a set of ru
 
 KLC is a convention for a library that has to work for everyone, so its numbers are a floor that suits most fabricators. A fabricator's own minimums can be stricter, and [Layers and fabricator rules](layers-and-fabricator-rules.md) shows what happens when you check a board against them.
 
-## One package, many footprints
+## Footprints for the same package {#one-package-many-footprints}
 
 The image the course's checks run in has 155 footprint libraries, and `Package_DFN_QFN` alone holds 779 footprints. Thirty of them have names that start `QFN-64-1EP_9x9mm_P0.5mm`: the same 9 × 9 mm body and 0.5 mm pitch, with exposed pads from 3.4 mm to 7.65 mm square, some with thermal vias and some without. The name spells out what you need to match: the package, the pin count, `1EP` for one exposed pad, the body size, the pitch and the exposed pad's size.
 
-So picking a footprint by its body size and pin count isn't enough. A QFN-64 package with a 4.7 mm exposed pad would sit on the 7.65 mm footprint's pad with solder spread far past its own, and one with a 7.65 mm pad would overhang a 4.7 mm footprint's. Tiny Tapeout's IHP breakout, for example, uses a footprint of Tiny Tapeout's own, `QFN-64-1EP_9x9mm_P0.5mm_EP4.7x4.7mm_IHP_C`. The package drawing in the part's datasheet is what decides, and working from one is what Lab 02 is about.
+So picking a footprint by its body size and pin count isn't enough. A QFN-64 package with a 4.7 mm exposed pad would sit on the 7.65 mm footprint's pad with solder spread far past its own, and one with a 7.65 mm pad would overhang a 4.7 mm footprint's. Tiny Tapeout's IHP breakout, for example, uses a footprint of Tiny Tapeout's own, `QFN-64-1EP_9x9mm_P0.5mm_EP4.7x4.7mm_IHP_C`. The package drawing in the part's datasheet decides which footprint is right, and Lab 02 is about working from one.
 
 ## Libraries and library tables
 
@@ -71,7 +71,7 @@ The breakout has project tables, and each one adds Tiny Tapeout's library:
 (lib (name "TinyTapeout")(type "KiCad")(uri "${KIPRJMOD}/../tinytapeout-kicad-libs/footprints/TinyTapeout.pretty")(options "")(descr ""))
 ```
 
-`${KIPRJMOD}` is the folder the project is in, so this path means "the folder `tinytapeout-kicad-libs` beside this project's folder". In Tiny Tapeout's repository that folder is a git submodule, and the course's fetch script puts the same library there, which is why the breakout finds its library when you open it. Paths that start from `${KIPRJMOD}` are the reason a project works the same on every computer: nothing depends on where the computer keeps its libraries.
+`${KIPRJMOD}` is the folder the project is in, so this path means "the folder `tinytapeout-kicad-libs` beside this project's folder". In Tiny Tapeout's repository that folder is a git submodule, and the course's fetch script puts the same library there, which is why the breakout finds its library when you open it. A path that starts from `${KIPRJMOD}` doesn't depend on where a computer keeps its libraries, which is why a project that uses one works the same on every computer.
 
 ## The copies inside a design
 
@@ -86,7 +86,7 @@ The copies are also where two kinds of warning come from. When KiCad can find th
 - 47 `lib_footprint_mismatch` warnings, such as "Footprint 'C_0402_1005Metric' does not match copy in library 'Capacitor_SMD'". They cover every footprint the board took from KiCad's own libraries: 25 capacitors, 15 resistors, 3 fiducials, the two regulators, the header J2 and the chip. The warning says that the copies differ, not how. For U4, we compared the two: the pads are identical, and the library's version has gained a filled triangle on the silkscreen at the pin 1 corner, which the board's copy doesn't have, and different fields.
 - 76 `lib_footprint_issues` warnings, all "The current configuration does not include the footprint library …": 74 for `flyingcarsfootprints`, the library of the board's stitching vias, and 2 for `Logos`. `flyingcarsfootprints` isn't in either of Tiny Tapeout's library repositories, so these 74 stay whatever you install.
 
-ERC reports the same two kinds for symbols: 69 `lib_symbol_mismatch` and 22 `lib_symbol_issues`. None of these warnings is about the board's copper. They're about whether the design still matches its libraries. When a design is a record of a board that was built, its own copies are what was made, so leave them as they are. When you start a board of your own, though, it's worth resolving them: either update the part from the library, or know why you've kept the old copy.
+ERC reports the same two kinds for symbols: 69 `lib_symbol_mismatch` and 22 `lib_symbol_issues`. These warnings are about whether the design still matches its libraries, and none of them is about the board's copper. When a design is a record of a board that was built, its own copies are what was made, so leave them as they are. When you start a board of your own, though, it's worth resolving them: either update the part from the library, or know why you've kept the old copy.
 
 ## Check yourself
 
