@@ -50,7 +50,7 @@ Pins 2, 3, 8, 11, 15, 16, 18 and 19 are ground on that breakout. J13 is marked D
 
 What does your board have to do, in numbers?
 
-1. Start in your repository. For Brief D, that's your Lab 03 to 06 repository. For Brief A, make a new one the way Lab 03, Part 1 does, from the same template, and copy in Lab 05's `starter/`, finished as you did there, and your `.gitignore`.
+1. Start in your repository. For Brief D, that's your Lab 03 to 06 repository. For Brief A, make a new one the way Lab 03, Part 1 does, from the same template, and copy your finished `.github/`, `ci/` and `.gitignore` into it from your Lab 05 repository.
 
 2. Copy the design note's template in:
 
@@ -76,7 +76,7 @@ What does your board have to do, in numbers?
      FAIL  test points  no test point on J4 pin 2 (/DONGLE_TXD), J4 pin 3 (/DONGLE_RXD), or on the other side of its series resistor
    ```
 
-   You should see the design row name what's still missing from your requirements and decisions. Your history row will differ from ours: a repository carried through Labs 03 to 05 already has several commits that change the board, and in our run of the course as a student it read `ok    history      5 commits change the schematic or the board`.
+   You should see the design row name what's still missing from your requirements and decisions. Your history row will differ from ours, because a repository carried through Labs 03 to 05 already has several commits that change the board. When we worked through the labs the way you have, it read `ok    history      5 commits change the schematic or the board`.
 
 ## Part 2: The board
 
@@ -167,7 +167,7 @@ Questions:
 
    </details>
 
-2. For Brief A, why put a 10 nF capacitor right at the pin, when the RC corner it makes with the source's 1.25 kΩ at most, 12.7 kHz, is far above anything a hand-turned trimmer does?
+2. For Brief A, why put a 10 nF capacitor right at the pin, when its RC corner, 12.7 kHz with the source's largest resistance of 1.25 kΩ, is far above anything a hand-turned trimmer does?
 
    <details>
    <summary>Answer</summary>

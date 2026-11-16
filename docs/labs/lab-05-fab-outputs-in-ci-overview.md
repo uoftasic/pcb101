@@ -23,7 +23,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
    git status
    ```
 
-   You should see two new folders, `.github/` and `ci/`, alongside `pmod.kicad_prl`, which Lab 03 had you leave out of your commits. `.github/workflows/board.yml` is the workflow. `ci/build.sh` is the script it runs, `ci/check_board.py` is a copy of the course's board check, and `ci/kicad-image.txt` names the pinned KiCad image by its digest.
+   You should see two new folders, `.github/` and `ci/`, and `pmod.kicad_prl`, which is still untracked because Lab 03 had you leave it out of your commits. `.github/workflows/board.yml` is the workflow. `ci/build.sh` is the script it runs, `ci/check_board.py` is a copy of the course's board check, and `ci/kicad-image.txt` names the pinned KiCad image by its digest.
 
 2. Read `board.yml`. After checking out your commit, it pulls the image named in `ci/kicad-image.txt`, then runs `bash ci/build.sh check`, `fab` and `images` as three steps, each in a fresh container, and uploads the folder `out/` as an artifact called `board-outputs`. Then read `ci/build.sh`, which holds everything those three steps do.
 
@@ -36,7 +36,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
 
    </details>
 
-3. Commit the starter, naming the two folders so that `pmod.kicad_prl` stays out, but don't push it yet:
+3. Commit the starter, but don't push it yet. Name its two folders in `git add`, so that `pmod.kicad_prl` stays out of the commit:
 
    ```bash
    git add .github ci
@@ -106,7 +106,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 
    and the same for `sch export bom`, `pcb export pos`, `pcb render` and `pcb export svg`. Keep the file names the comments give, because the check looks for them. Things to decide as you go:
 
-   - The drill file has to use the same origin as the Gerbers. Look at File > Plot in the PCB Editor: if "Use drill/place file origin" isn't ticked, the Gerbers use the absolute origin, and so should the drill file (`--drill-origin`). On our board the drill/place origin was never moved from (0, 0), so `absolute` and `plot` wrote the same file; on a board where someone has placed that origin, as on the DIP dock, they don't.
+   - The drill file has to use the same origin as the Gerbers. Look at File > Plot in the PCB Editor: if "Use drill/place file origin" isn't ticked, the Gerbers use the absolute origin, and so should the drill file (`--drill-origin`). On our board the drill/place origin was never moved from (0, 0), so `absolute` and `plot` wrote the same file. On a board where someone has placed that origin, such as the DIP dock, the two put the holes in different places.
    - An assembler wants the position file as CSV, in millimetres (`--format`, `--units`); the defaults are a text table in inches.
    - A render takes `--side top` or `--side bottom`.
    - For the copper plots, `--layers F.Cu,B.Cu` with `--mode-multi` writes one SVG per layer, `--common-layers Edge.Cuts` adds the outline to each, and `--page-size-mode 2` with `--exclude-drawing-sheet` crops them to the board.
