@@ -279,10 +279,10 @@ def check(stem, spec, protect):
                     problems.append("their spacing is " + " and ".join(f"{g:.2f}" for g in gaps) +
                                     f" mm; it must be {SPACING} mm")
                 if any(abs(o) > TOL for o in offs):
-                    problems.append("they aren't in a row: along the pins, " +
+                    problems.append("they aren't in a row: with the pins pointing away from you, " +
                                     " and ".join(f"{q} is {o:+.2f} mm from {p}"
                                                  for (p, q), o in zip(zip(order, order[1:]), offs)) +
-                                    " (+ is the way the pins point)")
+                                    " (+ is further away from you, toward the pins' tips)")
                 for r in pmods:
                     pads_in = all(bd.inside(bd.place(r, *xy)) for xy in bd.fps[r]["pads"].values())
                     tip = bd.place(r, PIN_TIP, 6.35)
