@@ -148,7 +148,7 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
    labs/common/kicad.sh python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
    ```
 
-   It takes 20 to 30 s. Below the header lines you should see:
+   In our runs it took 45 and 49 s with one CPU, and 23 s with two. Below the header lines you should see:
 
    ```text
                    errors  warnings  excluded
@@ -222,7 +222,7 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
    labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/check_notes.py
    ```
 
-   It works out its own answers from the board file, and runs `check_board.py` for the counts, so it takes 20 to 30 s. On the notes as shipped, every row is TODO, and it ends:
+   It works out its own answers from the board file, and runs `check_board.py` for the counts, so it takes a few seconds longer than the board check: 51 s with one CPU in our run, and 26 s with two. On the notes as shipped, every row is TODO, and it ends:
 
    ```text
      MISMATCH  Checks        ERC error all: the count is TODO
@@ -248,7 +248,7 @@ Check: `check_notes.py` prints an `ok` row for Not fitted, VCCD, VDD_IO, VDDA an
 | ERC errors | 10: 8 `power_pin_not_driven`, 2 `pin_to_pin` | exact |
 | DRC errors, excluded | 0, and 1 excluded `courtyards_overlap` | exact |
 | ERC and DRC warnings | 103 and 123 in the pinned image; yours may differ | setup-dependent |
-| `check_notes.py` run time | 20 to 30 s | ballpark |
+| `check_notes.py` run time | 51 s with one CPU, 26 s with two | ballpark |
 
 ## Finishing
 

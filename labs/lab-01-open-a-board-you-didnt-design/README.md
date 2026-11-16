@@ -13,9 +13,9 @@ python3 labs/common/fetch_boards.py          # once, if you haven't
 labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/check_notes.py
 ```
 
-It takes about 20 s, most of it ERC and DRC on the breakout, and ends with `PASS` or `FAIL`.
-On the shipped `breakout-notes.md`, which is all TODO, it prints `FAIL  5 of 5 rows disagree
-with the board`.
+It ends with `PASS` or `FAIL`, and in our runs it took 51 s with one CPU and 26 s with two,
+most of it ERC and DRC on the breakout. On the shipped `breakout-notes.md`, which is all
+TODO, it prints `FAIL  5 of 5 rows disagree with the board`.
 
 ## Files
 
