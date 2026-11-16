@@ -28,5 +28,5 @@ TODO, it prints `FAIL  5 of 5 rows disagree with the board`.
 | `results/` | local outputs; never committed |
 
 `labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/selftest.py`
-runs the self-test, which took 53 s with one CPU in our run, and ends with `5 of 5 cases gave
-the expected verdict`.
+runs the self-test, which took 53 s with one CPU in our run, and ends with
+`5 of 5 cases gave the expected verdict`.
