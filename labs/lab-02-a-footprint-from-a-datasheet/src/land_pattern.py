@@ -24,8 +24,8 @@ tolerance and P the placement machine's; the course uses F = 0.10 and P = 0.05.
 C_S here is the worst case, S_max - S_min. KiCad's generator combines the tolerances that
 make up S as a root-sum-square instead and centres that band on S's nominal
 (src/generators/tools/footprint/ipc_pad_size_calculators.py and
-src/kilibs/util/toleranced_size.py at 090252c), which gives a larger G. The course keeps
-the worst case, which a student can work out by hand.
+src/kilibs/util/toleranced_size.py at 090252c). The course keeps the worst case, which a
+student can work out by hand.
 
 KiCad's library convention (KLC F6.3) then wants at least 0.2 mm of clearance between the
 exposed pad and every other pad. Where G puts a pad's inner end closer than that to the
