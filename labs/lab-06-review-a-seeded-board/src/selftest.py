@@ -10,7 +10,8 @@ The seeded board (board/), as shipped:
     the connectors row fails because J3 is 0.5 mm out, and the pins row fails with "not
     checked until the connectors pass" (the power row is checked anyway, and passes);
   - with J3 put back at 22.86 mm, Lab 04's check must FAIL on the ui[0], ESD J4.2 and ESD J4.3
-    rows only: three of the eight faults are ones it looks for, and five are not.
+    rows only: three of the eight faults are ones it looks for, and it doesn't look for the
+    other five.
 
 The Lab 06 check, on a board repository like a student's after Lab 05 (Lab 04's reference
 board with Lab 05's reference files, in results/selftest/repo):
