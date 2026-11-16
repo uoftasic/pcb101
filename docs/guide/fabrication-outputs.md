@@ -60,7 +60,7 @@ Which layers become Gerbers, and with what options, is a setting stored in the b
 
 `kicad-cli pcb export gerbers` uses those settings only when you pass `--board-plot-params`. Without it, it uses its own defaults, and on the DIP dock the difference was large. With `--board-plot-params` it wrote the ten `.gbr` files above. Without it, it wrote 26 files, one for every layer the board has, including the courtyards, the margin and eight user layers such as `dip-dock-User_Eco1.gbr`, and it gave the main layers the old Protel extensions instead of `.gbr`: `dip-dock-F_Cu.gtl`, `dip-dock-B_Cu.gbl`, `dip-dock-F_Mask.gts`, `dip-dock-Edge_Cuts.gm1` and so on. The layers the fab needs are in both sets, but from the second a fabricator has to work out which 10 of the 26 files matter, and its silkscreen isn't the same: the board's settings subtract the solder mask from the silkscreen, and `kicad-cli`'s defaults don't.
 
-The simplest rule is to set the Plot dialog up once, save the board, and have every export, by hand or in CI, use `--board-plot-params`. Then the files you looked at in the GUI are the files CI sends to the fab.
+The simplest way to avoid that is to set the Plot dialog up once, save the board, and have every export, by hand or in CI, use `--board-plot-params`. Then the files you looked at in the GUI are the files CI sends to the fab.
 
 ## The drill file
 
@@ -85,7 +85,7 @@ The drill file has to use the same origin as the Gerbers, and in our first expor
 
 ![GerbView showing the DIP dock's Gerbers with the drill holes offset to the lower right of the board](../assets/img/kicad-gerbview-dip-dock-drill-absolute.png)
 
-*The DIP dock's ten Gerbers and a drill file made with `kicad-cli`'s default drill origin, in GerbView (KiCad 10.0.8). The board sits above and to the right of the origin; the orange holes from `dip-dock.drl` are below and to the right of it. Nothing warned us: both exports succeeded.*
+*The DIP dock's ten Gerbers and a drill file made with `kicad-cli`'s default drill origin, in GerbView (KiCad 10.0.8). The board sits above and to the right of the origin; the orange holes from `dip-dock.drl` are below and to the right of it. Neither export printed a warning, and both succeeded.*
 
 Exported again with `--drill-origin plot`, which uses the same origin as the plot, the holes sit in their pads:
 
