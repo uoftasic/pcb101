@@ -1,0 +1,24 @@
+{
+  "comment": "SimProc's pins, as a Pmod for it must connect them. Read by labs/common/check_pmod.py. Sources: uoftasic/simproc at 1d97772 (info.yaml; src/tt_um_ieeeuoftasic_simproc.sv: uio_oe = 8'b0000_0000, clk_per_bit = {uio_in[7:0], 2'b00}; docs/info.md: 'Send commands using the UART RX pin (using a USB to UART conveter)', 'Set UIO7-UIO0 to set the BAUD rate'). Pmod pin numbers follow the demo board's sockets J14, J15 and J16 (TinyTapeout/tt-demo-pcb bbf3dd1): bits 0-3 on pins 1-4, bits 4-7 on pins 7-10, GND on 5 and 11, +3V3 on 6 and 12.",
+  "project": "SimProc (tt_um_ieeeuoftasic_simproc)",
+  "sockets": ["input", "bidir", "output"],
+  "parts": {
+    "dongle": {
+      "what": "a 1 x 3 header for a 3.3 V USB-UART dongle",
+      "pins": {"1": "GND", "2": "the dongle's TXD (into the board)", "3": "the dongle's RXD (out of the board)"},
+      "external": true
+    }
+  },
+  "pins": [
+    {"pin": "ui[0]", "use": "UART receive", "to": {"part": "dongle", "pin": "2"}, "crossing": true},
+    {"pin": "uo[0]", "use": "UART transmit", "to": {"part": "dongle", "pin": "3"}, "crossing": true},
+    {"pin": "uio[0]", "use": "clk_per_bit[2]", "switch": "3V3", "pull": "down"},
+    {"pin": "uio[1]", "use": "clk_per_bit[3]", "switch": "3V3", "pull": "down"},
+    {"pin": "uio[2]", "use": "clk_per_bit[4]", "switch": "3V3", "pull": "down"},
+    {"pin": "uio[3]", "use": "clk_per_bit[5]", "switch": "3V3", "pull": "down"},
+    {"pin": "uio[4]", "use": "clk_per_bit[6]", "switch": "3V3", "pull": "down"},
+    {"pin": "uio[5]", "use": "clk_per_bit[7]", "switch": "3V3", "pull": "down"},
+    {"pin": "uio[6]", "use": "clk_per_bit[8]", "switch": "3V3", "pull": "down"},
+    {"pin": "uio[7]", "use": "clk_per_bit[9]", "switch": "3V3", "pull": "down"}
+  ]
+}
