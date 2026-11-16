@@ -22,8 +22,8 @@ checks what it built and what git sees:
              and the schematic (PDF)
   gitignore  after the build, `git status` shows nothing untracked, and git tracks none of
              KiCad's local files (.kicad_prl, backups, lock files, fp-info-cache, .history/)
-  planted    (with --planted REV) REV is an earlier commit of this branch on which
-             `ci/build.sh check` fails on the board, not on the script
+  planted    (with --planted REV) REV is an earlier commit on this branch, and
+             `ci/build.sh check` fails there on the board, not on the script
 
 Exit status: 0 PASS, 1 FAIL, 2 the check couldn't run.
 """
@@ -281,7 +281,7 @@ def check_planted(repo, rev, rows):
                          "check verdict: the script broke, not the board"))
         else:
             what = ", ".join(f"{x['key']} {x['got']}" for x in verdict["failures"])
-            rows.append((True, "planted", f"{sha[:7]}, an earlier commit of this branch, fails the board check ({what})"))
+            rows.append((True, "planted", f"{sha[:7]}, an earlier commit on this branch, fails the board check ({what})"))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
