@@ -101,7 +101,7 @@ Instead of listing every export in the workflow, you can save the list in the pr
 
 ## KiBot
 
-[KiBot](https://github.com/INTI-CMNB/KiBot), licensed under the AGPL-3.0, is a tool that drives KiCad from a YAML file and produces outputs that `kicad-cli` doesn't, such as an interactive HTML BOM. Lab 05 suggests it for that BOM under Going further, but we haven't run KiBot in this course ourselves. Its newest release on November 16, 2026 was 1.9.1, dated 2026-07-28, and its changelog says its KiCad 10 3D rendering goes "through the kicad-cli interface" and "has various limitations". Two things about it matter for a pinned course:
+[KiBot](https://github.com/INTI-CMNB/KiBot), licensed under the AGPL-3.0, is a tool that drives KiCad from a YAML file and produces outputs that `kicad-cli` doesn't, such as an interactive HTML BOM. Lab 05 suggests it for that BOM in its Going further section, but we haven't run KiBot in this course ourselves. Its newest release on November 16, 2026 was 1.9.1, dated 2026-07-28, and its changelog says its KiCad 10 3D rendering goes "through the kicad-cli interface" and "has various limitations". Two things about it matter for a pinned course:
 
 - Its KiCad 10 images lag KiCad. The newest KiCad version in any `ghcr.io/inti-cmnb/kicad10_auto_full` tag was 10.0.5, three releases behind the 10.0.8 the checks use, so a workflow with KiBot runs two different KiCads.
 - Its GitHub Action for KiCad 10, `v2_k10`, builds `FROM ghcr.io/inti-cmnb/kicad10_auto_full:latest`, a moving tag. If you use KiBot, name a fixed image tag, such as `1.9.1-2_k10.0.5_d13.2_b4.2.4LTS`, as you would for KiCad.
