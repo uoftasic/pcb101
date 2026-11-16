@@ -56,6 +56,6 @@ Stop and unplug the dongle first, then the kit's USB cable, before you look for 
 
 - A resistance in Before power that is low where it should be open points to a solder bridge or a part on the wrong pads; compare the board with the schematic before anything is powered.
 - The board alone drawing much more than 0.99 mA, or the supply hitting its 10 mA limit, means a short from +3V3 to GND on the board: don't plug it into the kit.
-- The kit drawing more than 250 mA, or anything warm, can be a latched-up chip: switch off, wait, and try the kit without your board to see whether the current is the board's or the kit's.
+- The kit drawing more than 250 mA, or anything warm, can mean that a chip has latched up: switch off, wait, and try the kit without your board to see whether the current is the board's or the kit's.
 - `uo_out` other than 0x03 after reset: check the project selection and the clock in the firmware before suspecting the chip.
 - No reply to `PING`: check that the dongle's TXD is on J4 pin 2 and its RXD on pin 3, that the terminal's baud rate matches `clk_per_bit` and the clock, and that the demo board's DIP switch 1 is off.
