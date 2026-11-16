@@ -2,7 +2,7 @@
 
 Don't read this until you've done the lab.
 
-`board/` is Lab 04's reference SimProc Pmod with eight faults planted in it by [`../src/make_seeded.py`](../src/make_seeded.py). Its board check passes (ERC 0, DRC 0 errors and 32 warnings, 0 unconnected, 0 parity, in `kicad/kicad:10.0.8`), because every fault agrees with the board's own schematic and rules. Lab 04's check (`check_pmod.py --protect`) fails on the connectors row and checks nothing else until the connectors pass; with J3 moved back to 22.86 mm it fails on `ui[0]`, `ESD J4.2` and `ESD J4.3`, so three of the faults are ones it looks for, and five aren't.
+`board/` is Lab 04's reference SimProc Pmod with eight faults planted in it by [`../src/make_seeded.py`](../src/make_seeded.py). Its board check passes (ERC 0, DRC 0 errors and 32 warnings, 0 unconnected, 0 parity, in `kicad/kicad:10.0.8`), because every fault agrees with the board's own schematic and rules. Lab 04's check (`check_pmod.py --protect`) fails on the connectors row and checks nothing else until the connectors pass; with J3 moved back to 22.86 mm it fails on `ui[0]`, `ESD J4.2` and `ESD J4.3`, so it looks for three of the faults and not for the other five.
 
 | # | Fault | Where | Checklist line | Found by Lab 04's check? |
 |---|---|---|---|---|
