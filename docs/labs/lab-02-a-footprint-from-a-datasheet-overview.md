@@ -161,7 +161,7 @@ Check: the check's Symbol row says `ok  Symbol  25 pins with Table 4-1's names a
 
 Do your symbol and footprint work together the way KiCad expects?
 
-1. Run the check once more. With both files in place, it now builds a one-part KiCad project in `results/fit/`: a schematic with your symbol, a label on every pin and a PWR_FLAG on each net that needs a driver, and a board with your footprint placed and every pad given its pin's net. Then it runs `labs/common/check_board.py` on that project. In our runs the whole check took 46 and 48 s with the container limited to one CPU. On the reference solution it ends:
+1. Run the check once more. With both files in place, it now builds a one-part KiCad project in `results/fit/`: a schematic with your symbol, a label on every pin and a PWR_FLAG on each net that needs a driver, and a board with your footprint placed and every pad given its pin's net. Then it runs `labs/common/check_board.py` on that project. In our two runs, with the container limited to one CPU, the whole check took 46 s and 48 s. On the reference solution it ends:
 
    ```text
      ok        pads.md    Z, G, X, pad lengths and centres within 0.02 mm of the course's

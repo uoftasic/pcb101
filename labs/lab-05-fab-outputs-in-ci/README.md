@@ -24,7 +24,7 @@ cp -r ~/pb101/labs/lab-05-fab-outputs-in-ci/starter/. .             # once
 | position | a `.csv` with `pos` in its name in `out/assembly/`, KiCad's CSV format, with every part at its position on the board in mm |
 | images | `out/review/` has a PNG with `top` and one with `bottom` in its name, an SVG with `F_Cu` and one with `B_Cu`, and a PDF |
 | gitignore | after the build `git status` lists no untracked files, and git tracks none of KiCad's local files |
-| planted | with `--planted REV`: REV is an earlier commit of your branch, and `ci/build.sh check` fails there with a board check verdict |
+| planted | with `--planted REV`: REV is an earlier commit on your branch, and `ci/build.sh check` fails there with a board check verdict |
 
 | Repository | Last line of the check |
 |---|---|
