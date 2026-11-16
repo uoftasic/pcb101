@@ -29,13 +29,13 @@ On the folder as shipped it prints `FAIL  4 of 4 parts of the check disagree`.
 | `src/check_footprint.py` | the check: your numbers, your footprint, your symbol, and a one-part board built from them through `labs/common/check_board.py` |
 | `src/fit_project.py` | writes that one-part board into `results/fit/` |
 | `src/make_reference.py` | writes the reference solution from `land_pattern.py` |
-| `src/selftest.py` | five folders with known verdicts, which show that the check checks |
+| `src/selftest.py` | seven folders with known verdicts, which show that the check checks |
 | `solutions/` | the reference `pads.md`, footprint and symbol |
 | `results/` | local outputs; never committed |
 
 `labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/selftest.py` runs
-the self-test in 1 to 3 min (68 s and 150 s in our two runs) and ends with `5 of 5 cases gave the
-expected verdict`.
+the self-test in about 3 min (196 s in our run, with `--cpus 1`) and ends with `7 of 7 cases gave
+the expected verdict`.
 
 The datasheet is TI's and isn't copied here; `data/rhl0024a.json` holds only the numbers
 the lab uses, each with the page it's on.

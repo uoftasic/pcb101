@@ -67,8 +67,27 @@ def plain_name(name):
     return re.sub(r"[~_^]\{([^}]*)\}", r"\1", name).strip()
 
 
-def pins_of(sym_text, name):
-    """[(unit, number, name, type, x, y)] for every pin of the symbol."""
+def pin_numbers(number):
+    """The pad numbers of one pin. KiCad 10 writes a pin stack as one pin whose number is
+    a list or a range in brackets, "[11,12,13]" or "[11-13]", and gives its net to every
+    pad in it (KLC S4.3). Any other number is a single pad."""
+    m = re.match(r"^\[(.*)\]$", number.strip())
+    if not m:
+        return [number]
+    out = []
+    for part in m.group(1).split(","):
+        part = part.strip()
+        r = re.match(r"^([A-Za-z]*)(\d+)-\1(\d+)$", part)
+        if r and int(r.group(2)) <= int(r.group(3)):
+            out += [f"{r.group(1)}{i}" for i in range(int(r.group(2)), int(r.group(3)) + 1)]
+        elif part:
+            out.append(part)
+    return out
+
+
+def pins_of(sym_text, name, stacks=True):
+    """[(unit, number, name, type, x, y, hidden)] for every pin of the symbol. Each number
+    of a pin stack gets its own entry; stacks=False keeps the number as the file has it."""
     sym = parse(sym_text)
     out = []
     for sub in sym:
@@ -83,7 +102,9 @@ def pins_of(sym_text, name):
                 at = next(c for c in p if isinstance(c, list) and c[0] == "at")
                 nm = next((c[1] for c in p if isinstance(c, list) and c[0] == "name"), "")
                 num = next((c[1] for c in p if isinstance(c, list) and c[0] == "number"), "")
-                out.append((unit, num, nm, p[1], float(at[1]), float(at[2])))
+                hidden = "hide" in p or ["hide", "yes"] in p
+                for n in (pin_numbers(num) if stacks else [num]):
+                    out.append((unit, n, nm, p[1], float(at[1]), float(at[2]), hidden))
     return out
 
 
@@ -118,7 +139,7 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
     pins = pins_of(student, sym_name)
     units = sorted(set(u for u, *_ in pins if u != 0)) or [1]
     nets, pad_net, points, power_nets = {}, {}, {}, set()
-    for unit, num, name, etype, x, y in pins:
+    for unit, num, name, etype, x, y, _hidden in pins:
         net = plain_name(name)
         if not net or net == "~":
             net = f"P{num}"
@@ -149,7 +170,7 @@ def build(out_dir, sym_lib, sym_name, fp_lib_dir, fp_name, fields, power_sym_lib
         sch += prop_s("Footprint", f"pb101:{fp_name}", ux, Y0 + 32, hide=True)
         sch += prop_s("Datasheet", fields.get("Datasheet", ""), ux, Y0 + 34, hide=True)
         sch += prop_s("Description", fields.get("Description", ""), ux, Y0 + 36, hide=True)
-        for unit, num, *_ in pins:
+        for unit, num, *_ in pins_of(student, sym_name, stacks=False):
             if unit in (0, u):
                 sch += f'\t\t(pin "{num}"\n\t\t\t(uuid "{uid("pin", u, num)}")\n\t\t)\n'
         sch += (f'\t\t(instances\n\t\t\t(project "fit"\n\t\t\t\t(path "/{root}"\n\t\t\t\t\t(reference "U1")\n'

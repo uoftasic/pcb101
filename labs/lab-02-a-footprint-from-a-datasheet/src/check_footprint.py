@@ -16,7 +16,9 @@ pb101.kicad_sym with the symbol SN74LVC8T245RHL. The check has four parts:
    also compares your pads with every footprint in KiCad's Package_DFN_QFN library and
    fails if they're the same as one of them.
 3. The symbol against Table 4-1 of the datasheet: pins 1 to 25, their names and types,
-   and the Footprint field pb101:RHL0024A.
+   and the Footprint field pb101:RHL0024A. A KiCad 10 pin stack such as [11,12,13] counts
+   as each of its numbers. A hidden power-input pin fails, because KiCad joins it to a
+   global net named after it.
 4. A one-part project with your symbol and footprint (written to results/fit/), through
    labs/common/check_board.py: no ERC errors, no DRC errors, no parity items.
 
@@ -329,8 +331,11 @@ def check_symbol(path, rows):
     table = drawing()["pins"]
     msgs = []
     by_num = {}
-    for unit, num, name, etype, x, y in pins:
+    hidden_power = []
+    for unit, num, name, etype, x, y, hidden in pins:
         by_num.setdefault(num, []).append((name, etype))
+        if hidden and etype == "power_in":
+            hidden_power.append((num, fit_project.plain_name(name)))
     dup = [n for n, v in by_num.items() if len(v) > 1]
     if dup:
         msgs.append(f"pin number {', '.join(sorted(dup, key=int if all(d.isdigit() for d in dup) else str))} "
@@ -362,6 +367,9 @@ def check_symbol(path, rows):
     for g, types in groups.items():
         if "power_in" not in types:
             msgs.append(f"none of the {g} pins is power_in, so ERC won't know it's a supply")
+    for n, nm in hidden_power:
+        msgs.append(f"pin {n} ({nm}) is a hidden power input, which KiCad joins to a global net "
+                    f"called {nm}; make it passive, or stack the pins in one pin numbered like [23,24]")
     fp_field = None
     for c in re.finditer(r'\(property\s+"Footprint"\s+"([^"]*)"', sym):
         fp_field = c.group(1)

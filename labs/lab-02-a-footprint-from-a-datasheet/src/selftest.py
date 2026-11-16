@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Does the Lab 02 check check? Five folders with known verdicts.
+"""Does the Lab 02 check check? Seven folders with known verdicts.
 
     labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/selftest.py
 
@@ -11,6 +11,10 @@
    FAIL, on the hand calculation and on DRC clearance in the fit project, because 0.32 mm
    pads at a 0.5 mm pitch leave 0.18 mm between them.
 5. The solution with pin 25 (the exposed pad) left out of the symbol: must FAIL.
+6. The solution with GND and VCCB drawn as KiCad 10 pin stacks, one pin numbered [11,12,13]
+   and one numbered [23,24], in place of pins stacked on top of each other: must PASS.
+7. The solution with the hidden VCCB pin 24 made a power input instead of passive: must
+   FAIL on the symbol, because KiCad joins a hidden power input to a global net.
 
 Exit status 0 when every case gives its expected verdict.
 """
@@ -70,12 +74,45 @@ def main():
         with open(path, "w") as f:
             f.write(out)
 
+    def pin_blocks(text):
+        return re.findall(r'\t\t\t\(pin \w+ line\n.*?\n\t\t\t\)\n', text, flags=re.S)
+
+    def number(block):
+        return re.search(r'\(number "([^"]*)"', block).group(1)
+
+    def native_stacks(d):
+        path = os.path.join(d, "pb101.kicad_sym")
+        with open(path) as f:
+            text = f.read()
+        for b in pin_blocks(text):
+            n = number(b)
+            if n in ("12", "13", "24"):
+                text = text.replace(b, "", 1)
+            elif n in ("11", "23"):
+                text = text.replace(b, b.replace(f'(number "{n}"', '(number "[11,12,13]"' if n == "11"
+                                                 else '(number "[23,24]"'), 1)
+        assert '"[11,12,13]"' in text and '"[23,24]"' in text, "stacked pins not found; update selftest.py"
+        with open(path, "w") as f:
+            f.write(text)
+
+    def hidden_power_pin(d):
+        path = os.path.join(d, "pb101.kicad_sym")
+        with open(path) as f:
+            text = f.read()
+        b = next(b for b in pin_blocks(text) if number(b) == "24")
+        assert "(hide yes)" in b and b.startswith("\t\t\t(pin passive"), "pin 24 isn't hidden and passive; update selftest.py"
+        with open(path, "w") as f:
+            f.write(text.replace(b, b.replace("(pin passive", "(pin power_in", 1), 1))
+
     cases = [
         ("lab folder as shipped", LAB, 1, ["Z, long sides: TODO", "RHL0024A.kicad_mod yet"]),
         ("reference solution", SOLUTION, 0, ["PASS"]),
         ("KiCad's QFN-24 renamed", variant(work, "kicad-copy", copy_kicad), 1, [f"same as KiCad's {COPY}"]),
         ("0.32 mm pads", variant(work, "wide", wide_pads), 1, ["X, long sides: 0.32", "drc.error"]),
         ("no pin 25 in the symbol", variant(work, "no-ep-pin", no_pin_25), 1, ["no pin 25"]),
+        ("KiCad 10 pin stacks", variant(work, "stacks", native_stacks), 0, ["PASS"]),
+        ("hidden power-input pin 24", variant(work, "hidden-power", hidden_power_pin), 1,
+         ["pin 24 (VCCB) is a hidden power input"]),
     ]
     results = []
     for label, folder, want_rc, want in cases:
