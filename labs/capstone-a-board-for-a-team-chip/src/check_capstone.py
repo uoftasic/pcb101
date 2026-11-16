@@ -128,9 +128,11 @@ def check_design(path, rows):
     reqs = numbered(secs.get("Requirements", []))
     decs = numbered(secs.get("Decisions", []))
     if len(reqs) < 3:
-        probs.append(f"{len(reqs)} numbered requirement{'' if len(reqs) == 1 else 's'}; at least 3 needed")
+        probs.append(f"{'only ' + str(len(reqs)) if reqs else 'no'} numbered "
+                     f"requirement{'' if len(reqs) == 1 else 's'}, and at least 3 are needed")
     if len(decs) < 3:
-        probs.append(f"{len(decs)} numbered decision{'' if len(decs) == 1 else 's'}; at least 3 needed")
+        probs.append(f"{'only ' + str(len(decs)) if decs else 'no'} numbered "
+                     f"decision{'' if len(decs) == 1 else 's'}, and at least 3 are needed")
     met = set()
     no_value, no_meets = [], []
     for n, item in decs:
@@ -146,8 +148,8 @@ def check_design(path, rows):
         probs.append(f"{counted(no_meets, 'decision', 'decisions')} {'has' if len(no_meets) == 1 else 'have'} "
                      "no 'Meets:' line naming requirements")
     if no_value:
-        probs.append(f"{counted(no_value, 'decision', 'decisions')} give{'s' if len(no_value) == 1 else ''} "
-                     "no value with its unit")
+        probs.append(f"{counted(no_value, 'decision', 'decisions')} "
+                     f"{'gives no value with its unit' if len(no_value) == 1 else 'give no value with their units'}")
     unmet = [n for n, _ in reqs if n not in met]
     if reqs and decs and unmet:
         probs.append(f"{counted(unmet, 'requirement', 'requirements')} {'isn' if len(unmet) == 1 else 'aren'}'t "
