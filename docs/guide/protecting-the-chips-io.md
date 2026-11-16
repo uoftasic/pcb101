@@ -24,7 +24,7 @@
 
 This page answers: *what can the board around a Tiny Tapeout chip do to its digital pins, and what do you put between a pin and the outside world so that it can't?*
 
-The chip on a Tiny Tapeout breakout is the only one in the kit, so a mistake on your Pmod that damages a pin is expensive. This page covers the pins' ratings, what happens when a pin is driven past them, and the parts that keep it inside: series resistors, buffers and translators, and pull resistors. [Supplies, back-powering and ESD](supplies-back-powering-and-esd.md) covers what happens when one board is powered and the other isn't, and static. In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you'll add this protection to your Lab 03 board.
+The chip on a Tiny Tapeout breakout is the only one in the kit, so a mistake on your Pmod that damages a pin is expensive. This page covers the pins' ratings, what happens when a pin is driven past them, and the parts that keep it inside: series resistors, buffers and translators, and pull resistors. [Supplies, back-powering and ESD](supplies-back-powering-and-esd.md) covers what happens when one board is powered and the other isn't, and what static discharge does to a pin. In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you'll add this protection to your Lab 03 board.
 
 ## What the pins are rated for
 
