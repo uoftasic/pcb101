@@ -16,7 +16,7 @@
 
 This page answers: *which of a Tiny Tapeout project's pins can a board of yours reach, through which connector pin, and what else on the demo board is already connected to each one?*
 
-A Pmod is the simplest board you can make for a Tiny Tapeout chip: it plugs into the demo board's headers and never touches the chip's breakout. In [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md) you'll draw one for a single project, by default the team's SimProc. To do that you need to know where each project pin comes out, what the demo board already hangs on it, and how the project's choice of pins helps or hinders the board. The last of those is something a team can still change before its chip is taped out, so this page ends with it.
+A Pmod is the simplest board you can make for a Tiny Tapeout chip: it plugs into the demo board's headers and never touches the chip's breakout. In [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md) you'll draw one for a single project, and this page uses the team's SimProc as its example. To do that you need to know where each project pin comes out, what the demo board already hangs on it, and how the project's choice of pins helps or hinders the board. The last of those is something a team can still change before its chip is taped out, so this page ends with it.
 
 ## A project's pins
 
@@ -72,7 +72,7 @@ SimProc's `info.yaml` and its top-level RTL (`uoftasic/simproc` at 1d97772) give
 
 Its `info.yaml` gives the clock as 0 Hz, which means "not applicable", so the bit period in seconds depends on the clock the demo board supplies. Its documentation says to "Send commands using the UART RX pin (using a USB to UART conveter)" and to "Set UIO7-UIO0 to set the BAUD rate of the internal UART module."
 
-Against the demo board, that pinout does three things. SimProc's transmit pin, `uo_out[0]`, lands on a hardware UART receiver in the RP2350. Its receive pin, `ui_in[0]`, lands on GPIO17, which has no UART function in the table. And its halt and done flags light segments B and C of the display already. The Lab 03 Pmod therefore carries a header for a 3.3 V USB-UART dongle on `ui[0]` and `uo[0]`, and eight switches with pull-down resistors on `uio[0..7]`, and it spans all three sockets, as the README expected. It has no LEDs on the halt and done flags, because the display already shows them and an LED would be a second load on each pin.
+Against the demo board, that pinout does three things. SimProc's transmit pin, `uo_out[0]`, lands on a hardware UART receiver in the RP2350. Its receive pin, `ui_in[0]`, lands on GPIO17, which has no UART function in the table. And its halt and done flags light segments B and C of the display already. So a Pmod that lets you talk to SimProc without depending on the demo board's firmware needs a header for a 3.3 V USB-UART dongle on `ui[0]` and `uo[0]`, as SimProc's documentation describes, and eight switches with pull-down resistors on `uio[0..7]`. It spans all three sockets, the case the README warns about. It needs no LEDs on the halt and done flags, because the display already shows them and an LED would be a second load on each pin.
 
 ## Planning a pinout before tapeout
 

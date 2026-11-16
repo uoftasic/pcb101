@@ -9,7 +9,6 @@ Copper pads are drawn from each footprint's pad list (pads on a copper layer onl
 QFN's separate paste windows are left out) and the body from its F.Fab drawing, on a
 1 mm grid. Nothing is redrawn by hand.
 """
-import math
 import os
 import subprocess
 
@@ -17,7 +16,7 @@ from matplotlib.patches import Circle, FancyBboxPatch, Polygon, Rectangle
 from matplotlib.transforms import Affine2D
 
 from kicad_sexpr import find, get, parse
-from plot_style import COPPER, GREY, INK, REPO, figure, save
+from plot_style import COPPER, INK, REPO, figure, save
 
 LIB = "/usr/share/kicad/footprints"
 ROWS = [

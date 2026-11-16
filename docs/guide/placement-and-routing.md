@@ -37,7 +37,7 @@ After the connectors come the parts their signals go to, in the order that keeps
 
 A CMOS chip draws its supply current in short pulses, at every edge, and those pulses flow through whatever inductance lies between the chip and the nearest charge. Horowitz and Hill work an example (*The Art of Electronics*, 3rd ed., p. 857): a 74LVC output at 3.3 V driving 25 pF with 2 ns edges draws 40 mA, and since a ground wire has roughly 5 nH/cm of inductance, one inch of it turns that current step into about 0.2 V of noise on the chip's ground. Their remedy is a ground plane and "0.1 µF ceramic per IC (or per 2–3 ICs)", with some larger capacitors nearby. The capacitor supplies the pulse from close by, so the pulse's loop is the short one from the capacitor through the chip and back, and the rest of the supply only has to deliver the average current.
 
-The SKY130 breakout shows what that looks like around a QFN. Nine of its twelve 100 nF capacitors sit within 2.6 mm of the chip pin they serve, measured from the centre of the capacitor's pad to the centre of the nearest chip pad on the same rail. Two more are on the regulator outputs, and one, C25 on `VDD_IO`, is 18.5 mm away. The 1 µF capacitors are further out: C2, C8 and C5 at 3.7 to 5.5 mm, and the other six beside the 0 Ω links at the top of the board. The two 10 µF capacitors sit at the regulator inputs.
+The SKY130 breakout shows what that looks like around a QFN. We measured its board file, from the centre of each capacitor's pad to the centre of the nearest chip pad on the same rail, and nine of its twelve 100 nF capacitors sit within 2.6 mm of the chip pin they serve. Two more are on the regulator outputs, and one, C25 on `VDD_IO`, is 18.5 mm away. The 1 µF capacitors are further out: C2, C8 and C5 at 3.7 to 5.5 mm, and the other six beside the 0 Ω links at the top of the board. The two 10 µF capacitors sit at the regulator inputs.
 
 ![The SKY130 breakout around the chip U4](../assets/img/pb101-sky-breakout-u4-decoupling.svg)
 
@@ -45,7 +45,7 @@ The SKY130 breakout shows what that looks like around a QFN. Nine of its twelve 
 
 ## Track widths, clearances and vias
 
-A fabricator's capability page gives the smallest track and gap it can make, and you shouldn't design at that limit everywhere. JLCPCB's page, read on November 16, 2026, gives a minimum track width and spacing of 0.10 mm (4 mil) on 1- and 2-layer boards with 1 oz copper, and a minimum via of 0.15 mm hole and 0.25 mm diameter. Tiny Tapeout's 2-layer dock draws at roughly twice that:
+A fabricator's capability page gives the smallest track and gap it can make, and you shouldn't design at that limit everywhere. JLCPCB's page, read on November 16, 2026, gives a minimum track width and spacing of 0.10 mm (4 mil) on 1- and 2-layer boards with 1 oz copper, and a minimum via of 0.15 mm hole and 0.25 mm diameter. Tiny Tapeout's 2-layer dock draws at roughly twice that. Here are the numbers we read from the two boards' project and board files:
 
 | | DIP dock (2 layers) | SKY130 breakout (4 layers) |
 |---|---|---|

@@ -39,7 +39,7 @@ Tiny Tapeout's [GPIO page](https://tinytapeout.com/specs/gpio/) says the chip's 
 
 Under the table it adds: "The input pins are not 5V tolerant." On the demo board the pads run from 3.3 V, so keep every input between 0 V and 3.3 V.
 
-SkyWater's [user guide for its I/O cells](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_io/docs/user_guide.html) describes the circuit behind that limit. Its GPIO cells "use the main Vddio/Vssio connections for their ESD current steering diodes", that is, each pad has a diode up to the I/O supply and a diode down to ground. Its feature list gives "Hot swap & over-voltage tolerant" for two other cells, `sky130_fd_io__sio` and `sky130_fd_io__gpio_ovtv2`, and not for `sky130_fd_io__gpiov2`. We found no rating in that guide for how much current the diodes may carry, so the arithmetic below uses Horowitz and Hill's typical figures and a limit you'll set in Lab 04.
+SkyWater's [user guide for its I/O cells](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_io/docs/user_guide.html) describes the circuit behind that limit. Its GPIO cells "use the main Vddio/Vssio connections for their ESD current steering diodes", that is, each pad has a diode up to the I/O supply and a diode down to ground. Its feature list gives "Hot swap & over-voltage tolerant" for two other cells, `sky130_fd_io__sio` and `sky130_fd_io__gpio_ovtv2`, and not for `sky130_fd_io__gpiov2`. We found no rating in that guide for how much current the diodes may carry, so the arithmetic below uses Horowitz and Hill's typical figures, and the limit you design to is a choice you make and write down.
 
 ## Beyond the rails
 
@@ -64,7 +64,7 @@ where $V_D$ is the diode's forward drop. Horowitz and Hill use about 0.6 V for i
 | 1 kΩ | 2.7 mA |
 | 4.7 kΩ | 0.57 mA |
 
-The first row is already past Horowitz and Hill's 20 mA example. Lab 04 sets the limit you design to and has you work out the resistor from it; the next page explains why the unpowered case is also the one where that current does the most mischief.
+The first row is already past Horowitz and Hill's 20 mA example. Choose a limit well below that, and work the resistor out from it; the next page explains why the unpowered case is also the one where that current does the most mischief.
 
 A series resistor costs speed. With the capacitance at the pin it forms an RC low-pass, and its 10–90 % rise time is $2.2RC$ (Hall and Heck, *Advanced Signal Integrity for High-Speed Digital Designs*, eq. 8-8, give $2.195\tau$). We have no figure for the pad's own capacitance, so suppose the pin, its trace and the connectors add up to 10 pF. Then 1 kΩ gives $\tau$ = 10 ns and an edge of 22 ns. For a UART at 115 200 baud, whose bits last 8.7 µs, that edge doesn't matter at all. For an input near the pads' 66 MHz rating, whose half period is 7.6 ns, the edge would last longer than the signal stays high, so a fast line can only have a small series resistor, of tens of ohms. That small resistor, placed at the driving end, is also the series termination that [Placement and routing](placement-and-routing.md#when-a-trace-stops-being-a-wire) mentions for long lines.
 
@@ -85,7 +85,7 @@ The chip's analog pins are a different case, because there the signal itself is 
 
 ## Inputs that nobody drives
 
-A CMOS input that isn't driven floats, and Horowitz and Hill warn that an open input can float up to the logic threshold, where the gate's output sits at half the supply "with both MOS output transistors conducting", drawing current and sometimes oscillating (p. 806). So every input your board might leave undriven needs a resistor that holds it at a defined level. A switch is the usual case. Their switch-to-logic circuit (p. 802) uses a 10 kΩ pull-up or pull-down, and for CMOS either works. SimProc is a good example: its `uio[0..7]` pins are all inputs (`uio_oe` is 0 in its RTL) and set its UART's bit period, so the Lab 03 Pmod puts a switch and a pull-down on each one, and a switch that's open reads as 0 rather than as whatever the line picks up.
+A CMOS input that isn't driven floats, and Horowitz and Hill warn that an open input can float up to the logic threshold, where the gate's output sits at half the supply "with both MOS output transistors conducting", drawing current and sometimes oscillating (p. 806). So every input your board might leave undriven needs a resistor that holds it at a defined level. A switch is the usual case. Their switch-to-logic circuit (p. 802) uses a 10 kΩ pull-up or pull-down, and for CMOS either works. SimProc is a good example: its `uio[0..7]` pins are all inputs (`uio_oe` is 0 in its RTL) and set its UART's bit period, so a Pmod that sets them with switches needs a pull-down on each one, and a switch that's open then reads as 0 rather than as whatever the line picks up.
 
 ## Check yourself
 
@@ -112,7 +112,7 @@ A CMOS input that isn't driven floats, and Horowitz and Hill warn that an open i
    <details>
    <summary>Answer</summary>
 
-   The resistor and the capacitance at the pin set the edge time, $2.2RC$. With 10 pF, 1 kΩ gives about 22 ns edges, which is nothing against a UART bit of microseconds, but longer than a 50 MHz clock's whole 20 ns period.
+   The resistor and the capacitance at the pin set the edge time, $2.2RC$. With the 10 pF supposed above, 1 kΩ gives about 22 ns edges, which is nothing against a UART bit of microseconds, but longer than a 50 MHz clock's whole 20 ns period.
 
    </details>
 

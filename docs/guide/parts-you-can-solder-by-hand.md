@@ -59,7 +59,7 @@ The size of a part isn't the only thing that decides whether you can solder it. 
 - **SOD-882**, the package of 22 of the TVS diodes on the demo board, has a body of 1.0 × 0.6 mm and two pads of 0.4 × 0.7 mm, 0.7 mm apart between centres. That's about the size of an 0402, with the same problem.
 - **QFN-64**, 9 × 9 mm with a 0.5 mm pitch, has pads 0.25 mm wide. Each one reaches only 0.375 mm beyond the edge of the body, and the 7.65 × 7.65 mm exposed pad in the middle is entirely underneath the part, where no iron can reach it. The Tiny Tapeout chip comes already mounted on its breakout, so a QFN is something you'll draw a footprint for, in [Lab 02](../labs/lab-02-a-footprint-from-a-datasheet-overview.md), and not something you'll solder.
 
-When Lab 04 asks you to add ESD protection to your Pmod, pick a part whose package is in the first group, not the third. Lab 04 names the part.
+When you add ESD protection to your Pmod in Lab 04, look for a part whose package is in the first group, not the third.
 
 ## Through-hole parts
 

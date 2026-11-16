@@ -17,9 +17,9 @@
     output capacitor and ESR), 754 (mixed supplies), 759-760 (latch-up; a chip powered by its logic inputs),
     795 (Fig. 12.4: HIGH input partially powers the rail), 804-805 (HBM, Fig. 12.21 and
     12.22, 15 uJ at 2.5 kV).
-  - The SKY breakout's 60-pin connector carrying an0-an11, res_an and ground where the
-    demo board has its 5VTVS parts: the course plan's fact T15 (pad numbers matched
-    between the two board files).
+  - The 5VTVS lines against the SKY breakout: we matched the demo board's J5 pad Ln to
+    the breakout's J1 pad n (all 16 digital project nets on those pads agree); /A-/X are
+    an0-an11, res_an16, res_an19 and eight GND (the course plan's fact T15 agrees).
 -->
 
 This page answers: *where does each of the chip's supplies come from, what happens to the chip when one board is powered and the board connected to it isn't, and where does static get in?*
@@ -84,7 +84,7 @@ A series resistor helps here as well: with $R_S$ between your driver and the lin
 
 Static is the other way current gets into a pin from outside. The human body model, which chip makers test with, treats a charged person as 100 pF in series with 1.5 kΩ, and Horowitz and Hill (p. 804) give its usual charging voltages as 1 to 2.5 kV, with some ICs rated up to 15 kV. At 2.5 kV that's a peak current of 1.67 A for a pulse with a time constant of 150 ns. Their estimate is that such a discharge delivers 15 µJ to an unprotected input, and that a series resistor with a pair of external clamp diodes, which have more junction area than the clamps on a chip, cuts that to about 0.1 µJ (p. 805).
 
-Static gets in where something from outside touches the board: connectors, cables and fingers. The demo board's file has TVS diodes, parts made to clamp such pulses, in two places. D1 and D2, valued "TVS", sit on the USB data lines. Twenty-two more, valued "5VTVS" and in SOD-882 packages (D6 to D27), sit on the lines `/A` to `/X`, which run from the breakout's connector to an unfitted 2 × 16 header; on the SKY130 breakout, those connector pins carry the analog pads `an0` to `an11`, two `res_an` lines and ground. The digital project pins have none. So the `ui_in`, `uo_out` and `uio` lines your Pmod reaches have only the chip's own protection, and a cable from a dongle gives static a direct path to them. Lab 04 has you add an ESD part from every pin of the dongle header to ground, at the header, so that a discharge arriving on the cable is diverted before it reaches anything else.
+Static gets in where something from outside touches the board: connectors, cables and fingers. The demo board's file has TVS diodes, parts made to clamp such pulses, in two places. D1 and D2, valued "TVS", sit on the USB data lines. Twenty-two more, valued "5VTVS" and in SOD-882 packages (D6 to D27), sit on the lines `/A` to `/X`, which run from the breakout's connector to an unfitted 2 × 16 header. We matched the demo board's connector to the SKY130 breakout's pad by pad (the sixteen digital project lines on that connector all line up), and those 22 lines are the analog pads `an0` to `an11`, two `res_an` lines and eight grounds. The digital project pins have none. So the `ui_in`, `uo_out` and `uio` lines your Pmod reaches have only the chip's own protection, and a cable from a dongle gives static a direct path to them. That's why the ESD protection you add in Lab 04 goes on the connector a cable plugs into, from each of its signal pins to ground, so that a discharge arriving on the cable is diverted before it reaches anything else.
 
 The other half of ESD protection is handling. Each kit has one chip, so handle the breakout on an ESD mat, wearing a wrist strap, and hold it by its edges.
 
