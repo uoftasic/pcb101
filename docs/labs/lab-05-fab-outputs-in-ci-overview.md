@@ -211,7 +211,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
    ~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
-   It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    16fecee fails the board check (drc.error 2), and the commits after it fix it` with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
+   It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    2e1dabd, an earlier commit of this branch, fails the board check (drc.error 2)` with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
 
 ## Finishing
 

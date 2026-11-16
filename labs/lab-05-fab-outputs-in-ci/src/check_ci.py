@@ -235,7 +235,7 @@ def check_git(repo, rows):
                      + "; ignore them or commit them"))
     elif local or ignored_tracked:
         f = (local or ignored_tracked)[0]
-        rows.append((False, "gitignore", f"git still tracks {f}; `git rm --cached {f}` and commit"))
+        rows.append((False, "gitignore", f"git still tracks {f}; run `git rm --cached {f}` and commit"))
     else:
         rows.append((True, "gitignore", "nothing untracked after the build, and none of KiCad's local files tracked"))
 
@@ -279,7 +279,7 @@ def check_planted(repo, rev, rows):
                          "check verdict: the script broke, not the board"))
         else:
             what = ", ".join(f"{x['key']} {x['got']}" for x in verdict["failures"])
-            rows.append((True, "planted", f"{sha[:7]} fails the board check ({what}), and the commits after it fix it"))
+            rows.append((True, "planted", f"{sha[:7]}, an earlier commit of this branch, fails the board check ({what})"))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
