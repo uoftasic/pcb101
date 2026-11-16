@@ -13,7 +13,7 @@ A **net** is a set of pins that are connected to each other, and it's what the b
 - **Wires**, which connect where they end on a pin or on another wire, and **junctions**, the dots that join wires that cross.
 - **Labels**. A local label joins everything on the same sheet that carries a label with the same name. A global label does the same across every sheet of the design, and a hierarchical label connects a sheet to a pin on the symbol of that sheet in its parent.
 - **Power symbols**, such as `+3V3` and `GND`. In KiCad a power symbol makes a net that is global across the whole design, named by the symbol's value.
-- **Pins on top of each other**: two pins at the same point are connected, with no wire needed.
+- **Pins on top of each other**: two pins at the same point are connected, and you don't need a wire between them.
 
 The breakout's schematic is one sheet with 333 wires, 46 junctions and 128 local labels, and no global or hierarchical labels, since there's no second sheet to reach. The difference between a label and a power symbol shows up in the net names the board file uses. A local label's net is named with the sheet's path in front, so the label `VCIN` makes the net `/VCIN`, while a power symbol's net has no prefix: `+3V3`, `GND` and `VCCD`.
 
@@ -58,9 +58,9 @@ All ten come from the supply section in the figure. `+3V3`, `+5V` and `GND` reac
 
 The two power flags are on the two nets that didn't need one. `VCC_{REG}` and `VDD_{REG}` already have a power output on them, the VOUT pin of each regulator, and the flag adds a second one, which is the "Power output and Power output" error.
 
-We checked this by editing a copy of the schematic and running ERC on it again. With the two power flags deleted, ERC reported 8 errors, all `power_pin_not_driven`, on the same eight nets as before, plus 2 new `unconnected_wire_endpoint` warnings for the wires the flags had been on. With a power flag added on each of those eight nets as well, ERC reported no errors at all. The breakout was built and shipped with these errors in it, because nothing about them changes the copper: they're errors in what the schematic tells ERC, not in the circuit. They're still worth fixing in a board of your own, because a schematic with ten known errors is one where an eleventh, real one is easy to miss.
+We checked this by editing a copy of the schematic and running ERC on it again. With the two power flags deleted, ERC reported 8 errors, all `power_pin_not_driven`, on the same eight nets as before, plus 2 new `unconnected_wire_endpoint` warnings for the wires the flags had been on. With a power flag added on each of those eight nets as well, ERC reported no errors at all. The breakout was built and shipped with these errors in it, because they don't change the copper: they're errors in what the schematic tells ERC rather than in the circuit. They're still worth fixing in a board of your own, because a schematic with ten known errors is one where an eleventh, real one is easy to miss.
 
-The rule to take away is to put a power flag where a supply enters through parts ERC treats as passive, such as a connector or a link, and never on a regulator's output.
+So put a power flag where a supply enters through parts that ERC treats as passive, such as a connector or a link, and never on a regulator's output.
 
 ## Warnings that come from the libraries
 
