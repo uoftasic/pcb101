@@ -6,8 +6,9 @@
 The seeded board (board/), as shipped:
   - the board check must PASS: every planted fault agrees with the schematic and the rules
     the board carries, so ERC, DRC and parity have nothing to report;
-  - Lab 04's check (check_pmod.py --protect) must FAIL on the connectors row only, because
-    J3 is 0.5 mm out, and it checks nothing else until the connectors pass;
+  - Lab 04's check (check_pmod.py --protect) must FAIL on the connectors and pins rows only:
+    the connectors row fails because J3 is 0.5 mm out, and the pins row fails with "not
+    checked until the connectors pass" (the power row is checked anyway, and passes);
   - with J3 put back at 22.86 mm, Lab 04's check must FAIL on the ui[0], ESD J4.2 and ESD J4.3
     rows only: three of the eight faults are ones it looks for, and five are not.
 
