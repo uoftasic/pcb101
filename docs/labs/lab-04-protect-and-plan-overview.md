@@ -95,7 +95,7 @@ How big a resistor keeps the current into an unpowered chip small, and still let
 
 Where does static get onto your board, and where does the protection have to sit?
 
-1. Add a two-line ESD array. Ours is `Power_Protection:SP0502BAHT`, which KiCad's library describes as "TVS Diode Array, 5.5V Standoff, 2 Channels, SOT-23 package", with the footprint `Package_TO_SOT_SMD:SOT-23`, a package whose leads you can reach with an iron.
+1. Add a two-line ESD array to the schematic (A, then filter for it). Ours is `Power_Protection:SP0502BAHT`, which KiCad's library describes as "TVS Diode Array, 5.5V Standoff, 2 Channels, SOT-23 package", with the footprint `Package_TO_SOT_SMD:SOT-23`, a package whose leads you can reach with an iron.
 
    ![The Choose Symbol dialog filtered to SP0502](../assets/img/kicad-symbol-chooser-sp0502.png)
 

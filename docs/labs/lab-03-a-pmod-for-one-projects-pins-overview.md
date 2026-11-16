@@ -74,9 +74,9 @@ What does SimProc need from a board, pin by pin?
 
    J1 will go in the demo board's input socket, J2 in the bidirectional one and J3 in the output one. Each symbol's pins follow the sockets: `IO1` to `IO4` on pins 1 to 4 carry bits 0 to 3, `IO5` to `IO8` on pins 7 to 10 carry bits 4 to 7, pins 5 and 11 are GND and pins 6 and 12 are the demo board's 3.3 V.
 
-2. Connect the pins SimProc uses, with net labels: J1 pin 1 (`ui[0]`) as `UART_RX`, J3 pin 1 (`uo[0]`) as `UART_TX`, and J2's eight IO pins as `UIO0` to `UIO7`. Put a `+3V3` power symbol on pins 6 and 12 and a `GND` symbol on pins 5 and 11 of all three connectors. The 14 IO pins left over get a no-connect flag (Place > No Connect Flag, Q), which tells ERC you left them open on purpose.
+2. Connect the pins SimProc uses, with net labels (Place > Add Label, L): J1 pin 1 (`ui[0]`) as `UART_RX`, J3 pin 1 (`uo[0]`) as `UART_TX`, and J2's eight IO pins as `UIO0` to `UIO7`. Put a `+3V3` power symbol on pins 6 and 12 and a `GND` symbol on pins 5 and 11 of all three connectors. The 14 IO pins left over get a no-connect flag (Place > No Connect Flag, Q), which tells ERC you left them open on purpose.
 
-3. Add the header for the dongle, `Connector_Generic:Conn_01x03` with the footprint `Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical`. The check expects this pinout: pin 1 GND, pin 2 to the dongle's TXD, pin 3 to the dongle's RXD. So pin 2 goes on `UART_RX` and pin 3 on `UART_TX`. Leave the dongle's VCC wire unconnected, because the board is powered by the demo board.
+3. Add the header for the dongle, `Connector_Generic:Conn_01x03` with the footprint `Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical`. (Double-click a symbol to set its Footprint field.) The check expects this pinout: pin 1 GND, pin 2 to the dongle's TXD, pin 3 to the dongle's RXD. So pin 2 goes on `UART_RX` and pin 3 on `UART_TX`. Leave the dongle's VCC wire unconnected, because the board is powered by the demo board.
 
    Why does SimProc's receive line go to the dongle's *transmit* pin?
 
