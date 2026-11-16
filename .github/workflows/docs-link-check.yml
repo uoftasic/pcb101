@@ -40,7 +40,7 @@ jobs:
             --accept 200,206,301,302,303,307,308,403,429 \
             'docs/**/*.md'
 
-      - name: Images referenced by a page exist on disk
+      - name: Check that every image and video a page references exists
         run: |
           python3 - <<'PY'
           import os, re, sys

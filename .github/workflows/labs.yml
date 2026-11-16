@@ -45,7 +45,7 @@ jobs:
       # a footprint deleted or a GND track across VCC must FAIL, and Tiny Tapeout's SKY130
       # breakout must match its recorded counts. If this fails, the checker can't be
       # trusted on anything below it.
-      - name: Does the checker check?
+      - name: Check the board checker on four known boards
         run: labs/common/kicad.sh python3 labs/common/selftest_check.py
 
       - name: Check every lab's reference solution
@@ -62,7 +62,7 @@ jobs:
       # Labs whose solution isn't a KiCad project (notes, a library) prove their own
       # checker instead: each src/selftest.py runs the lab's check on the shipped starter
       # (must FAIL), on solutions/ (must PASS) and on known-bad variants.
-      - name: Lab checkers against their starters and solutions
+      - name: Run each lab's checker on its starter, solution and known-bad variants
         run: |
           for t in labs/*/src/selftest.py; do
             echo "== $t"
