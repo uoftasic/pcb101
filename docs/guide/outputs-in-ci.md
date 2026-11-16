@@ -55,7 +55,7 @@ It exits 1 on a FAIL, so a workflow step that runs it fails the run. The 159 DRC
 
 A Docker image name such as `kicad/kicad:10.0` is a tag, and a tag is a pointer that the publisher moves. On Docker Hub, `kicad/kicad:10.0` and `kicad/kicad:10.0.8` were both last updated on October 30, 2026, and both are 812 MB, because `10.0` currently points at 10.0.8. KiCad posted 10.0.5 on July 22, 10.0.6 on August 29, 10.0.7 on October 7 and 10.0.8 on October 30, so a workflow that names `10.0` gets a new KiCad every few weeks without anyone committing anything. That is fine for pictures. For checks, it means a DRC count can change on a Monday morning for reasons that have nothing to do with your board.
 
-A digest names one exact image, and Docker refuses to substitute another. The course's checks name `kicad/kicad:10.0.8@sha256:3f4a01786dfb…` (in full in [`labs/common/kicad-image.txt`](https://github.com/uoftasic/pb101/blob/main/labs/common/kicad-image.txt)), and `labs/common/kicad.sh` prints the digest it ran before every check, so a log always records which KiCad produced it. We haven't compared outputs across 10.0 patch releases, so when the course moves to a newer one, it will be a commit of its own that regenerates every count on every page.
+A digest names one exact image, and Docker won't substitute another. The course's checks name `kicad/kicad:10.0.8@sha256:3f4a01786dfb…` (in full in [`labs/common/kicad-image.txt`](https://github.com/uoftasic/pb101/blob/main/labs/common/kicad-image.txt)), and `labs/common/kicad.sh` prints the digest it ran before every check, so a log always records which KiCad produced it. We haven't compared outputs across 10.0 patch releases, so when the course moves to a newer one, it will be a commit of its own that regenerates every count on every page.
 
 ## The user and the library tables
 
@@ -93,7 +93,7 @@ It helps to know which outputs come out the same on every run, because then CI c
 
 The images are for people to look at. When a workflow needs to decide whether the board changed, compare the Gerbers with their date lines removed.
 
-One more thing `kicad-cli` does is write a `.kicad_prl` file of local settings next to the project it reads, even for a check. In CI that doesn't matter, because the runner is thrown away afterwards; on your own machine it's one of the files [KiCad files in git](kicad-files-in-git.md) tells you to ignore.
+`kicad-cli` also writes a `.kicad_prl` file of local settings next to the project it reads, even for a check. In CI that doesn't matter, because the runner is thrown away afterwards; on your own machine it's one of the files [KiCad files in git](kicad-files-in-git.md) tells you to ignore.
 
 ## Jobsets
 
