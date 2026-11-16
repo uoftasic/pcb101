@@ -71,7 +71,11 @@ Which of the parts drawn on this board does the factory actually solder on?
 
    KiCad draws a part marked DNP (do not populate) with a red cross. Its footprint is still on the board, so the copper is there, but nothing is soldered to it. This block has four of them: R1, R7, R3 and the second regulator, U2.
 
-4. Look over the rest of the sheet for crossed-out parts, and list every one under "## Not fitted" in your notes. The "Presence Detection", "EEPROM ID" and "MUX and Supply Headers" blocks have some, and so does the corner beside the title block. You can confirm any one by opening its properties (double-click it) and looking for the "Do not populate" box.
+4. Look over the rest of the sheet for crossed-out parts, and list every one under "## Not fitted" in your notes. The "Presence Detection", "EEPROM ID" and "MUX and Supply Headers" blocks have some, and so does the corner beside the title block:
+
+   ![The whole of the breakout's schematic in KiCad 10.0.8's Schematic Editor. Core Voltage Selection is at the top left, MUX and Supply Headers at the top right, Presence Detection and EEPROM ID side by side under the left-hand connector, and the title block at the bottom right.](../assets/img/kicad-schematic-editor-sky-breakout.png)
+
+   At the zoom of the whole sheet the red crosses are small, so zoom in on each block to read the references of the parts under them. You can confirm any one by opening its properties (double-click it) and looking for the "Do not populate" box.
 
 5. Open the Symbol Fields Table with the grid-shaped button near the right-hand end of the top toolbar:
 
@@ -79,7 +83,7 @@ Which of the parts drawn on this board does the factory actually solder on?
 
    It opens on a view Tiny Tapeout saved in the project, "populatedlcsc", which leaves out the DNP parts and groups the rest the way a factory's parts list does: C1–C5, C8 and five more 1 µF capacitors on one row, U1 on its own row, and so on. None of the parts you listed in step 4 is in it.
 
-6. Compare that table with what the factory was actually given. Tiny Tapeout's production BOM for this revision is `labs/common/upstream/pcb-files/ETR/breakout-skyqfn-v3p2/bom/breakout-sky-qfn_bom_jlc.csv`; open it in a text editor or a spreadsheet. You should see 12 lines after the header, listing 25 capacitors, J1 and J3, 9 resistors, U1 and U4, and no U2, U3 or J2.
+6. Compare that table with what the factory was actually given. Tiny Tapeout's production BOM for this revision is `labs/common/upstream/pcb-files/ETR/breakout-skyqfn-v3p2/bom/breakout-sky-qfn_bom_jlc.csv`; open it in a text editor or a spreadsheet. You should see 12 lines after the header, listing 25 capacitors, J1 and J3, 9 resistors, U1 and U4, and no U2, U3 or J2. The `v3p2` in that path is rev 3.2, the revision in the board file's title block; the schematic's title block says rev 3.1 (dated 2025-12-02, where the board's says 2025-10-04), but both files come from the same commit, and the board check in Part 4 reports no schematic parity items between them.
 
 7. FID1, FID2 and FID3 are marked DNP too, and TP1 to TP4 are in neither the BOM nor your list. Why?
 
