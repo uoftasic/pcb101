@@ -110,7 +110,7 @@ What does SimProc need from a board, pin by pin?
 
 6. Add one `power:PWR_FLAG` on `+3V3` and one on `GND`, and run ERC again. Commit with `git commit -am "Schematic"`.
 
-You should see `ERC  0  0  0` in the check, a parity warning for every footprint that isn't on the board yet (six of them in our version, `missing_footprint J1` to `missing_footprint SW1`), and the Pmod check now finding the connectors and asking for them on the board: `FAIL  connectors   J1, J2, J3 not on the board yet (Update PCB from Schematic, F8)`.
+You should see `ERC  0  0  0` in the check, the `invalid_outline` error from Part 1 still in DRC (Part 3 draws the outline), a parity warning for every footprint that isn't on the board yet (six of them in our version, `missing_footprint J1` to `missing_footprint SW1`), and the Pmod check now finding the connectors and asking for them on the board: `FAIL  connectors   J1, J2, J3 not on the board yet (Update PCB from Schematic, F8)`.
 
 ## Part 3: Place the connectors
 
