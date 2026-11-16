@@ -8,7 +8,7 @@ Continuous integration (CI) means that every time you push, a fresh machine chec
 
 *One CI run for a board. If ERC, DRC or schematic parity finds an error, the step fails and GitHub Actions skips the later steps, so a broken board never produces a set of Gerbers that looks ready to order. Made by [`scripts/figures/ci_flow.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/ci_flow.py).*
 
-This is an ordinary thing to do with a KiCad project. wafer.space's chip-on-board repository, for example, has a GitHub Actions workflow that runs in the `kicad/kicad:10.0` container, renders the top and bottom of each board with `kicad-cli pcb render`, plots the copper and silkscreen layers with `kicad-cli pcb export svg`, exports each schematic with `kicad-cli sch export pdf`, and commits the results back to the repository (`.github/workflows/release-docs.yml` and `.github/scripts/gen_docs.py` in `wafer-space/chip-on-board-wire-bonded-pcbs`). This course's own repository does the checking half: its [`labs.yml`](https://github.com/uoftasic/pb101/blob/main/.github/workflows/labs.yml) workflow runs the board check on every lab's reference solution whenever `labs/` changes, and once a week in case something outside the repository has moved.
+Other KiCad projects already work this way. wafer.space's chip-on-board repository, for example, has a GitHub Actions workflow that runs in the `kicad/kicad:10.0` container, renders the top and bottom of each board with `kicad-cli pcb render`, plots the copper and silkscreen layers with `kicad-cli pcb export svg`, exports each schematic with `kicad-cli sch export pdf`, and commits the results back to the repository (`.github/workflows/release-docs.yml` and `.github/scripts/gen_docs.py` in `wafer-space/chip-on-board-wire-bonded-pcbs`). This course's own repository does the checking half: its [`labs.yml`](https://github.com/uoftasic/pb101/blob/main/.github/workflows/labs.yml) workflow runs the board check on every lab's reference solution whenever `labs/` changes, and once a week in case something outside the repository has moved.
 
 ## Checks that fail the run
 
@@ -25,7 +25,7 @@ Found 0 schematic parity issues
 exit status 0
 ```
 
-ERC fails, on two `power_pin_not_driven` errors, and DRC passes. The DRC line looks reassuring, and it hides something. Run the same DRC with `--severity-all` and it reports:
+ERC fails, on two `power_pin_not_driven` errors, and DRC passes. Run with `--severity-all` instead, the same DRC reports:
 
 ```text
 Found 165 violations
@@ -34,7 +34,7 @@ Found 3 schematic parity issues
 exit status 5
 ```
 
-The three parity issues were there all along. KiCad reports schematic parity problems as warnings, so `--severity-error` filters them out, and in every project the course checked, that included a footprint that is in the schematic and missing from the board. On the DIP dock the three are about a logo (one footprint, `PSYLOGO01`, placed twice and not in the schematic), which is harmless. On your board the same filter would let a missing connector through with a green run.
+The three parity issues were there in the first run too. KiCad reports schematic parity problems as warnings, so `--severity-error` filters them out, and in every project the course checked, that included a footprint that is in the schematic and missing from the board. On the DIP dock the three are about a logo (one footprint, `PSYLOGO01`, placed twice and not in the schematic), which is harmless. On your board the same filter would let a missing connector through with a green run.
 
 That is why the labs don't use the plain `kicad-cli` flags as their "done when". They run [`labs/common/check_board.py`](https://github.com/uoftasic/pb101/blob/main/labs/common/check_board.py), which runs ERC and DRC with every severity, reads the JSON reports, and fails on any error, any unconnected item, and any parity item at all. On the DIP dock it took 18 s and ended like this:
 
@@ -83,7 +83,7 @@ The second is 3D models. The image doesn't include KiCad's 3D models of parts (t
 
 For a reviewer that is often better than a render with parts, since the pads and the silkscreen are what they're checking.
 
-## Same board, same files?
+## Outputs that repeat from run to run
 
 It helps to know which outputs come out the same on every run, because then CI can tell you whether a commit changed them:
 
@@ -101,12 +101,11 @@ Instead of listing every export in the workflow, you can save the list in the pr
 
 ## KiBot
 
-[KiBot](https://github.com/INTI-CMNB/KiBot) is a tool that drives KiCad from a YAML file and produces outputs that `kicad-cli` doesn't, such as an interactive HTML BOM, which is why Lab 05 offers it as an optional part. Its newest release on November 16, 2026 was 1.9.1, dated 2026-07-28, and its changelog says its KiCad 10 3D rendering goes "through the kicad-cli interface" and "has various limitations". Two things about it matter for a pinned course:
+[KiBot](https://github.com/INTI-CMNB/KiBot), licensed under the AGPL-3.0, is a tool that drives KiCad from a YAML file and produces outputs that `kicad-cli` doesn't, such as an interactive HTML BOM, which is why Lab 05 offers it as an optional part. Its newest release on November 16, 2026 was 1.9.1, dated 2026-07-28, and its changelog says its KiCad 10 3D rendering goes "through the kicad-cli interface" and "has various limitations". Two things about it matter for a pinned course:
 
 - Its KiCad 10 images lag KiCad. The newest KiCad version in any `ghcr.io/inti-cmnb/kicad10_auto_full` tag was 10.0.5, three releases behind the 10.0.8 the checks use, so a workflow with KiBot runs two different KiCads.
 - Its GitHub Action for KiCad 10, `v2_k10`, builds `FROM ghcr.io/inti-cmnb/kicad10_auto_full:latest`, a moving tag. If you use KiBot, name a fixed image tag, such as `1.9.1-2_k10.0.5_d13.2_b4.2.4LTS`, as you would for KiCad.
 
-KiBot's licence is the AGPL-3.0.
 
 ## Check yourself
 

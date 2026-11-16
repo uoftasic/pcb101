@@ -2,13 +2,13 @@
 
 This page answers: *which of the files in a KiCad project belong in your repository, and how does anyone review a change to a board when its diff runs to thousands of lines?*
 
-KiCad's design files are plain text, so git can store them, show their history and merge them like source code. That's the good news, and the reason a board can live in a repository with CI at all. The catch is that KiCad also writes files that aren't part of the design, next to the ones that are, and that a small change to a board can rewrite thousands of lines of its file. This page is about both. From Lab 03 on your board lives in your own repository, and in [Lab 05](../labs/lab-05-fab-outputs-in-ci-overview.md) you add the `.gitignore` this page describes.
+KiCad's design files are plain text, so git can store them, show their history and merge them like source code, which is what lets a board live in a repository with CI at all. KiCad also writes files that aren't part of the design next to the ones that are, and a small change to a board can rewrite thousands of lines of its file. This page is about both. From Lab 03 on your board lives in your own repository, and in [Lab 05](../labs/lab-05-fab-outputs-in-ci-overview.md) you add the `.gitignore` this page describes.
 
 ## What's in a project folder
 
 We copied Tiny Tapeout's DIP dock to a scratch folder, opened its board in KiCad 10.0.8's PCB Editor, saved it without changing anything, and closed the editor, listing the folder after each step. Opening the board created two lock files, `~dip-dock.kicad_pcb.lck` and `~dip-dock.kicad_pro.lck`, which tell another copy of KiCad that the files are in use. Saving created a folder named `.history`. Closing the editor removed the lock files. And every `kicad-cli` run on the project, even a check, had already written a `dip-dock.kicad_prl` next to it.
 
-Here is what each kind of file is, and whether it belongs in git:
+The table lists each kind of file and whether it belongs in git.
 
 | File | What it is | In git? |
 |---|---|---|
@@ -35,7 +35,7 @@ KiCad periodically saves copies of your work here, allowing you to
 recover from accidental changes or data loss.
 ```
 
-It's a git repository of its own, with its own `.gitignore` (which lists `fp-info-cache` and `*-backups/`), and the README says it can be turned off in Preferences → Common → Project Backup. It's useful on your own machine and has no business in your board's repository, which is already the history that matters.
+It's a git repository of its own, with its own `.gitignore` (which lists `fp-info-cache` and `*-backups/`), and the README says it can be turned off in Preferences → Common → Project Backup. It's useful on your own machine, but your board's repository already keeps the board's history, so `.history/` stays out of it.
 
 Outputs stay out because they go stale. Tiny Tapeout's `breakout-pcb` repository, for example, tracks `dip-dock/dip-dock.xml`, an export from the Schematic Editor that records the date it was made (2026-10-29) and the full path of the schematic on the designer's own computer. The moment the schematic changes, the export describes a board that no longer exists, unless someone remembers to make it again. When you do want to keep the files that went to the fab, keep them per order, the way Tiny Tapeout's separate `pcb-files` repository archives the production files of each run.
 
@@ -82,11 +82,11 @@ It covers the lock files (`*.lck`), the local settings (`*.kicad_prl`), the foot
 
 The same demo board repository shows the trap in `.gitignore`. Line 19 of that file is `fp-info-cache`, and yet `fp-info-cache` is in the repository: at the pinned commit it's a 3,924,749-byte file that git tracks like any other. The history shows how. The file was committed on October 14, 2023 at 16:49 (commit 974c613, 93,108 lines), and the `.gitignore` that lists it arrived four minutes later, at 16:53 (commit 0e63c95). Counting that first one, 20 commits have changed the cache, adding 306,006 lines and removing 198,254, and none of those lines is part of the design.
 
-That is how `.gitignore` is meant to work. git's documentation says it "specifies intentionally untracked files that Git should ignore. Files already tracked by Git are not affected." A pattern in `.gitignore` stops git from *adding* a file; it does nothing to a file git already has. To stop tracking one, the documentation says to "use `git rm --cached` to remove the file from the index", which leaves your copy on disk and records its removal in the next commit, after which the ignore rule takes effect.
+git is doing what its documentation describes. It says it "specifies intentionally untracked files that Git should ignore. Files already tracked by Git are not affected." A pattern in `.gitignore` stops git from *adding* a file; it does nothing to a file git already has. To stop tracking one, the documentation says to "use `git rm --cached` to remove the file from the index", which leaves your copy on disk and records its removal in the next commit, after which the ignore rule takes effect.
 
 The demo board's `.kicad_prl` was in the same first commit and was ignored by the same `.gitignore`. It stayed tracked through 31 commits, until it was removed in September 2025 (commit 3b4873f). So write the `.gitignore` before the first commit, and if `git status` ever lists a file you meant to ignore, check whether git is already tracking it.
 
-## Saving can change a file you didn't edit
+## A save with no edits
 
 When we saved the DIP dock in the course's pinned image without touching anything, git saw 111 lines added and 225 removed in `dip-dock.kicad_pcb`. Every changed line was inside the `render_cache` of three silkscreen labels, `ui_in`, `uio` and `uo_out`. The designer set those in the FreeMono font, KiCad stores the outline of each such label in the board file, and the image doesn't have FreeMono, so KiCad drew them again in the font it substituted and saved the new outlines. ([Outputs in CI](outputs-in-ci.md#fonts-and-3d-models) has the warning it printed.)
 
@@ -94,7 +94,7 @@ Your own machine can do the same with a font, and a KiCad 9 board saved in KiCad
 
 ## Reviewing a change to a board
 
-A board file diff is text, but it isn't readable. Commit ecb636a of the demo board, "Reworked manual clocking circuit, Iref current source for analog, TVS diodes on analog lines", changed 60,318 lines of `tinytapeout-demo.kicad_pcb` and 12,558 of its schematic. Even a commit its author called "minor pcb cleanup" (293a3e2, the same day) changed 5,770 lines of the board. Nobody reviews that by reading it.
+A board file diff is text, but it isn't readable. Commit ecb636a of the demo board, "Reworked manual clocking circuit, Iref current source for analog, TVS diodes on analog lines", changed 60,318 lines of `tinytapeout-demo.kicad_pcb` and 12,558 of its schematic. Even a commit its author called "minor pcb cleanup" (293a3e2, the same day) changed 5,770 lines of the board, far more than a reviewer can read line by line.
 
 What a reviewer can read is a picture. Here is that "minor" commit as two `kicad-cli` renders, with the pixels that differ marked:
 
@@ -102,7 +102,7 @@ What a reviewer can read is a picture. Here is that "minor" commit as two `kicad
 
 *Tiny Tapeout's demo board (`tt-demo-pcb`, Apache-2.0) before and after commit 293a3e2, rendered from the top by `kicad-cli pcb render` in `kicad/kicad:10.0.8`. 998 of the 1,542,912 pixels in a render changed, about 0.1 %. The red marks are thickened so that they show at this size: a track near the analog header, a few spots along the row of small parts below it and near the RP2350, and two on the left edge. Made by [`scripts/figures/review_diff.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/review_diff.py).*
 
-In 5,770 lines of diff the change is invisible, and in the picture it takes a second to find. That's the reason Lab 05's workflow makes renders and layer plots on every push: the reviewer of a pull request compares the images from the two commits, and opens the board in KiCad only where a picture raises a question. A top render shows only the top, so a change on an inner or bottom layer needs the layer plots too.
+That's the reason Lab 05's workflow makes renders and layer plots on every push: the reviewer of a pull request compares the images from the two commits, and opens the board in KiCad only where a picture raises a question. A top render shows only the top, so a change on an inner or bottom layer needs the layer plots too.
 
 Two habits make this work. First, keep a commit to one change, because a commit that moves a part and also re-annotates the schematic is as hard to review as a picture as it is as text. (On the demo board, "re-annotated entire schem", 9c07f7f, changed 2,102 lines of the board file by itself.) Second, write in the commit message what changed and why, since the message is the only part of the commit a reviewer reads without opening anything.
 

@@ -14,7 +14,7 @@ In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you write a `BRINGUP.md
 
 **The review.** Nobody powers a kit from a board whose `BRINGUP.md` hasn't been read by a second member against the checklist in [Reviewing and ordering a board](reviewing-and-ordering-a-board.md). Until the team has someone who has reviewed boards before, that second reader is the review.
 
-**Handling.** Static is the cheapest way to lose a chip. The standard model of a person touching a part, the human body model, is 100 pF discharged through 1.5 kΩ, charged to typically 1 to 2.5 kV and sometimes to 15 kV (Horowitz and Hill, *The Art of Electronics*, 3rd ed., §12.1.5). At 1 kV that's a peak of 0.67 A into whatever pin you touch first. At team sessions, work on an ESD mat with a wrist strap, and hold the breakout by its edges.
+**Handling.** Static can damage a chip before it has ever been powered. The standard model of a person touching a part, the human body model, is 100 pF discharged through 1.5 kΩ, charged to typically 1 to 2.5 kV and sometimes to 15 kV (Horowitz and Hill, *The Art of Electronics*, 3rd ed., §12.1.5). At 1 kV that's a peak of 0.67 A into whatever pin you touch first. At team sessions, work on an ESD mat with a wrist strap, and hold the breakout by its edges.
 
 **Unpowered checks.** With nothing connected, measure the resistance from each supply rail of your board to ground with a multimeter. A rail that reads close to 0 Ω is a short, and you stop there: a short found with an ohmmeter costs nothing, and the same short found with a power supply may cost a trace or a part. Write down beforehand what you expect from the schematic, so that you're comparing the reading with something.
 
@@ -36,7 +36,7 @@ What your Pmod can measure is its own draw. A 10 Ω resistor in your board's sup
 
 ## The order of the supplies
 
-You may expect a rule for which supply comes up first. We looked and didn't find one for the Tiny Tapeout chip. SkyWater's [user guide for its I/O cells](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_io/docs/user_guide.html), the cells around the chip's edge, gives no required order between `VDDIO`, `VCCD` and `VDDA`. What it does say is:
+We looked for a rule about which supply has to come up first, and didn't find one for the Tiny Tapeout chip. SkyWater's [user guide for its I/O cells](https://skywater-pdk.readthedocs.io/en/main/contents/libraries/sky130_fd_io/docs/user_guide.html), the cells around the chip's edge, gives no required order between `VDDIO`, `VCCD` and `VDDA`. What it does say is:
 
 - "no single power supply will be grounded while another supply is active", and "It is OK to float a supply while another is active though";
 - before `VCCD` is taken to 0 or left floating, "the hold mode must be asserted";
@@ -62,7 +62,7 @@ On the demo board, "The RP2350 is responsible for selecting projects, by control
 
 Step 6 is the first functional test, the smallest thing that shows the design is alive, with its expected result written down. Make it something you can see without your board if you can. For SimProc, the demo board already shows the halt and done flags: `uo_out[1]` and `uo_out[2]` each drive a segment of the 7-segment display, B and C, so a reset and a few clocks should leave those segments in the state the RTL predicts.
 
-## Things with their own power go last
+## Things with their own power
 
 Your board connects to the kit with nothing powered, and anything with a supply of its own, such as a USB-UART dongle powered from your laptop, connects only once the kit is up. Disconnect in the reverse order.
 
@@ -70,7 +70,7 @@ The reason is the chip's input protection. A CMOS input has clamp diodes to its 
 
 ## When a reading is wrong
 
-Turn the power off first, then work out why. It's tempting to raise the current limit and watch, and that's how a fault that was costing a few milliamps becomes one that costs the chip. Write down the reading you got next to the one you expected; most bring-up problems are solved by someone looking at those two numbers together.
+Turn the power off first, then work out why. It's tempting to raise the current limit and watch, and that's how a fault that was costing a few milliamps becomes one that costs the chip. Write down the reading you got next to the one you expected; those two numbers side by side are the first thing anyone helping you will ask for.
 
 Two things about measuring:
 

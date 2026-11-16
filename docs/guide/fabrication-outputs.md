@@ -6,7 +6,7 @@ A board house doesn't open your `.kicad_pcb`. It works from a set of plain files
 
 The board is Tiny Tapeout's DIP dock (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), the 2-layer host board for their DIP carriers, which the course uses as the closest reference for the Pmod you draw in Lab 03. Its Gerber job file gives it as 85.05 × 85.05 mm, 2 copper layers and 1.561 mm thick, and the PCB Editor counts 370 pads, 111 vias and 535 track segments. Every file name, size and line quoted below comes from `kicad-cli` 10.0.8 in the course's pinned image, run on November 16, 2026.
 
-## Gerbers, one per layer
+## One Gerber per layer
 
 A Gerber file describes one layer as flat 2D shapes: lines with a width, pads, and filled regions, in millimetres (or inches) from an origin. It describes shapes, not parts or footprints, although the newer version of the format can label each shape with the net it belongs to. The fabricator builds the board by stacking the layers on top of each other, which is why every file has to use the same origin and the same orientation.
 
@@ -58,7 +58,7 @@ Which layers become Gerbers, and with what options, is a setting stored in the b
 
 *The PCB Editor's Plot dialog (File → Plot) with the DIP dock open, in KiCad 10.0.8. Under "Include Layers" the designer ticked F.Cu, B.Cu, both paste, silkscreen and mask layers, Edge.Cuts and F.Fab. On the right, "Use drill/place file origin" is ticked and "Use extended X2 format (recommended)" isn't. "Generate Drill Files..." at the bottom opens a second dialog for the drill file.*
 
-`kicad-cli pcb export gerbers` uses those settings only when you pass `--board-plot-params`. Without it, it uses its own defaults, and on the DIP dock the difference was large. With `--board-plot-params` it wrote the ten `.gbr` files above. Without it, it wrote 26 files, one for every layer the board has, including the courtyards, the margin and eight user layers such as `dip-dock-User_Eco1.gbr`, and it gave the main layers the old Protel extensions instead of `.gbr`: `dip-dock-F_Cu.gtl`, `dip-dock-B_Cu.gbl`, `dip-dock-F_Mask.gts`, `dip-dock-Edge_Cuts.gm1` and so on. Both sets would make the same board, but a fabricator has to work out which of 26 files matter.
+`kicad-cli pcb export gerbers` uses those settings only when you pass `--board-plot-params`. Without it, it uses its own defaults, and on the DIP dock the difference was large. With `--board-plot-params` it wrote the ten `.gbr` files above. Without it, it wrote 26 files, one for every layer the board has, including the courtyards, the margin and eight user layers such as `dip-dock-User_Eco1.gbr`, and it gave the main layers the old Protel extensions instead of `.gbr`: `dip-dock-F_Cu.gtl`, `dip-dock-B_Cu.gbl`, `dip-dock-F_Mask.gts`, `dip-dock-Edge_Cuts.gm1` and so on. The layers the fab needs are in both sets, but from the second a fabricator has to work out which 10 of the 26 files matter, and its silkscreen isn't the same: the board's settings subtract the solder mask from the silkscreen, and `kicad-cli`'s defaults don't.
 
 The simplest rule is to set the Plot dialog up once, save the board, and have every export, by hand or in CI, use `--board-plot-params`. Then the files you looked at in the GUI are the files CI sends to the fab.
 
@@ -81,7 +81,7 @@ T1C0.300
 
 There are six tools, all plated: 0.3 mm (90 via holes and 4 component holes), 0.4 mm (21 via holes and 103 component holes), 1.0 mm (106 component holes) and 3.2 mm (2 component holes, the mounting holes). The 90 and 21 via holes add up to the 111 vias the PCB Editor counts, which is a quick check that the file has everything. `MixedPlating` means the file is allowed to hold plated and unplated holes together; `--excellon-separate-th` writes them to separate files instead.
 
-The drill file has to use the same origin as the Gerbers, and on the DIP dock our first try didn't. The board's plot settings tick "Use drill/place file origin", so its Gerbers are drawn from an origin the designer placed at the board's bottom-left corner. `kicad-cli pcb export drill` defaults to `--drill-origin absolute`, the page origin. Opened together in GerbView, KiCad's Gerber viewer, the holes land beside the board:
+The drill file has to use the same origin as the Gerbers, and in our first export of the DIP dock it used a different one. The board's plot settings tick "Use drill/place file origin", so its Gerbers are drawn from an origin the designer placed at the board's bottom-left corner. `kicad-cli pcb export drill` defaults to `--drill-origin absolute`, the page origin. Opened together in GerbView, KiCad's Gerber viewer, the holes land beside the board:
 
 ![GerbView showing the DIP dock's Gerbers with the drill holes offset to the lower right of the board](../assets/img/kicad-gerbview-dip-dock-drill-absolute.png)
 

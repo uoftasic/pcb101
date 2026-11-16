@@ -2,11 +2,11 @@
 
 This page answers: *what does a review find that ERC and DRC can't, and what happens, at what cost, between a clean board and a box of them arriving in Toronto?*
 
-By the end of Lab 05 your board passes every automatic check and CI builds its fabrication files on every push. That's necessary, and it isn't enough to order it. The checks compare the board with its own schematic and with a set of rules; none of them knows what the board is *for*. This page is about the review that does, and then about ordering: what a fabricator asks for, what it costs, how long it takes, and what Canada charges at the border. In [Lab 06](../labs/lab-06-review-a-seeded-board-overview.md) you review a board we seeded with faults, then get a real quote and DFM report for your own.
+By the end of Lab 05 your board passes every automatic check and CI builds its fabrication files on every push. Those checks compare the board with its own schematic and with a set of rules, and none of them knows what the board is *for*, so a board can pass all of them and still be wrong. This page is about the review that does, and then about ordering: what a fabricator asks for, what it costs, how long it takes, and what Canada charges at the border. In [Lab 06](../labs/lab-06-review-a-seeded-board-overview.md) you review a board we seeded with faults, then get a real quote and DFM report for your own.
 
-## What the checks can't see
+## Mistakes the checks don't look for
 
-Tiny Tapeout's own boards are the best evidence. Their breakout repository records two mistakes that were made into real boards:
+Tiny Tapeout's breakout repository records two mistakes that were made into real boards:
 
 - The TT07 breakout "has the ASIC project MUX `reset_n` and `increment` wires crossed and is thus mislabelled."
 - The production run of the TT06 demo boards "had very low valued resistances which, if you wish to interact with analog projects, had to be removed or replaced."
@@ -30,7 +30,7 @@ The course checklist is the list Lab 06 has you review against. Each line comes 
 9. **Fabricator rules.** Silkscreen, text, annular rings and clearances meet the rules of the fabricator you'll order from, which may be stricter than KiCad's libraries (next section).
 10. **Mechanical fit.** The Pmod connectors are 22.86 mm apart, as Tiny Tapeout's Pmod library places them, and nothing overhangs the demo board where it would hit something.
 
-Write each finding down with the line it breaks and where on the board it is. A finding you can't point at isn't one the designer can fix.
+Write each finding down with the line it breaks and where on the board it is, so that the designer can go straight to it.
 
 ## Fabricator rules and KiCad's libraries
 
@@ -43,7 +43,7 @@ Every fabricator publishes minimum sizes. These are the ones for an ordinary 2-l
 | [OSH Park](https://docs.oshpark.com/services/), 2 layers | 0.1524 / 0.1524 mm (6 mil) | 0.254 mm (10 mil) | 0.127 mm (5 mil) | |
 | KLC (KiCad's footprints) | | | at least 0.15 mm (rule F7.5) | nominally 0.12 mm (rule F5.1) |
 
-JLCPCB also gives a minimum text height of 1.0 mm and 0.15 mm from a pad to silkscreen. The point of the table is the last two columns: KiCad's own footprints are drawn to KiCad's convention, and that isn't the same as any one fabricator's limits. Tiny Tapeout's DIP dock shows how far apart they can be. We counted its silkscreen: 441 lines, arcs and circles in its footprints are 0.12 mm wide, 98 of the 139 pieces of text placed on the board itself have 0.14 mm strokes, and 38 are less than 1.0 mm tall. By JLCPCB's published numbers, all of those are below its minimums, and the board's own DRC reports no errors, because its rules don't ask about them.
+JLCPCB also gives a minimum text height of 1.0 mm and 0.15 mm from a pad to silkscreen. The last two columns are where KiCad and the fabricators part ways: KiCad's own footprints are drawn to KiCad's convention, which isn't the same as any one fabricator's limits. Tiny Tapeout's DIP dock shows how far apart they can be. We counted its silkscreen: 441 lines, arcs and circles in its footprints are 0.12 mm wide, 98 of the 139 pieces of text placed on the board itself have 0.14 mm strokes, and 38 are less than 1.0 mm tall. By JLCPCB's published numbers, all of those are below its minimums, and the board's own DRC reports no errors, because its rules don't ask about them.
 
 What a fabricator does with a 0.12 mm line, whether it prints it anyway, thickens it, or flags it, is what its DFM (design for manufacture) report tells you, which is one reason Lab 06 has you get one. When your board's design rules carry your fabricator's numbers, its DRC catches what KiCad can check, and the DFM report covers the rest.
 
@@ -59,7 +59,7 @@ Prices change, so treat these as what the fabricators' own pages said on Novembe
 
 OSH Park's price depends only on area, so you can work it out yourself. A board that spans the demo board's three I/O Pmods is about 61 mm wide (two 22.86 mm spacings and one connector), and if it's 30 mm tall, that's 2.8 square inches, or about $14 for three boards, delivered. The DIP dock, at 85.05 × 85.05 mm, is 11.2 square inches, or $56.06 for three.
 
-A build time isn't a delivery time. JLCPCB's shipping table is an image we couldn't read, so we have no confirmed transit time or shipping price to Canada; from the build times and OSH Park's lead time, expect one to three weeks between ordering and holding the boards. That's why the course suggests ordering as a group right after Lab 06, when everyone's board has been reviewed.
+The build times don't include shipping. JLCPCB's shipping table is an image we couldn't read, so we have no confirmed transit time or shipping price to Canada; from the build times and OSH Park's lead time, expect one to three weeks between ordering and holding the boards. That's why the course suggests ordering as a group right after Lab 06, when everyone's board has been reviewed.
 
 Assembly is optional in PB101, and most course boards are meant to be soldered by hand ([Parts you can solder by hand](parts-you-can-solder-by-hand.md)). If you do want it: JLCPCB's economic assembly has an $8.18 setup fee, $1.53 for the stencil, $3.07 to load each "extended" part and $0.0016 per solder joint (its price page, updated October 22, 2026), and PCBWay advertises "Only $ 29 in total for 1-20pcs assembly".
 
@@ -67,7 +67,7 @@ Two Toronto companies make boards too. Candor Industries (125 Martin Ross Avenue
 
 ## Duties and tax
 
-Bare printed circuit boards don't pay duty in Canada: tariff item 8534.00.00, "Printed circuits", has a most-favoured-nation rate of "Free" in the CBSA's 2026 Customs Tariff. Tax is another matter. For a shipment by courier, the CBSA's low-value rules (modified 2025-11-25) are:
+Bare printed circuit boards don't pay duty in Canada: tariff item 8534.00.00, "Printed circuits", has a most-favoured-nation rate of "Free" in the CBSA's 2026 Customs Tariff. They can still pay tax. For a shipment by courier, the CBSA's low-value rules (modified 2025-11-25) are:
 
 | Shipment | Duty and tax free up to | Above that |
 |---|---|---|
