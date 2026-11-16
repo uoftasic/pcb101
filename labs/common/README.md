@@ -7,7 +7,7 @@ python3 labs/common/fetch_boards.py
 labs/common/kicad.sh python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
 ```
 
-The first command fetches the boards (84 MB, about 7 s). The second checks Tiny Tapeout's SKY130 breakout, which took 45 to 58 s in our runs with the container limited to one CPU and 23 s with two. It ends like this:
+The first command fetches the boards (84 MB, about 7 s). The second checks Tiny Tapeout's SKY130 breakout. In our runs it took 45 to 58 s with the container limited to one CPU, and 23 s with two. It ends like this:
 
 ```text
                 errors  warnings  excluded
@@ -179,7 +179,7 @@ The labs open Tiny Tapeout's own board files, and this repo doesn't store copies
 
 `tinytapeout-kicad-libs` goes inside `upstream/breakout-pcb/`, because the breakouts' library tables look for it at `${KIPRJMOD}/../tinytapeout-kicad-libs` and the demo board's at `${KIPRJMOD}/../breakout-pcb/tinytapeout-kicad-libs`, and that one folder satisfies both. `breakout-pcb`'s `.gitmodules` points that submodule at `psychogenic/tinytapeout-kicad-libs`. The same commit is in `TinyTapeout/tinytapeout-kicad-libs`, which is the one we fetch.
 
-To add a board, add an entry to `upstream.json` with the full commit hash, the date, the licence and the paths to fetch, then run `fetch_boards.py` and check the files you need are there. The paths are git sparse-checkout patterns: `/dir/` for a folder, `/file` for one file, and `!/dir/*.wrl` to leave something out.
+To add a board, add an entry to `upstream.json` with the full commit hash, the date, the licence and the paths to fetch, then run `fetch_boards.py` and check that the files you need are there. The paths are git sparse-checkout patterns: `/dir/` for a folder, `/file` for one file, and `!/dir/*.wrl` to leave something out.
 
 ## The Pmod check: `check_pmod.py`
 
