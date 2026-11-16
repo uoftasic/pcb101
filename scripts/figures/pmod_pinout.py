@@ -93,7 +93,7 @@ def main():
     ax.set_ylim(y_bot + 24, y_top - 24)  # y down, as in KiCad
     ax.set_aspect("equal")
     ax.axis("off")
-    print(save(fig, "pb101-pmod-pinout-simproc"))
+    print(save(fig, "ic103-pmod-pinout-simproc"))
 
 
 if __name__ == "__main__":

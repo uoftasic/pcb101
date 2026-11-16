@@ -24,7 +24,7 @@ Current is the first thing you read when a new board is powered. A board that dr
 
 There are two ordinary ways to measure a current on a bench, and both put a resistor in its path and read the voltage across it.
 
-![A meter in series, and a sense resistor with two test points](../assets/img/pb101-current-spy.svg)
+![A meter in series, and a sense resistor with two test points](../assets/img/ic103-current-spy.svg)
 
 *(a) A multimeter on a current range, in series with the supply. (b) A sense resistor in the supply, with a test point at each end and a multimeter on a volts range across them. In (b) the bypass capacitors are on the board's side of the resistor, as in Horowitz and Hill's Figure 10.93.*
 
@@ -36,7 +36,7 @@ There are two ordinary ways to measure a current on a bench, and both put a resi
 
 The voltage across the resistor is $V = IR$, and it has to do two jobs at once: it has to be large enough for your meter to read, and small enough that the board still has the supply it needs.
 
-![Voltage across a sense resistor against current](../assets/img/pb101-shunt-drop.svg)
+![Voltage across a sense resistor against current](../assets/img/ic103-shunt-drop.svg)
 
 *$V = IR$ for three resistors, drawn by [`scripts/figures/shunt_drop.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/shunt_drop.py). The blue band is a multimeter's burden at full scale, and the grey band is the current the whole kit draws from USB on its factory test.*
 
@@ -54,7 +54,7 @@ Some numbers from the figure:
 
 **One of the chip's rails.** The breakout lets you do this only after rework. Its schematic says each supply pin "may be monitored or fed through these headers by popping off the relevant resistor (0805s for easier manip)". The resistors are the 0 Ω links R13 (`VDD_IO`), R14 (`VCCD`) and R15 (`VDDA`), and the header is J2, a 1 × 12 header that the board marks as not fitted. To measure `VCCD`, for example, you'd remove R14 and fit J2, and put a meter or a sense resistor between the regulator side and the chip side through J2's pins.
 
-![The top edge of the SKY130 breakout, with the 0 Ω links and J2](../assets/img/pb101-sky-breakout-links.svg)
+![The top edge of the SKY130 breakout, with the 0 Ω links and J2](../assets/img/ic103-sky-breakout-links.svg)
 
 *The top 12.5 mm of Tiny Tapeout's SKY130 breakout, drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/sky_breakout_map.py), with pads coloured by supply. R14, R13 and R15 each join a regulator net (red) to one of the chip's rails. J2's twelve pads, and U2's, are grey because those parts aren't fitted.*
 

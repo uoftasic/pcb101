@@ -117,7 +117,7 @@ def main():
     ax.set_ylim(20.5, -4)
     ax.set_aspect("equal")
     ax.axis("off")
-    print(save(fig, "pb101-footprint-sizes"))
+    print(save(fig, "ic103-footprint-sizes"))
 
 
 if __name__ == "__main__":

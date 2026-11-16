@@ -75,7 +75,7 @@ def main():
     ax.set_ylim(LOW - H / 2 - 0.2, TOP + H / 2 + 0.2)
     ax.set_aspect("equal")
     ax.axis("off")
-    print(save(fig, "pb101-sky-breakout-rails"))
+    print(save(fig, "ic103-sky-breakout-rails"))
 
 
 if __name__ == "__main__":

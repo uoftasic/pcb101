@@ -4,7 +4,7 @@ This page answers: *how can a computer check your board and build its fabricatio
 
 Continuous integration (CI) means that every time you push, a fresh machine checks out your commit and runs a fixed list of commands on it. You met it in IC102 for code. For a board, the commands are the checks you'd otherwise run by hand, ERC, DRC and schematic parity, followed by the [fabrication outputs](fabrication-outputs.md) and some images a reviewer can look at without opening KiCad. In [Lab 05](../labs/lab-05-fab-outputs-in-ci-overview.md) you add a workflow that does this to your board repository, then break the board on purpose and watch the run go red.
 
-![A flow chart of one CI run: a push, a runner that checks out the commit, the pinned KiCad image, the checks, and either a failed run or the outputs uploaded as an artifact](../assets/img/pb101-ci-flow.svg)
+![A flow chart of one CI run: a push, a runner that checks out the commit, the pinned KiCad image, the checks, and either a failed run or the outputs uploaded as an artifact](../assets/img/ic103-ci-flow.svg)
 
 *One CI run for a board. If ERC, DRC or schematic parity finds an error, the step fails and GitHub Actions skips the later steps, so a broken board never produces a set of Gerbers that looks ready to order. Made by [`scripts/figures/ci_flow.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/ci_flow.py).*
 

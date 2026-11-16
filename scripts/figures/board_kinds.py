@@ -1,7 +1,7 @@
 """Boards for chips: where each kind of board attaches, from the chip outwards.
 
     pip install -r scripts/figures/requirements.txt
-    python3 scripts/figures/board_kinds.py      # writes docs/assets/img/pb101-board-kinds.svg
+    python3 scripts/figures/board_kinds.py      # writes docs/assets/img/ic103-board-kinds.svg
 
 Every connection drawn here is one the course names a source for: the DF12 pair and the
 power they carry (Tiny Tapeout's SKY130 breakout, rev 3.2, at breakout-pcb 91a2bf1), the
@@ -93,4 +93,4 @@ text(d, (X_HOST, y - 0.32), "0.4 mm pitch", size=NOTE)
 text(d, (X_CARRIER - BOX_W / 2, y - 1.35), "Dashed boxes: boards this course doesn't have you design.",
      halign="left", size=NOTE)
 
-print(save(d, "pb101-board-kinds"))
+print(save(d, "ic103-board-kinds"))

@@ -26,7 +26,7 @@ Tiny Tapeout's [GPIO page](https://tinytapeout.com/specs/gpio/) lists 26 pins fo
 
 The demo board's README says the three Pmod headers along its bottom edge "provide access to all the project I/O in a logical fashion, with inputs, bidirectional pins and outputs available on their own distinct headers", and that "extension boards will often need to span at least two, and sometimes three, distinct headers." The ETR guide adds that the headers "follow the digilent PMOD spec and spacing".
 
-![The demo board's three I/O Pmod sockets, with SimProc's pins](../assets/img/pb101-pmod-pinout-simproc.svg)
+![The demo board's three I/O Pmod sockets, with SimProc's pins](../assets/img/ic103-pmod-pinout-simproc.svg)
 
 *The demo board's sockets J14, J15 and J16, seen from above, drawn from the board file (`TinyTapeout/tt-demo-pcb` at bbf3dd1) by [`scripts/figures/pmod_pinout.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/pmod_pinout.py). Each pad carries the net the board file gives it; pin 1 is square. SimProc's pins are in blue with what they do, from its `info.yaml` and RTL. Every `uio` pin sets one bit of SimProc's `clk_per_bit`.*
 

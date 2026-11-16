@@ -30,7 +30,7 @@ This page answers: *where does each of the chip's supplies come from, what happe
 
 The SKY130 chip on Tiny Tapeout's breakout has three supply rails: `VCCD`, the 1.8 V core supply; `VDD_IO`, the supply of the I/O pads; and `VDDA`, the analog supply. The breakout has places for two regulators, and as built it fits one. [Tiny Tapeout's boards, part by part](tiny-tapeouts-boards-part-by-part.md) walks through the board; here is the result.
 
-![Where the SKY130 breakout's three supplies come from](../assets/img/pb101-sky-breakout-rails.svg)
+![Where the SKY130 breakout's three supplies come from](../assets/img/ic103-sky-breakout-rails.svg)
 
 *The supplies on Tiny Tapeout's SKY130 QFN breakout, rev 3.2, as fitted, from the board file at 91a2bf1 (drawn by [`scripts/figures/sky_breakout_rails.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/sky_breakout_rails.py)). U1, an AP2112K-1.8 regulator, makes `VCCD`. `VDD_IO` and `VDDA` come straight from the demo board's 3.3 V through four 0 Ω links, past the empty place of the second regulator U2. The dashed parts are marked DNP, do not populate.*
 
@@ -56,7 +56,7 @@ These are written for the designers of the chip's I/O ring, and the guide says t
 
 Tiny Tapeout's ETR guide uses "back-powered" for something deliberate. Since none of the breakouts needs the 5 V from USB, it says, "the boards can be back-powered by feeding 3v3 on a header pin marked as such". This page means something else by it: the accident in which a chip is powered through its own input pins.
 
-![A powered dongle driving an input of an unpowered kit](../assets/img/pb101-back-powering-path.svg)
+![A powered dongle driving an input of an unpowered kit](../assets/img/ic103-back-powering-path.svg)
 
 *The SimProc case. The USB-UART dongle takes its power from the laptop, the kit is switched off, and the dongle's TX line sits high between characters. Current flows through $R_S$ and the pad's upper protection diode into `VDD_IO`, and through the breakout's 0 Ω links onto the demo board's +3V3 net, which the figure lumps into one resistor. The demo board's file has its RP2350, the RP2350's flash memory and the output of its TLV1117LV33 regulator on that net.*
 

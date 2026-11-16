@@ -39,7 +39,7 @@ def main():
     ax.grid(True, which="major", color="#e6e6e6", lw=0.5)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
-    print(save(fig, "pb101-shunt-drop"))
+    print(save(fig, "ic103-shunt-drop"))
 
 
 if __name__ == "__main__":

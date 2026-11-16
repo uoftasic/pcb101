@@ -5,9 +5,9 @@
 
 Reads breakout-pcb/breakout-sky-qfn/breakout-sky-qfn.kicad_pcb (rev 3.2, 91a2bf1) and writes:
 
-- pb101-sky-breakout-u4-decoupling.svg: the chip U4 and the capacitors around it
+- ic103-sky-breakout-u4-decoupling.svg: the chip U4 and the capacitors around it
   (placement-and-routing).
-- pb101-sky-breakout-links.svg: the strip along the board's top edge with the
+- ic103-sky-breakout-links.svg: the strip along the board's top edge with the
   regulators, the 0 ohm links and the header J2 (measuring-current).
 
 Every pad is drawn at the position, size and angle the board file gives it, with the
@@ -125,8 +125,8 @@ def draw(name, box, refs, size, legend_columns):
 
 def main():
     caps = {f"C{i}" for i in range(1, 26)}
-    draw("pb101-sky-breakout-u4-decoupling", (126.0, 62.0, 150.0, 86.0), caps | {"U4"}, (5.6, 6.2), 2)
-    draw("pb101-sky-breakout-links", (113.5, 49.5, 162.5, 62.0),
+    draw("ic103-sky-breakout-u4-decoupling", (126.0, 62.0, 150.0, 86.0), caps | {"U4"}, (5.6, 6.2), 2)
+    draw("ic103-sky-breakout-links", (113.5, 49.5, 162.5, 62.0),
          caps | {"U1", "U2", "R2", "R4", "R8", "R13", "R14", "R15", "J2", "TP3", "TP4"}, (8.6, 3.0), 3)
 
 

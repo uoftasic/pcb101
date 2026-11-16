@@ -27,7 +27,7 @@ Resistors, capacitors and other two-terminal surface-mount parts come in standar
 
 Horowitz and Hill favour 0603, "or the larger 0805 package, for general prototyping of surface-mount circuits". Of the smaller sizes, 0402 and below, they write that they "are a major pain – you basically have to work under a microscope (and don't sneeze)". That's the rule of thumb for this course: on a board you'll assemble yourself, use 0603 or 0805 for resistors and capacitors.
 
-![KiCad footprints for common small parts, drawn to one scale](../assets/img/pb101-footprint-sizes.svg)
+![KiCad footprints for common small parts, drawn to one scale](../assets/img/ic103-footprint-sizes.svg)
 
 *Footprints from KiCad 10.0.8's own libraries, drawn to one scale on a 1 mm grid by [`scripts/figures/footprint_sizes.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/footprint_sizes.py): copper pads in gold, and the part's body as the fabrication layer draws it. Top row, resistors: 0402, 0603, 0805 and 1206, and the hand-soldering versions of 0603 and 0805. Bottom row: SOD-882, a two-pin diode package; SOT-23-5; SOIC-8; and the 9 × 9 mm QFN-64 that Tiny Tapeout's SKY130 chip comes in.*
 

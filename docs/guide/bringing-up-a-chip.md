@@ -6,7 +6,7 @@ This page answers: *the first time you power a board with one of the team's chip
 
 In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you write a `BRINGUP.md` for your Pmod: the checks before power, the current limit, the firmware mode and switch positions, the order of the steps, an expected reading with units for every step, and what to do when a reading is wrong. This page explains what goes in each part and why.
 
-![A flow chart of seven bring-up steps, each with the reading written down beforehand](../assets/img/pb101-bringup-order.svg)
+![A flow chart of seven bring-up steps, each with the reading written down beforehand](../assets/img/ic103-bringup-order.svg)
 
 *The order of a first power-up. Each step has a reading you write down before you do it; any step that doesn't give that reading sends you back to the bench with the power off. Made by [`scripts/figures/bringup_order.py`](https://github.com/uoftasic/pb101/blob/main/scripts/figures/bringup_order.py).*
 

@@ -47,7 +47,7 @@ def main():
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
     ax.set_title(f"FR-4, $\\varepsilon_r$ = {EPS_R}: $v = c/\\sqrt{{\\varepsilon_r}}$ = {V:.0f} mm/ns", fontsize=9)
-    print(save(fig, "pb101-trace-length-limits"))
+    print(save(fig, "ic103-trace-length-limits"))
 
 
 if __name__ == "__main__":
