@@ -125,7 +125,7 @@ Why is each part there, and what will you read at each step?
 
 1. Write the Decisions in `DESIGN.md`: one numbered item per part or choice, with the value that justifies it and its unit, and a line `Meets:` naming the requirements it meets. Every requirement needs at least one decision. Work every number out in the note itself, as our references do: for example, "(3.3 V − 0.6 V) / 1 kΩ = 2.7 mA into an unpowered pin" for a series resistor, or, for Brief A with a 1.25 kΩ source, "1.25 kΩ / 10 MΩ = 0.0125 %" for the pull-down.
 
-2. For Brief A, take care over the current that the pin's sampling capacitor draws on average, which is roughly $C \cdot V \cdot f_s$ and drops across your source's resistance. Before you work it out, write down whether you think it matters for an 8-bit converter. Our reference assumes 400 kS/s, which CrossWalk's documentation doesn't yet confirm: 5 pF × 3.3 V × 400 kHz = 6.6 µA, and across 1.25 kΩ that's 8.3 mV, 0.64 of one step of 12.9 mV. That's why our trimmer is 1 kΩ and not 10 kΩ.
+2. For Brief A, take care over the current that the pin's sampling capacitor draws on average, which is roughly $C \cdot V \cdot f_s$ and drops across your source's resistance. Before you work it out, write down whether you think it matters for an 8-bit converter. Our reference assumes 400 kS/s, which CrossWalk's documentation doesn't yet confirm. At that rate, 5 pF × 3.3 V × 400 kHz = 6.6 µA, and across 1.25 kΩ that's 8.3 mV, 0.64 of one step of 12.9 mV. That's why our trimmer is 1 kΩ and not 10 kΩ.
 
    <details>
    <summary>Answer</summary>
