@@ -2,7 +2,7 @@
 
 This page answers: *the first time you power a board with one of the team's chips on it, what do you do, and in what order, so that a mistake costs you a resistor and not the chip?*
 
-**Bring-up** is the first power-up and first test of new hardware. For a board of your own it's mostly a matter of patience. For one of the team's Tiny Tapeout chips it's worth more care, because you can't replace the chip. Tiny Tapeout's FAQ says of the devkit, "You only get 1 chip", they don't sell bare dies ("We don't ship bare dies either"), and another chip means another kit. Everything on this page is about making each step small enough that when something is wrong, you find out before it costs the chip.
+**Bring-up** is the first power-up and first test of new hardware. For a board of your own it's mostly a matter of patience. For one of the team's Tiny Tapeout chips it's worth more care, because you can't replace the chip. Tiny Tapeout's FAQ says of the devkit, "You only get 1 chip", they don't sell bare dies ("We don't ship bare dies either"), and another chip means another kit. This page is about making each step small enough that when something is wrong, you find out before it costs the chip.
 
 In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you write a `BRINGUP.md` for your Pmod: the checks before power, the current limit, the firmware mode and switch positions, the order of the steps, an expected reading with units for every step, and what to do when a reading is wrong. This page explains what goes in each part and why.
 
@@ -30,7 +30,7 @@ Check that every connector goes in the right way round. Tiny Tapeout's breakouts
 
 ## The kit alone, with a current limit
 
-Power the kit first without your board, from a supply whose current you can see and limit. That gives you two numbers. One is whether the kit works at all. The other is its current, and Tiny Tapeout publishes a figure to compare it with: running the factory test project, "you should see a draw of around 180-200 milliAmps, on the 5V supply" ([demo board guide](https://tinytapeout.com/guides/get-started-demoboard-etr/)). Run that project first, before your own, so that you know the chip, the breakout and the demo board work before anything of yours is involved.
+Power the kit first without your board, from a supply whose current you can see and limit. That tells you two things: whether the kit works at all, and how much current it draws, which you can compare with a figure Tiny Tapeout publishes: running the factory test project, "you should see a draw of around 180-200 milliAmps, on the 5V supply" ([demo board guide](https://tinytapeout.com/guides/get-started-demoboard-etr/)). Run that project first, before your own, so that you know the chip, the breakout and the demo board work before anything of yours is involved.
 
 Your Pmod can't measure the chip's current, and it's worth understanding why before you plan around it. The chip's three supply rails, `VCCD` (1.8 V, from the breakout's regulator), `VDD_IO` and `VDDA` (both 3.3 V), stay on the breakout. The two DF12 connectors that join it to the demo board carry only +3V3, +5V and GND among their power pins, and a Pmod sees only what the demo board passes on. So the chip's current is part of the kit's total at the USB input, and that's where you read it.
 
