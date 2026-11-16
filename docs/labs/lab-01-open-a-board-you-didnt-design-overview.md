@@ -57,7 +57,7 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
 
 Check: KiCad's About box says 10.0, `kicad-cli version` prints `10.0.8`, and `labs/common/upstream/breakout-pcb/breakout-sky-qfn/` exists.
 
-## Part 2: Which parts are fitted?
+## Part 2: Fitted and unfitted parts
 
 Which of the parts drawn on this board does the factory actually solder on?
 
@@ -71,7 +71,7 @@ Which of the parts drawn on this board does the factory actually solder on?
 
    KiCad draws a part marked DNP (do not populate) with a red cross. Its footprint is still on the board, so the copper is there, but nothing is soldered to it. Here you can see four: R1, R7, R3 and the second regulator, U2.
 
-4. Look over the rest of the sheet for crossed-out parts, and list every one under "## Not fitted" in your notes. The "EEPROM ID" and "MUX and Supply Headers" blocks have some, and so does the corner near the title block. You can confirm any one by opening its properties (double-click it) and looking for the "Do not populate" box.
+4. Look over the rest of the sheet for crossed-out parts, and list every one under "## Not fitted" in your notes. The "Presence Detection", "EEPROM ID" and "MUX and Supply Headers" blocks have some, and so does the corner beside the title block. You can confirm any one by opening its properties (double-click it) and looking for the "Do not populate" box.
 
 5. Open the Symbol Fields Table with the grid-shaped button near the right-hand end of the top toolbar:
 
@@ -92,7 +92,7 @@ Which of the parts drawn on this board does the factory actually solder on?
 
 Check: your "Not fitted" list has 9 parts, plus the fiducials if you included them.
 
-## Part 3: Where does each supply come from?
+## Part 3: The supply rails
 
 How does each of the chip's three supplies get from the connectors to the chip, and at what voltage?
 
@@ -100,7 +100,7 @@ How does each of the chip's three supplies get from the connectors to the chip, 
 
 2. Find U4's pins on each rail. Its symbol names its supply pins `vccd`, `vccd1`, `vccd2`, `vddio`, `vdda`, `vdda1` and `vdda2`. Edit → Find (Ctrl+F), with "Search pin names and numbers" ticked, finds them. Write the pin numbers into the "Chip pins" column.
 
-3. Follow VCCD back towards the connectors. VCCD doesn't connect to U1 directly: it comes from the "MUX and Supply Headers" block, to the right of the sheet's title:
+3. Follow VCCD back towards the connectors. VCCD doesn't connect to U1 directly: it comes from the "MUX and Supply Headers" block, on the right of the sheet below its title:
 
    ![The MUX and Supply Headers block: the unfitted 12-pin header J2, and the three 0 Ω links R14 (VCC_REG to VCCD), R15 (VDD_REG to VDDA) and R13 (VDD_REG to VDD_IO).](../assets/img/kicad-schematic-sky-breakout-supply-headers.png)
 
@@ -130,9 +130,9 @@ How does each of the chip's three supplies get from the connectors to the chip, 
 
 Check: you have a row for each of VCCD, VDD_IO and VDDA, with every column filled in. Part 4 runs the check on them.
 
-## Part 4: What do ERC and DRC report?
+## Part 4: ERC and DRC
 
-What do KiCad's checks find on a board that was built, sold and works, and which of those findings matter?
+What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and which of the findings matter?
 
 1. Predict, before you run anything: how many ERC errors and how many DRC errors do you expect on this board? Write the two numbers down.
 
@@ -183,7 +183,7 @@ What do KiCad's checks find on a board that was built, sold and works, and which
    <details>
    <summary>Answer</summary>
 
-   ERC treats a net with a power-input pin as driven only if a power-output pin is on the same net. +3V3, +5V and GND arrive through the DF12 connectors, whose pins are passive, and VCCD, VDD_IO, VDDA and the two regulator inputs are each fed through a 0 Ω resistor, which is passive too. ERC can't see the demo board on the far side of the connector, and it doesn't follow a supply through a resistor, so none of these nets has a driver as far as it can tell. The usual fix is a PWR_FLAG symbol on each such net, which tells ERC that power comes from somewhere it can't see. The board itself is fine.
+   ERC treats a net with a power-input pin as driven only if a power-output pin is on the same net. +3V3, +5V and GND arrive through the DF12 connectors, whose pins are passive, and VCCD, VDD_IO, VDDA and the two regulator inputs are each fed through a 0 Ω resistor, which is passive too. ERC can't see the demo board on the far side of the connector, and it doesn't follow a supply through a resistor, so none of these nets has a driver as far as it can tell. The usual fix is a PWR_FLAG symbol on each such net, which tells ERC that power comes from somewhere it can't see. None of this is a fault in the board itself.
 
    </details>
 
@@ -201,7 +201,7 @@ What do KiCad's checks find on a board that was built, sold and works, and which
    <details>
    <summary>Answer</summary>
 
-   It's a `courtyards_overlap` error between J2, the unfitted 12-pin header, and the test point TP4. The designer marked it as excluded in the board file, which KiCad keeps as a record that someone looked at it and accepted it. J2 is DNP, so nothing is ever soldered there to collide with TP4. `check_board.py` counts excluded items separately and never fails on them; `kicad-cli pcb drc` leaves them out unless you ask for `--severity-all`.
+   It's a `courtyards_overlap` error between J2, the unfitted 12-pin header, and the test point TP4. The designer marked it as excluded in the board file, which KiCad keeps as a record that someone looked at it and accepted it. J2 is DNP, so no header is ever soldered there to collide with TP4. `check_board.py` counts excluded items separately and never fails on them; `kicad-cli pcb drc` leaves them out unless you ask for `--severity-all`.
 
    </details>
 

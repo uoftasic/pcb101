@@ -38,7 +38,7 @@ What does the drawing say about the package, and which of its numbers come with 
    <details>
    <summary>Answer</summary>
 
-   At the top left. The view from below is the top view flipped over, here top to bottom, so pin 1 moves from the bottom left to the top left, and the numbering runs counterclockwise from above: pin 1 on the top short side, 2 to 11 down the left side, 12 and 13 on the bottom, 14 to 23 up the right side, and 24 back on the top. TI's example board layout on page 37 is drawn from above and shows exactly that, and KiCad's library convention puts pin 1 at the top left too.
+   At the top left. The view from below is the top view flipped over, here top to bottom, so pin 1 moves from the bottom left to the top left, and the numbering runs counterclockwise from above: pin 1 on the top short side, 2 to 11 down the left side, 12 and 13 on the bottom, 14 to 23 up the right side, and 24 back on the top. TI's example board layout on page 37 is drawn from above and numbers its pads that way, and KiCad's library convention puts pin 1 at the top left too.
 
    </details>
 
@@ -140,7 +140,7 @@ Which pins does the schematic need, and what kind is each one?
 
 2. In the Symbol Editor, make a new symbol in the project library `pb101` called `SN74LVC8T245RHL`. Give it the pins in Table 4-1 on page 5: VCCA on 1, DIR on 2, A1 to A8 on 3 to 10, GND on 11, 12 and 13, B8 to B1 on 14 to 21, OE on 22 and VCCB on 23 and 24. Add pin 25 for the thermal pad, called `EP`. The Pin Table lets you type the pins into a grid rather than placing each one.
 
-3. Set each pin's electrical type, because ERC reasons from them: the supplies power input, DIR and OE input, and the A and B pins bidirectional. Where one name has several pins (GND, VCCB), make one of them power input and the others either power input too or passive, stacked behind it. The datasheet gives the thermal pad no type; passive is the usual choice.
+3. Set each pin's electrical type, because ERC reasons from them: the supplies power input, DIR and OE input, and the A and B pins bidirectional. Where one name has several pins (GND, VCCB), make one of them power input and the others either power input too or passive, stacked behind it. The datasheet gives the thermal pad no type; the reference makes it passive, and the check accepts passive, power input, input, bidirectional or unspecified for it.
 
 4. Set the symbol's Footprint field to `pb101:RHL0024A`, and save.
 
@@ -149,7 +149,7 @@ Which pins does the schematic need, and what kind is each one?
    <details>
    <summary>Answer</summary>
 
-   Note 4 on page 37 points to TI's application note SLUA271 for how to solder a thermal pad, and TI's support forum is the place to ask about this part. Giving the pad its own pin, EP, means the decision is made in the schematic, where a reviewer can see it, rather than hidden in the footprint.
+   Note 4 on page 37 points to TI's application note SLUA271 for how to solder a thermal pad, and TI's support forum is the place to ask about this part. Giving the pad its own pin, EP, puts that decision in the schematic, where a reviewer can see it.
 
    </details>
 
@@ -189,7 +189,7 @@ Do your symbol and footprint work together the way KiCad expects?
    <details>
    <summary>Answer</summary>
 
-   Pads 0.32 mm wide at a 0.5 mm pitch leave 0.5 − 0.32 = 0.18 mm of copper-free space between neighbours, and the board's default clearance is 0.2 mm. Each long side has 10 pads and so 9 gaps, and there are two long sides. The short sides' two pads are 1.5 mm apart, so they never come close.
+   Pads 0.32 mm wide at a 0.5 mm pitch leave 0.5 − 0.32 = 0.18 mm of copper-free space between neighbours, and the board's default clearance is 0.2 mm. Each long side has 10 pads and so 9 gaps, and there are two long sides. The short sides' two pads are 1.5 mm apart, far more than the clearance.
 
    </details>
 
@@ -229,7 +229,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   The fit project is a board with one part and no tracks, made only to test the part, so pads that share a net are bound to be unconnected; `check_board.py` reported 3 unconnected items on the reference, and the project's `check-expect.json` leaves them out of the verdict. On a real board every net has to be routed, and the board check counts unconnected items as failures.
+   The fit project is a board with one part and no tracks, made only to test the part, so pads that share a net are bound to be unconnected; `check_board.py` reported 3 unconnected items on the reference, and the project's `check-expect.json` leaves them out of the PASS or FAIL. On a real board every net has to be routed, and the board check counts unconnected items as failures.
 
    </details>
 
