@@ -120,7 +120,7 @@ Where exactly do the three connectors have to be?
 
 2. Select J1 and set its Orientation to 90° in the Properties panel, so that its pins point up, off the top of the board. Put it wherever you like; ours is at X 102, Y 56.35.
 
-3. Select J2 and press Shift+P, which opens Position Relative To. Click Select Item… and then J1. The dialog opens with Use polar coordinates ticked, so it asks for a Distance and an Angle: enter 22.86 mm and 0°, which puts J2 22.86 mm to the right of J1, along +X. Give J2 the same 90° orientation. Then do the same for J3, relative to J2.
+3. Select J2 and press Shift+P, which opens Position Relative To with Use polar coordinates ticked, so it asks for a Distance and an Angle. Click Select Item… and then J1, and enter 22.86 mm and 0°, which puts J2 22.86 mm to the right of J1, along +X. Give J2 the same 90° orientation. Then do the same for J3, relative to J2.
 
    ![The Position Relative To Reference Item dialog over J2](../assets/img/kicad-position-relative-to.png)
 
