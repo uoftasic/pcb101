@@ -80,7 +80,7 @@ It covers the lock files (`*.lck`), the local settings (`*.kicad_prl`), the foot
 
 ## Ignoring a file that git already tracks
 
-The same demo board repository shows the trap in `.gitignore`. Line 19 of that file is `fp-info-cache`, and yet `fp-info-cache` is in the repository: at the pinned commit it's a 3,924,749-byte file that git tracks like any other. The history shows how. The file was committed on October 14, 2023 at 16:49 (commit 974c613, 93,108 lines), and the `.gitignore` that lists it arrived four minutes later, at 16:53 (commit 0e63c95). Counting that first one, 20 commits have changed the cache, adding 306,006 lines and removing 198,254, and none of those lines is part of the design.
+The same demo board repository shows a common mistake with `.gitignore`. Line 19 of that file is `fp-info-cache`, and yet `fp-info-cache` is in the repository: at the pinned commit it's a 3,924,749-byte file that git tracks like any other. The history shows how. The file was committed on October 14, 2023 at 16:49 (commit 974c613, 93,108 lines), and the `.gitignore` that lists it arrived four minutes later, at 16:53 (commit 0e63c95). Counting that first one, 20 commits have changed the cache, adding 306,006 lines and removing 198,254, and none of those lines is part of the design.
 
 git is doing what its documentation describes. It says it "specifies intentionally untracked files that Git should ignore. Files already tracked by Git are not affected." A pattern in `.gitignore` stops git from *adding* a file; it does nothing to a file git already has. To stop tracking one, the documentation says to "use `git rm --cached` to remove the file from the index", which leaves your copy on disk and records its removal in the next commit, after which the ignore rule takes effect.
 
@@ -96,7 +96,7 @@ Your own machine can do the same with a font, and a KiCad 9 board saved in KiCad
 
 A board file diff is text, but it isn't readable. Commit ecb636a of the demo board, "Reworked manual clocking circuit, Iref current source for analog, TVS diodes on analog lines", changed 60,318 lines of `tinytapeout-demo.kicad_pcb` and 12,558 of its schematic. Even a commit its author called "minor pcb cleanup" (293a3e2, the same day) changed 5,770 lines of the board, far more than a reviewer can read line by line.
 
-What a reviewer can read is a picture. Here is that "minor" commit as two `kicad-cli` renders, with the pixels that differ marked:
+A reviewer can compare pictures instead. Here is that "minor" commit as two `kicad-cli` renders, with the pixels that differ marked:
 
 ![Renders of Tiny Tapeout's demo board before and after commit 293a3e2, and the changed pixels in red: a track near the analog header and a few small spots elsewhere](../assets/img/tt-demo-293a3e2-review.png)
 
