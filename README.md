@@ -22,20 +22,20 @@ The second command ends with `FAIL  erc.error: 10 (want 0)`, because Tiny Tapeou
 
 | Path | What it is | Writeup |
 |---|---|---|
-| `labs/lab-01-open-a-board-you-didnt-design/` | being written | Lab 01 |
-| `labs/lab-02-a-footprint-from-a-datasheet/` | being written | Lab 02 |
-| `labs/lab-03-a-pmod-for-one-projects-pins/` | being written | Lab 03 |
-| `labs/lab-04-protect-and-plan/` | being written | Lab 04 |
-| `labs/lab-05-fab-outputs-in-ci/` | being written | Lab 05 |
-| `labs/lab-06-review-a-seeded-board/` | being written | Lab 06 |
-| `labs/capstone-a-board-for-a-team-chip/` | being written | Capstone |
-| `labs/common/` | the pinned-KiCad wrapper, the board checker, and the script that fetches Tiny Tapeout's boards | used by every lab |
+| `labs/lab-01-open-a-board-you-didnt-design/` | the notes template for Tiny Tapeout's SKY130 breakout, and the check that compares a student's notes with the board | [Lab 01](https://uoftasic.com/pb101/labs/lab-01-open-a-board-you-didnt-design-overview.html) |
+| `labs/lab-02-a-footprint-from-a-datasheet/` | the RHL0024A drawing data, an empty footprint and symbol library, and the check that compares them with the student's own pad numbers | [Lab 02](https://uoftasic.com/pb101/labs/lab-02-a-footprint-from-a-datasheet-overview.html) |
+| `labs/lab-03-a-pmod-for-one-projects-pins/` | the board template a student copies into their own repository, and the reference SimProc Pmod | [Lab 03](https://uoftasic.com/pb101/labs/lab-03-a-pmod-for-one-projects-pins-overview.html) |
+| `labs/lab-04-protect-and-plan/` | the `BRINGUP.md` template, and the reference board with its protection and plan | [Lab 04](https://uoftasic.com/pb101/labs/lab-04-protect-and-plan-overview.html) |
+| `labs/lab-05-fab-outputs-in-ci/` | the starter workflow and build script, and the check that runs the build in a student's repository and checks what it made and what git tracks | [Lab 05](https://uoftasic.com/pb101/labs/lab-05-fab-outputs-in-ci-overview.html) |
+| `labs/lab-06-review-a-seeded-board/` | the seeded board, the `REVIEW.md` and `QUOTE.md` templates, and their check | [Lab 06](https://uoftasic.com/pb101/labs/lab-06-review-a-seeded-board-overview.html) |
+| `labs/capstone-a-board-for-a-team-chip/` | the `DESIGN.md` template, the check for both briefs, and a reference board for each | [Capstone](https://uoftasic.com/pb101/labs/capstone-a-board-for-a-team-chip-overview.html) |
+| `labs/common/` | the pinned-KiCad wrapper, the board checker, the Pmod and bring-up plan checks, and the script that fetches Tiny Tapeout's boards | used by every lab |
 
 Reference solutions go in each package's `solutions/` folder. `.github/workflows/labs.yml` runs the board checker on every KiCad project there, in the pinned image, on every change to `labs/**` and once a week.
 
 ## Screenshots and figures
 
-[`scripts/screenshots/kicad/`](scripts/screenshots/kicad/README.md) takes GUI screenshots of KiCad's editors under Xvfb in the pinned image, and makes 3D renders and SVG plots with `kicad-cli`. Images for the site go in `docs/assets/img/`.
+[`scripts/screenshots/kicad/`](scripts/screenshots/kicad/README.md) takes GUI screenshots of KiCad's editors under Xvfb in the pinned image, and makes 3D renders and SVG plots with `kicad-cli`. Images for the site go in `docs/assets/img/`. The guide pages' diagrams and plots are drawn by the scripts in [`scripts/figures/`](scripts/figures/), listed in [`scripts/README.md`](scripts/README.md).
 
 ## Docs
 
@@ -52,7 +52,7 @@ quarto render docs --profile pdf --to typst    # whole course as one PDF in docs
 | `docs/guide/` | Yes | Guide pages: reading only, no commands |
 | `docs/labs/` | Yes | Lab writeups: every command a student runs, in numbered parts and steps |
 | `labs/` | No | Lab packages, and the shared checks in `labs/common/` |
-| `scripts/` | No | `check_site.py` (the link check for the rendered site) and the KiCad screenshot tools |
+| `scripts/` | No | `check_site.py` (the link check for the rendered site), the KiCad screenshot tools, and the scripts that draw the guide pages' figures |
 
 GitHub Pages is set to Source: GitHub Actions. `.github/workflows/site.yml` renders the site and the course PDF, checks the rendered site's links and anchors with `scripts/check_site.py`, and deploys `docs/_site`.
 
