@@ -40,6 +40,11 @@ FIELDS = ["Fabricator", "Date", "Account needed to see the price", "Files upload
           "Shipping to Toronto", "DFM"]
 
 
+def counted(items, one, many):
+    """'row 3' or 'rows 3, 5': a label in the singular or plural, then the numbers."""
+    return f"{one if len(items) == 1 else many} {', '.join(map(str, items))}"
+
+
 # --------------------------------------------------------------------------------------
 # The review
 
@@ -73,7 +78,8 @@ def check_review(path, rows_out):
 
     todo = [i + 1 for i, l in enumerate(text.splitlines()) if "TODO" in l]
     rows_out.append((not todo, "TODO", "none left" if not todo else
-                     f"{len(todo)} line(s) still say TODO: line {', '.join(map(str, todo[:8]))}"))
+                     f"{len(todo)} line{' still says' if len(todo) == 1 else 's still say'} TODO: "
+                     f"{counted(todo[:8], 'line', 'lines')}"))
     rows = table_rows(text)
     if rows is None:
         rows_out.append((False, "findings", "no '## Findings' section with a table"))
@@ -101,8 +107,9 @@ def check_review(path, rows_out):
         else:
             notes.append((i, where, line, "doesn't find a planted fault"))
     rows_out.append((not bad and bool(rows), "findings",
-                     f"{len(rows)} row(s), each with where, a line, what's wrong and what to change" if not bad
-                     else f"row(s) {', '.join(map(str, bad))} incomplete"))
+                     f"{len(rows)} row{'' if len(rows) == 1 else 's'}, each with where, a line, what's wrong "
+                     "and what to change" if not bad
+                     else f"{counted(bad, 'row', 'rows')} {'is' if len(bad) == 1 else 'are'} incomplete"))
     rows_out.append((len(found) >= NEEDED, "faults",
                      f"{len(found)} of {len(faults)} planted faults found ({NEEDED} needed)"))
     return notes
@@ -155,7 +162,8 @@ def check_quote(path, repo, rows_out):
                      "every field filled in, no TODO" if not todo and not missing else
                      (f"missing or empty: {', '.join(missing)}" if missing else "")
                      + ("; " if missing and todo else "")
-                     + (f"{len(todo)} line(s) still say TODO" if todo else "")))
+                     + (f"{len(todo)} line{' still says' if len(todo) == 1 else 's still say'} TODO"
+                        if todo else "")))
     if missing:
         return
     bad = []

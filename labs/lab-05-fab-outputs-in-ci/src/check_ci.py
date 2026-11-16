@@ -228,10 +228,12 @@ def check_git(repo, rows):
     ignored_tracked = [f for f in ignored_tracked.splitlines() if f]
     if not os.path.exists(os.path.join(repo, ".gitignore")):
         rows.append((False, "gitignore", f"no .gitignore; after the build git sees {len(untracked)} untracked "
-                     f"file(s): {', '.join(untracked[:4])}" + (" ..." if len(untracked) > 4 else "")))
+                     f"file{'' if len(untracked) == 1 else 's'}: {', '.join(untracked[:4])}"
+                     + (" ..." if len(untracked) > 4 else "")))
     elif untracked:
-        rows.append((False, "gitignore", f"after the build git sees {len(untracked)} untracked file(s): "
-                     f"{', '.join(untracked[:4])}" + (" ..." if len(untracked) > 4 else "")
+        rows.append((False, "gitignore", f"after the build git sees {len(untracked)} untracked "
+                     f"file{'' if len(untracked) == 1 else 's'}: {', '.join(untracked[:4])}"
+                     + (" ..." if len(untracked) > 4 else "")
                      + "; ignore them or commit them"))
     elif local or ignored_tracked:
         f = (local or ignored_tracked)[0]

@@ -247,7 +247,8 @@ def check(stem, spec, protect):
     sockets = spec["sockets"]
     role = {}
     if len(pmods) != len(sockets):
-        rep.add(False, "connectors", f"the schematic has {len(pmods)} {PMOD_PART} connector(s); "
+        rep.add(False, "connectors", f"the schematic has {len(pmods)} {PMOD_PART} "
+                                     f"connector{'' if len(pmods) == 1 else 's'}; "
                                      f"this project needs {len(sockets)}, one per socket ({', '.join(sockets)})")
     else:
         missing = [r for r in pmods if r not in bd.fps]

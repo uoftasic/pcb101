@@ -59,6 +59,11 @@ def numbered(lines):
     return [" ".join(s.strip() for s in it) for it in items]
 
 
+def counted(items, one, many):
+    """'line 3' or 'lines 3, 5': a label in the singular or plural, then the numbers."""
+    return f"{one if len(items) == 1 else many} {', '.join(map(str, items))}"
+
+
 def has_expect(item):
     """True if the item says Expect and gives a value after it."""
     m = re.search(r"(?i)\bexpect", item)
@@ -81,7 +86,8 @@ def main():
     secs = sections(text)
     todo = [i + 1 for i, line in enumerate(text.splitlines()) if "TODO" in line]
     rows.append((not todo, "TODO", "none left" if not todo else
-                 f"{len(todo)} line(s) still say TODO: line {', '.join(map(str, todo[:8]))}"
+                 f"{len(todo)} line{' still says' if len(todo) == 1 else 's still say'} TODO: "
+                 f"{counted(todo[:8], 'line', 'lines')}"
                  + (" ..." if len(todo) > 8 else "")))
     for name in SECTIONS:
         body = secs.get(name)
@@ -100,8 +106,9 @@ def main():
             if not data:
                 rows.append((False, name, "no table rows"))
             elif empty:
-                rows.append((False, name, f"{len(data)} rows; row(s) {', '.join(map(str, empty))} have a cell "
-                                         "that's empty or says TODO"))
+                rows.append((False, name, f"{len(data)} rows; "
+                                         f"{counted(empty, 'row', 'rows')} {'has' if len(empty) == 1 else 'have'} "
+                                         "a cell that's empty or says TODO"))
             else:
                 rows.append((True, name, f"{len(data)} rows, every cell filled in"))
         elif name == "Settings":
@@ -113,14 +120,15 @@ def main():
             items = numbered(body)
             bad = [i + 1 for i, it in enumerate(items) if not has_expect(it)]
             if len(items) < MIN_ITEMS[name]:
-                rows.append((False, name, f"{len(items)} numbered item(s); at least {MIN_ITEMS[name]} needed"))
+                rows.append((False, name, f"{len(items)} numbered item{'' if len(items) == 1 else 's'}; "
+                                          f"at least {MIN_ITEMS[name]} needed"))
             elif bad:
-                rows.append((False, name, f"{len(items)} items; item(s) {', '.join(map(str, bad))} have no "
-                             "'Expect' with a value and its unit"))
+                rows.append((False, name, f"{len(items)} items; {counted(bad, 'item', 'items')} "
+                             f"{'has' if len(bad) == 1 else 'have'} no 'Expect' with a value and its unit"))
             else:
                 rows.append((True, name, f"{len(items)} items, each with an expected value and its unit"))
         else:
-            rows.append((True, name, f"{len(content)} line(s)"))
+            rows.append((True, name, f"{len(content)} line{'' if len(content) == 1 else 's'}"))
 
     print("PB101 bring-up plan check")
     print(f"  file      {path}")

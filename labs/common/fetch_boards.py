@@ -61,8 +61,10 @@ def fetch(src, root, force):
                 return "already at", dest
             if not force:
                 raise RuntimeError(
-                    f"{dest} has local changes to {len(changed)} file(s), for example "
-                    f"{changed[0]}. Rerun with --force to discard them.")
+                    f"{dest} has local changes to "
+                    + (f"1 file, {changed[0]}" if len(changed) == 1
+                       else f"{len(changed)} files, for example {changed[0]}")
+                    + ". Rerun with --force to discard them.")
     elif os.path.exists(dest) and os.listdir(dest):
         if not force:
             raise RuntimeError(f"{dest} exists and isn't a git checkout. Remove it, or rerun with --force.")
@@ -117,7 +119,8 @@ def main():
     known = {s["name"] for s in sources}
     unknown = [n for n in args.names if n not in known]
     if unknown:
-        print(f"unknown source(s): {', '.join(unknown)}; known: {', '.join(sorted(known))}", file=sys.stderr)
+        print(f"unknown source{'' if len(unknown) == 1 else 's'}: {', '.join(unknown)}; "
+              f"known: {', '.join(sorted(known))}", file=sys.stderr)
         return 2
     if args.names:
         sources = [s for s in sources if s["name"] in args.names]
@@ -145,7 +148,8 @@ def main():
             failed += 1
             print(f"FAILED     {s['name']:28} {e}", file=sys.stderr)
     if failed:
-        print(f"{failed} source(s) not at their pinned commit", file=sys.stderr)
+        print(f"{failed} {'source is' if failed == 1 else 'sources are'} not at "
+              f"{'its pinned commit' if failed == 1 else 'their pinned commits'}", file=sys.stderr)
         return 1
     return 0
 
