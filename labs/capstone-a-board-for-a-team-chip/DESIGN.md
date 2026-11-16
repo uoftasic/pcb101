@@ -5,7 +5,7 @@
   Keep the four "##" headings. Number the requirements and the decisions. Every decision
   says which requirements it meets on a line starting "Meets:", and gives a value with its
   unit (1 kΩ, 2.7 mA, 22 ns, 10 nF, 113,636 baud); every requirement is met by at least one
-  decision. Leave no TODO.
+  decision. Fill in every placeholder.
 -->
 
 Brief: TODO (D or A). Project: TODO (the Tiny Tapeout project and its repository). Board: TODO (one line).

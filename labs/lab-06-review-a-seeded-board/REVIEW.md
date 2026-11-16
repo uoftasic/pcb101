@@ -7,7 +7,7 @@
             (BRINGUP.md, pmod.kicad_pro), so the designer can go straight to it
     Line    the number of the checklist line it breaks, 1 to 10, from "Reviewing and
             ordering a board"
-  Add as many rows as you have findings, and leave no TODO.
+  Add as many rows as you have findings, and fill in every placeholder.
 -->
 
 Reviewer: TODO (your name)
