@@ -80,6 +80,15 @@ $R fp  /usr/share/kicad/footprints/Package_DFN_QFN.pretty QFN-64-1EP_9x9mm_P0.5m
 $R sym $B/../tinytapeout-kicad-libs/symbols/TinyTapeout.kicad_sym Openframe_QFN_TT06_REV2 docs/assets/img
 ```
 
+`kicad-cli`'s SVG plots are transparent, and their colours were chosen for the background of the editor they come from, so on a page in the other colour mode they can be hard to read: the footprint's yellow silkscreen (`#F2EDA1`) has a contrast of 1.21:1 on the site's white page, and the symbol's dark red pins (`#840000`) 1.50:1 on its dark one. `--bg COLOR`, before the mode, puts an opaque rectangle of that colour behind a plot. Lab 02's two plots use the background their editors have, white for the symbol and `#001023` for the footprint (sampled from the PCB Editor and Footprint Editor screenshots), and were made from its reference solution, then copied to `docs/assets/img/lab02-rhl0024a-footprint.svg` and `lab02-sn74lvc8t245rhl-symbol.svg`:
+
+```bash
+L=labs/lab-02-a-footprint-from-a-datasheet/solutions
+mkdir -p labs/common/results/figures
+$R --bg '#001023' fp  $L/pb101.pretty RHL0024A labs/common/results/figures
+$R --bg '#ffffff' sym $L/pb101.kicad_sym SN74LVC8T245RHL labs/common/results/figures
+```
+
 The top-view render took 12 s. The header of [`render.sh`](render.sh) lists the defaults it passes to `kicad-cli`. What we measured on the SKY130 breakout:
 
 - Two runs give byte-identical SVGs, once the date that `kicad-cli` writes into each SVG's `<title>` is removed (the script removes it), and byte-identical top-view renders.
