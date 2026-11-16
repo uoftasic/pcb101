@@ -35,8 +35,8 @@ On the folder as shipped it prints
 | `results/` | local outputs; never committed |
 
 `labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/selftest.py` runs
-the self-test in about 3 min (196 s in our run, with `--cpus 1`) and ends with `7 of 7 cases gave
-the expected verdict`.
+the self-test, which ends with `7 of 7 cases gave the expected verdict`. In our runs it took
+about 3 to 5 min with the container limited to one CPU.
 
 The datasheet is TI's and isn't copied here; `data/rhl0024a.json` holds only the numbers
 the lab uses, each with the page it's on.

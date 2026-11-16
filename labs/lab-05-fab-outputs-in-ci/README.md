@@ -45,8 +45,8 @@ cp -r ~/pb101/labs/lab-05-fab-outputs-in-ci/starter/. .             # once
 | `results/` | local outputs; never committed |
 
 ```bash
-labs/common/kicad.sh python3 labs/lab-05-fab-outputs-in-ci/src/selftest.py     # 8 of 8, about 5.5 min with one CPU
+labs/common/kicad.sh python3 labs/lab-05-fab-outputs-in-ci/src/selftest.py     # 8 of 8
 python3 labs/lab-05-fab-outputs-in-ci/src/run_workflow.py labs/lab-05-fab-outputs-in-ci/results/selftest/reference
 ```
 
-The second command needs the first to have built `results/selftest/reference`, and Python with PyYAML and Docker on the host. On that repository it ran all six steps in 11 s and copied 21 files into the artifact; on `results/selftest/planted` the board check step exited 1, the two steps after it were skipped, and the upload step copied the three reports.
+The first command is the self-test. In our runs it took about 5 to 5.5 min with the container limited to one CPU. The second needs the first to have built `results/selftest/reference`, and Python with PyYAML and Docker on the host. On that repository it ran all six steps in 11 s and copied 21 files into the artifact; on `results/selftest/planted` the board check step exited 1, the two steps after it were skipped, and the upload step copied the three reports.

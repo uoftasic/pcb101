@@ -28,5 +28,5 @@ runs it took 51 s with the container limited to one CPU, and 26 s with two. On t
 | `results/` | local outputs; never committed |
 
 `labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/selftest.py`
-runs the self-test, which took 53 s with one CPU in our run, and ends with
-`5 of 5 cases gave the expected verdict`.
+runs the self-test, which ends with `5 of 5 cases gave the expected verdict`. In our runs
+it took 50 to 54 s with the container limited to one CPU.

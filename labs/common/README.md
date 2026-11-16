@@ -148,7 +148,7 @@ ok   SKY130 breakout against its expected counts  PASS
 4 of 4 cases gave the expected verdict
 ```
 
-`pic_programmer` is one of the demo projects that ship in the image (`/usr/share/kicad/demos/`), and of the ones we ran it's one of three that pass as shipped. The test copies it and breaks the copy in two ways: it deletes the first footprint from the board, and it lays a 0.25 mm GND track across a 0.8 mm VCC track. The last case needs the fetched boards, and is skipped without them. The whole run took 69 s.
+`pic_programmer` is one of the demo projects that ship in the image (`/usr/share/kicad/demos/`), and of the ones we ran it's one of three that pass as shipped. The test copies it and breaks the copy in two ways: it deletes the first footprint from the board, and it lays a 0.25 mm GND track across a 0.8 mm VCC track. The last case needs the fetched boards, and is skipped without them. In our runs the whole test took about 1 to 3 min with the container limited to one CPU.
 
 ## Reference solutions and CI
 

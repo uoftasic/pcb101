@@ -44,7 +44,7 @@ J13's pinout is from `TinyTapeout/tt-demo-pcb` at bbf3dd1, where J13 is a `PinHe
 | `src/check_capstone.py` | the check itself |
 | `src/make_brief_d.py` | writes the Brief D reference board: Lab 04's, with TP3 and TP4 |
 | `src/make_brief_a.py` | writes the Brief A reference board, and checks its socket's pads against J13's when the demo board is fetched |
-| `src/selftest.py` | repositories with known verdicts, for testing the check itself (4 of 4, 97 s with one CPU) |
+| `src/selftest.py` | repositories with known verdicts, for testing the check itself (4 of 4; in our runs it took about 1.5 to 4.5 min with the container limited to one CPU) |
 | `results/` | local outputs; never committed |
 
 ```bash
