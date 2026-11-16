@@ -5,7 +5,7 @@ Design the boards a chip sits on: schematics, footprints from datasheets, layout
 Part of the UofT ASIC Team education materials (`uoftasic`).
 Course site: <https://uoftasic.com/pb101/> · Education hub: <https://edu.uoftasic.com/>
 
-Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/pb101/guide/getting-started.html) says what to install). The labs' checks run in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt), and every ERC, DRC and parity count a lab page shows comes from `kicad-cli` there. A few checks don't use KiCad at all, such as the bring-up plan check, `labs/common/check_bringup.py`, which needs only Python. Unlike the analog and digital courses, PB101 doesn't use the workbench that students set up in IC101.
+Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/pb101/guide/getting-started.html) says what to install). The labs' checks run in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt), and every ERC, DRC and parity count that a lab page shows comes from `kicad-cli` there. A few checks don't use KiCad at all. The bring-up plan check (`labs/common/check_bringup.py`) is one of them, and it needs only Python. Unlike the analog and digital courses, PB101 doesn't use the workbench that students set up in IC101.
 
 ## Quick start
 
