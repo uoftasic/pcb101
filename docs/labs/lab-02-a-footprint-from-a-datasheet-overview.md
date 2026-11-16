@@ -38,7 +38,7 @@ What does the drawing say about the package, and which of its numbers come with 
    <details>
    <summary>Answer</summary>
 
-   At the top left. The view from below is the top view flipped over, here top to bottom, so pin 1 moves from the bottom left to the top left, and the numbering runs counterclockwise from above: pin 1 on the top short side, 2 to 11 down the left side, 12 and 13 on the bottom, 14 to 23 up the right side, and 24 back on the top. TI's example board layout on page 37 is drawn from above and numbers its pads that way, and KiCad's library convention puts pin 1 at the top left too.
+   It goes at the top left. The view from below is the top view flipped over, here top to bottom, so pin 1 moves from the bottom left to the top left, and the numbering runs counterclockwise from above: pin 1 on the top short side, 2 to 11 down the left side, 12 and 13 on the bottom, 14 to 23 up the right side, and 24 back on the top. TI's example board layout on page 37 is drawn from above and numbers its pads that way, and KiCad's library convention puts pin 1 at the top left too.
 
    </details>
 
@@ -60,7 +60,7 @@ How big should each pad be, and where does it go?
 
    $$X = W_{min} + 2J_S + \sqrt{C_W^2 + F^2 + P^2}$$
 
-   Z is the distance between the outer ends of two opposite pads, G the distance between their inner ends, and X the pad width. $J_T = 0.30$, $J_H = 0$ and $J_S = -0.04$ mm are IPC-7351B's solder-fillet goals at the toe, heel and side of a no-lead terminal, at nominal density, as KiCad's footprint generator records them. F and P allow for the board maker's and the assembler's tolerances; this course uses F = 0.10 mm and P = 0.05 mm. The formula for G takes the worst case for S. KiCad's footprint generator combines the tolerances that make up S as a root-sum-square instead; the course's check uses the worst case. Write each result to two decimal places in the Z, G and X rows of `pads.md`, in the lab folder.
+   Z is the distance between the outer ends of two opposite pads, G the distance between their inner ends, and X the pad width. $J_T = 0.30$, $J_H = 0$ and $J_S = -0.04$ mm are IPC-7351B's solder-fillet goals at the toe, heel and side of a no-lead terminal, at nominal density, as KiCad's footprint generator records them. F and P allow for the board maker's and the assembler's tolerances; this course uses F = 0.10 mm and P = 0.05 mm. The formula for G takes the worst case for S, and so does the course's check, whereas KiCad's footprint generator combines the tolerances that make up S as a root-sum-square. Write each result to two decimal places in the Z, G and X rows of `pads.md`, in the lab folder.
 
 3. KiCad's library convention asks for at least 0.2 mm between the exposed pad and every other pad. Make the exposed pad's land the drawing's nominal size, 2.05 × 4.05, and work out the gap between it and the inner ends of your pads at G. Where the gap is less than 0.2 mm, move the pads' inner ends out until it's 0.2 mm, which makes the pads shorter. Then work out each pad's length, and the distance from the footprint's centre to the pad's centre, and write them in the "Pad length" and "Pad centre" rows. Write the exposed pad's size on the last line.
 
@@ -86,7 +86,7 @@ How big should each pad be, and where does it go?
    <details>
    <summary>Answer</summary>
 
-   On the long sides, Z = 4.23, G = 2.39 and X = 0.26, and on the short sides Z = 6.23 and G = 4.39. At G the gap to the exposed pad is only 0.17 mm on both, so the inner ends move out to 1.225 and 2.225 mm from the centre, and every pad ends up 0.89 × 0.26 mm, centred 1.67 mm (long sides) or 2.67 mm (short sides) from the middle. That's longer than TI's 0.6 mm. IPC's toe goal puts the outer end of each pad about 0.37 mm beyond the nominal edge of the body, so that a solder fillet can form there, whereas TI's pads stop 0.2 mm beyond it. Both are reasonable; they're different choices, and the course's check holds you to the IPC one so that everyone's numbers can be compared.
+   On the long sides, Z = 4.23, G = 2.39 and X = 0.26, and on the short sides Z = 6.23 and G = 4.39. At G the gap to the exposed pad is only 0.17 mm on both, so the inner ends move out to 1.225 and 2.225 mm from the centre, and every pad ends up 0.89 × 0.26 mm, centred 1.67 mm (long sides) or 2.67 mm (short sides) from the middle. That's longer than TI's 0.6 mm. IPC's toe goal puts the outer end of each pad about 0.37 mm beyond the nominal edge of the body, so that a solder fillet can form there, whereas TI's pads stop 0.2 mm beyond it. Both are reasonable choices, and the course's check holds you to the IPC one so that everyone's numbers can be compared.
 
    </details>
 
@@ -112,7 +112,7 @@ Can you turn your numbers into a footprint that KiCad will check?
 
 4. Make pads 14 to 23 the same way, from a pad 14 at X = 1.67, Y = 2.25. The right column is numbered upward, so give this array a vertical spacing of −0.5 mm, and start its numbering at 14. Then place pads 1 and 24 at Y = −2.67 and 12 and 13 at Y = 2.67, each at X = ±0.75, as 0.26 mm in X by 0.89 mm in Y.
 
-5. Add the exposed pad: pad 25, a rectangle 2.05 × 4.05 mm at the origin, with F.Paste unticked. Its paste goes on separately, through smaller openings, the way KiCad's own QFN footprints do it (its `QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm` has 36 of them). Either add pads of type "SMD Aperture" with no number, on F.Paste only, or set a negative "Solder paste relative clearance" on pad 25 and tick F.Paste again. KiCad applies that ratio to each side along its own axis: −10 % on a 2.05 × 4.05 mm pad plotted as a 1.64 × 3.24 mm opening, 64 % of the pad. Whichever you choose, the paste should cover between 50 % and 80 % of the pad's area, as the library convention asks (TI's own stencil on page 38 prints 80 %). The reference uses eight 0.83 × 0.82 mm openings, two across and four down, for 66 %.
+5. Add the exposed pad: pad 25, a rectangle 2.05 × 4.05 mm at the origin, with F.Paste unticked. Its paste goes on separately, through smaller openings, the way KiCad's own QFN footprints do it (KiCad's `QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm` has 36 of them). Either add pads of type "SMD Aperture" with no number, on F.Paste only, or set a negative "Solder paste relative clearance" on pad 25 and tick F.Paste again. KiCad applies that ratio to each side along its own axis, so −10 % on a 2.05 × 4.05 mm pad plotted as a 1.64 × 3.24 mm opening, which is 64 % of the pad. Whichever you choose, the paste should cover between 50 % and 80 % of the pad's area, as the library convention asks (TI's own stencil on page 38 prints 80 %). The reference uses eight 0.83 × 0.82 mm openings, two across and four down, for 66 %.
 
 6. Draw the rest:
    - on F.Fab, the body outline, 3.5 × 5.5 mm, centred, ideally with the pin 1 corner cut off;
@@ -140,7 +140,7 @@ Which pins does the schematic need, and what kind is each one?
 
 2. In the Symbol Editor, make a new symbol in the project library `pb101` called `SN74LVC8T245RHL`. Give it the pins in Table 4-1 on page 5: VCCA on 1, DIR on 2, A1 to A8 on 3 to 10, GND on 11, 12 and 13, B8 to B1 on 14 to 21, OE on 22 and VCCB on 23 and 24. Add pin 25 for the thermal pad, called `EP`. The Pin Table lets you type the pins into a grid rather than placing each one.
 
-3. Set each pin's electrical type, because ERC reasons from them: the supplies power input, DIR and OE input, and the A and B pins bidirectional. GND has three pins and VCCB two, and a schematic should only have to connect each of them once, so stack them. KiCad 10 can put a stack in a single pin: number one GND pin `[11,12,13]` and one VCCB pin `[23,24]`, and KiCad gives that pin's net to every pad in the list. KiCad's library convention (KLC S4.3) asks for these pin stacks from KiCad 10 on, in place of the older way of drawing several pins on top of each other, hidden behind one visible pin. The check accepts either, and the reference was drawn the older way. If you draw it that way, make the hidden pins passive. KiCad joins a hidden power-input pin to a global net named after it, so in Part 5 the pads' nets wouldn't match the schematic, and the check's Symbol row names the pin to change. The datasheet gives the thermal pad no type; the reference makes it passive, and the check accepts passive, power input, input, bidirectional or unspecified for it.
+3. Set each pin's electrical type, because ERC's checks are based on the types: the supplies power input, DIR and OE input, and the A and B pins bidirectional. GND has three pins and VCCB two, and a schematic should only have to connect each of them once, so stack them. KiCad 10 can put a stack in a single pin: number one GND pin `[11,12,13]` and one VCCB pin `[23,24]`, and KiCad gives that pin's net to every pad in the list. KiCad's library convention (KLC S4.3) asks for these pin stacks from KiCad 10 on, in place of the older way of drawing several pins on top of each other, hidden behind one visible pin. The check accepts either, and the reference was drawn the older way. If you draw it that way, make the hidden pins passive, because KiCad joins a hidden power-input pin to a global net named after it, and in Part 5 the pads' nets wouldn't match the schematic. If you leave one as a power input, the check's Symbol row names the pin to change. The datasheet gives the thermal pad no type; the reference makes it passive, and the check accepts passive, power input, input, bidirectional or unspecified for it.
 
 4. Set the symbol's Footprint field to `pb101:RHL0024A`, and save.
 
@@ -174,7 +174,7 @@ Do your symbol and footprint work together the way KiCad expects?
 
    The 17 ERC warnings are labels connected to only one pin, which is all a one-part schematic can have. `results/fit/check_board.txt` has the board check's full output.
 
-2. To see what the board check adds, we made every signal pad 0.32 mm wide instead of 0.26, in `pads.md` and in the footprint. The footprint check still passed, because the pads matched the numbers, but the board didn't:
+2. To see what the board check adds, we made every signal pad 0.32 mm wide instead of 0.26, in `pads.md` and in the footprint. The footprint check still passed, because the pads matched the numbers, but the board check failed:
 
    ```text
      MISMATCH  pads.md    X, long sides: 0.32 is more than 0.02 mm from the course's value
@@ -193,7 +193,7 @@ Do your symbol and footprint work together the way KiCad expects?
 
    </details>
 
-3. We also deleted pin 25 from the reference symbol. The board check passed: KiCad's schematic parity reported nothing, and pad 25 simply had no net. Only the Symbol row failed, with `no pin 25`. That's why the lab's check reads your symbol's pins itself rather than leaving it all to KiCad.
+3. We also deleted pin 25 from the reference symbol. The board check still passed, because KiCad's schematic parity reported nothing and pad 25 just had no net, and only the Symbol row failed, with `no pin 25`. That's why the lab's check reads your symbol's pins itself rather than leaving it all to KiCad.
 
 Check: the check prints `PASS`.
 
