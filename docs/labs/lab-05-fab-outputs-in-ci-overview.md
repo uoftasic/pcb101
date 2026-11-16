@@ -36,13 +36,22 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
 
    </details>
 
-3. `build.sh` has five TODOs, which you'll do in Part 3, and there's no `.gitignore` yet. Before you run anything, write down which rows of the Lab 05 check you expect to fail. Then run it:
+3. Commit the starter, but don't push it yet. If you pushed it now, would the run on GitHub be green or red?
+
+   <details>
+   <summary>Answer</summary>
+
+   Green. A step fails only when its command exits with a status other than 0, and the TODOs are comments, so every stage of `build.sh` succeeds and the artifact has no drill file, BOM, position file, renders or copper plots in it. That's why the lab's check looks at the files the build made as well as at its exit status.
+
+   </details>
+
+4. `build.sh` has five TODOs, which you'll do in Part 3, and there's no `.gitignore` yet. Before you run anything, write down which rows of the Lab 05 check you expect to fail. Then run it:
 
    ```bash
    ~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh
    ```
 
-   It first runs `bash ci/build.sh all` in the pinned image and prints what that prints, then one row per check. On Lab 04's reference board with the starter copied in, the rows were:
+   It first runs `bash ci/build.sh all` in the pinned image and prints what that prints, then one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
 
    ```text
      ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.8 by digest, and uploads out/
@@ -57,20 +66,11 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
    FAIL  pmod: 3 of 8 Lab 05 checks ok; add --planted REV once you've done Part 5
    ```
 
-4. Commit the starter, but don't push it yet. If you pushed it now, would the run on GitHub be green or red?
-
-   <details>
-   <summary>Answer</summary>
-
-   Green. A step fails only when its command exits with a status other than 0, and the TODOs are comments, so every stage of `build.sh` succeeds and the artifact has no drill file, BOM, position file, renders or copper plots in it. That's why the lab's check looks at the files the build made as well as at its exit status.
-
-   </details>
-
 ## Part 2: Keep KiCad's own files out of git
 
 Which files in your repository's folder belong in git, and which should git never see?
 
-1. Run `git status` again. Besides `.github/` and `ci/`, it lists `out/`, which the build just wrote, and `pmod.kicad_prl`, which `kicad-cli` writes next to any project it reads. If you've opened the board in KiCad since Lab 04, there may also be a `pmod-backups/` folder, a `.history/` folder or lock files ending in `.lck`. [KiCad files in git](../guide/kicad-files-in-git.md) says what each one is.
+1. Run `git status` again. It lists `out/`, which the build just wrote, and `pmod.kicad_prl`, which `kicad-cli` writes next to any project it reads. If you've opened the board in KiCad since Lab 04, there may also be a `pmod-backups/` folder, a `.history/` folder or lock files ending in `.lck`. [KiCad files in git](../guide/kicad-files-in-git.md) says what each one is.
 
 2. Make a `.gitignore` in the repository's root folder. Start from Tiny Tapeout's, which [KiCad files in git](../guide/kicad-files-in-git.md) prints in full, and add the two lines it doesn't have: `.history/` for KiCad 10's local history, and `out/` for everything `build.sh` writes. CI makes `out/` again on every run, so it never needs to be in git.
 
@@ -204,7 +204,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
    ~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
-   It builds that commit again in a temporary folder and checks that its board check fails. You should see a tenth row, `ok    planted    16fecee fails the board check (drc.error 2), and the commits after it fix it` with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
+   It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    16fecee fails the board check (drc.error 2), and the commits after it fix it` with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
 
 ## Finishing
 

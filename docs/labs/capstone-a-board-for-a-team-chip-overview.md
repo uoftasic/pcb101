@@ -60,7 +60,7 @@ What does your board have to do, in numbers?
 
 3. Fill in the line at the top and write the Requirements: a numbered list of what the board has to do, from the brief and from your project, each with its number where it has one (a pin, a voltage, a current, a rate). Leave the Decisions for Part 3.
 
-4. Run the check with your brief, and before you do, write down which rows you expect to fail:
+4. Commit `DESIGN.md`: the check runs Lab 05's check first, and that fails on any file git doesn't track. Then write down which rows you expect to fail, and run the check with your brief:
 
    ```bash
    ~/pb101/labs/capstone-a-board-for-a-team-chip/check.sh --brief D
@@ -138,7 +138,7 @@ Why is each part there, and what will you read at each step?
 
 4. Write `BRINGUP.md`. For Brief D, start from your Lab 04 plan and read the steps at your new test points. For Brief A, copy Lab 04's template and fill it in for your board: the lines that leave it are the analog pin, 3.3 V and GND. Every step still needs an `Expect:` with a value and its unit.
 
-5. Run the check. You should see `ok    design       ...` with your own counts, for example `9 requirements, 9 decisions, every requirement met`, and for Brief A `ok    bringup      PASS  BRINGUP.md: 6 of 6 parts ok`.
+5. Commit, and run the check. You should see `ok    design       ...` with your own counts, for example `9 requirements, 9 decisions, every requirement met`, and for Brief A `ok    bringup      PASS  BRINGUP.md: 6 of 6 parts ok`.
 
 ## Part 4: Review it and push
 
@@ -181,7 +181,7 @@ Submit: the URL of your repository and the hash of the commit the check passed o
 ## Going further (optional)
 
 - Order your board with your cohort after a second person has read `BRINGUP.md`, and bring it up when there's a chip to bring up; [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) has the costs, and SimProc, on TTSKY25b, is the only team chip that could be on a bench before the TTSKY26d chips, which are expected in May 2027.
-- For Brief A, add a buffer between the trimmer and the filter, and work out how much of the sampling droop it removes. KiCad's `MCP6001R` is a rail-to-rail op-amp in SOT-23-5; its pins 2 and 5 are the reverse of the plain `MCP6001`'s, which is the kind of package-variant fault you looked for in Lab 06.
+- For Brief A, add a buffer between the trimmer and the filter, and work out how much of the sampling droop it removes. KiCad's `MCP6001R` is a 1 MHz op-amp in SOT-23-5; its pins 2 and 5 are the reverse of the plain `MCP6001`'s, which is the kind of package-variant fault you looked for in Lab 06.
 - Do both briefs.
 
 Next on the [Course path](../index.md#course-path): this is the last row. A second course, PB201, would take up what PB101 left out: 4-layer boards and decoupling for a QFN, characterization boards with a reference of their own, and high-speed signals.

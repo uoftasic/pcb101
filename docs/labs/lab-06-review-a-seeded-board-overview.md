@@ -164,7 +164,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   It checks that each `uio` line has a switch to the 3.3 V supply and a pull-down to GND, and not which switch. On the seeded board `uio[6]` goes to switch 8 (`pins 8-9`) and `uio[7]` to switch 7 (`pins 7-10`), the reverse of the other six and of the silkscreen, so a student who sets the switches by the legend gets a different bit period. Tiny Tapeout's TT07 breakout had the same kind of fault, two lines crossed and so mislabelled.
+   It checks that each `uio` line has a switch to the 3.3 V supply and a pull-down to GND, and not which switch. On the seeded board `uio[6]` goes to switch 8 (`pins 8-9`) and `uio[7]` to switch 7 (`pins 7-10`), the reverse of the other six and of the silkscreen, so anyone who sets the switches by the legend gets a different bit period. Tiny Tapeout's TT07 breakout had the same kind of fault, two lines crossed and so mislabelled.
 
    </details>
 
@@ -182,7 +182,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   DRC checks the board against the rules saved in the board, and the seeded board's Board Setup lowers the minimum text height and thickness to 0.8 mm and 0.1 mm, below JLCPCB's 1.0 mm and 0.15 mm. With your template's rules, the same text gives a `text_height` and a `text_thickness` warning. When you review a board, review its rules too.
+   DRC checks the board against the rules saved in the board, and the seeded board's Board Setup lowers the minimum text height and thickness to 0.8 mm and 0.1 mm, below JLCPCB's 1.0 mm and 0.15 mm. With your template's rules, the same text gives a `text_height` and a `text_thickness` warning.
 
    </details>
 
