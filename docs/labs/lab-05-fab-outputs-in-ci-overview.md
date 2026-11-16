@@ -11,7 +11,7 @@ The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uof
 
 The check is bash, as in Labs 03 and 04, so on Windows run it in WSL. It runs git inside the course image as well as KiCad, and we have run it only on Linux.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates. We did time the check, which with one CPU took 55 s on our reference repository, and 91 s with `--planted`, because that builds a second commit.
+The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates, but we timed the check itself: with one CPU it took 55 s on our reference repository, and 91 s with `--planted`, because that builds a second commit.
 
 ## Part 1: Add the workflow
 
@@ -211,7 +211,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
    ~/pb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
-   It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    2e1dabd, an earlier commit of this branch, fails the board check (drc.error 2)` with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
+   It builds that commit again in a temporary folder and checks that its board check fails. You should see a ninth row, `ok    planted    2e1dabd, an earlier commit of this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 9 of 9 Lab 05 checks ok`.
 
 ## Finishing
 
