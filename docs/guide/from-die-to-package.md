@@ -2,7 +2,7 @@
 
 This page answers: *a chip is a small square of silicon whose connections are a fraction of a millimetre apart. How does it become something you can solder to a board, and how do you draw the copper it lands on?*
 
-The chip a fab makes is a **die**: a thin piece of silicon with the circuit on top and its connections, the **bond pads**, in a ring around its edge. Nothing about a die suits a circuit board. Its pads are far too small and too close together to solder to, and the silicon is fragile. A **package** solves both problems: it holds the die, protects it, and carries each bond pad out to a lead or ball big enough for a board. This page follows a connection from the die to the board, then shows how the copper under a package, its **land pattern**, is worked out from the package's drawing, which is what you do in [Lab 02](../labs/lab-02-a-footprint-from-a-datasheet-overview.md).
+The chip a fab makes is a **die**: a thin piece of silicon with the circuit on top and its connections, the **bond pads**, in a ring around its edge. A die can't go on a circuit board as it is: its pads are far too small and too close together to solder to, and the silicon is fragile. A **package** solves both problems: it holds the die, protects it, and carries each bond pad out to a lead or ball big enough for a board. This page follows a connection from the die to the board, then shows how the copper under a package, its **land pattern**, is worked out from the package's drawing, which is what you do in [Lab 02](../labs/lab-02-a-footprint-from-a-datasheet-overview.md).
 
 ## The pad ring
 
@@ -50,7 +50,7 @@ If the team ever packages a die of its own, there are local routes. The Universi
 
 ## Package parasitics
 
-A package is part of every signal's path, and not a neutral one. Hall and Heck's *Advanced Signal Integrity for High-Speed Digital Designs* (section 3.5.7) notes that bond wires, vias, lead frames, sockets and connectors are inductive, and CMOS inputs capacitive, and (section 3.5.5) that a package adds a stretch of line of roughly 0.25 to 1.0 inch to the path. wafer.space's remark about inductance in a 3 mm bond wire is the same point. For an analog pin on a SKY130 Tiny Tapeout chip, the [analog spec](https://tinytapeout.com/specs/analog/) puts the whole path from pad to project, switch included, at under 500 Ω and under 5 pF. At the speeds in this course, these mostly matter as numbers to put in a calculation, such as how long an analog input takes to settle.
+A package is part of every signal's path, and it has electrical effects of its own. Hall and Heck's *Advanced Signal Integrity for High-Speed Digital Designs* (section 3.5.7) notes that bond wires, vias, lead frames, sockets and connectors are inductive, and CMOS inputs capacitive, and (section 3.5.5) that a package adds a stretch of line of roughly 0.25 to 1.0 inch to the path. wafer.space's remark about inductance in a 3 mm bond wire is the same point. For an analog pin on a SKY130 Tiny Tapeout chip, the [analog spec](https://tinytapeout.com/specs/analog/) puts the whole path from pad to project, switch included, at under 500 Ω and under 5 pF. At the speeds in this course, these mostly matter as numbers to put in a calculation, such as how long an analog input takes to settle.
 
 ## Land patterns from a package drawing
 
