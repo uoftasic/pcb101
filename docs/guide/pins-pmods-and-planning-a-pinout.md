@@ -42,7 +42,7 @@ Every pin your Pmod reaches already has something else on it. From the demo boar
 - **`uo_out[0..7]`** go to the RP2350 (GPIO33 to GPIO40), and each one drives a segment of the 7-segment display, A to G and the decimal point in that order, through a bridged solder jumper (JP2 to JP9) and a 510 Ω resistor.
 - **`uio[0..7]`** go to the RP2350 (GPIO25 to GPIO32) and to nothing else that's fitted.
 
-Two consequences follow, and the next two pages deal with them in detail. On an input, your Pmod is one of up to three drivers. The demo board's firmware has a mode in which the RP2350 drives the `ui_in` pins, `ASIC_RP_CONTROL`, which is the mode its example configuration starts in, and a closed DIP switch is another driver. The ETR guide even gives a symptom: when its browser app reports the shuttle as "unknown", the usual cause is "driving the ui_in pins through the INPUT Pmod port". On an output, your Pmod is a second load, because the display segment and its 510 Ω resistor are already there.
+Two consequences follow, and [Protecting the chip's I/O](protecting-the-chips-io.md) and [Supplies, back-powering and ESD](supplies-back-powering-and-esd.md) deal with them in detail. On an input, your Pmod is one of up to three drivers. The demo board's firmware has a mode in which the RP2350 drives the `ui_in` pins, `ASIC_RP_CONTROL`, which is the mode its example configuration starts in, and a closed DIP switch is another driver. The ETR guide even gives a symptom: when its browser app reports the shuttle as "unknown", the usual cause is "driving the ui_in pins through the INPUT Pmod port". On an output, your Pmod is a second load, because the display segment and its 510 Ω resistor are already there.
 
 ## The RP2350's UARTs and the recommended pinouts
 
@@ -56,7 +56,7 @@ Tiny Tapeout's [pinouts page](https://tinytapeout.com/specs/pinouts/) says "TT a
 | `uo_out[0]` | GPIO33 | UART0.rx |
 | `uo_out[4]` | GPIO37 | UART1.rx |
 
-The first recommended pair has a hardware UART at both ends on the RP2350 board: UART1 transmits into the project's RX on `ui_in[3]` and receives its TX on `uo_out[4]`. The second pair has a hardware receiver on `uo_out[0]`, and nothing on `ui_in[1]` to transmit with. So a pinout that was a recommendation on the older board can be half of one on the newer.
+The first recommended pair has a hardware UART at both ends on the RP2350 board: UART1 transmits into the project's RX on `ui_in[3]` and receives its TX on `uo_out[4]`. The second pair has a hardware receiver on `uo_out[0]`, and nothing on `ui_in[1]` to transmit with. The pinouts page was written for the RP2040 board, and on the RP2350 board only its first pair has a hardware UART in both directions.
 
 ## SimProc's pins
 
