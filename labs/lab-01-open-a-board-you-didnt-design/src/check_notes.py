@@ -355,7 +355,9 @@ def main():
         if todo(cell):
             msgs.append("Volts: TODO")
         else:
-            m = re.search(r"\d+(?:\.\d+)?", cell.replace(",", "."))
+            # 3.3, 3,3 V and the schematic's own 3V3 (or 1v8) all mean the same voltage
+            v = re.sub(r"(\d+)[Vv](\d+)", r"\1.\2", cell.replace(",", "."))
+            m = re.search(r"\d+(?:\.\d+)?", v)
             if not m or f["volts"] is None or abs(float(m.group(0)) - f["volts"]) > 0.05:
                 msgs.append(f"Volts: {cell} isn't what reaches the chip")
 

@@ -23,9 +23,9 @@ with the board`.
 |---|---|
 | `breakout-notes.md` | the file you fill in: the parts that aren't fitted, the three supply rails, and the ERC and DRC counts |
 | `src/check_notes.py` | the check; it works out its answers from the board file and from `labs/common/check_board.py`, and stores no answer key |
-| `src/selftest.py` | four sets of notes with known verdicts, which show that the check checks |
+| `src/selftest.py` | five sets of notes with known verdicts, which show that the check checks |
 | `solutions/breakout-notes.md` | the reference notes; open them after your own check says PASS |
 | `results/` | local outputs; never committed |
 
 `labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/selftest.py`
-runs the self-test in about 40 s and ends with `4 of 4 cases gave the expected verdict`.
+runs the self-test in about 40 s and ends with `5 of 5 cases gave the expected verdict`.

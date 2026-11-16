@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Does the Lab 01 check check? Four sets of notes with known verdicts.
+"""Does the Lab 01 check check? Five sets of notes with known verdicts.
 
     labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/selftest.py
 
@@ -8,6 +8,7 @@
 3. The solution with the course plan's first-draft mistake, VDD_IO regulated by U2
    (which is DNP) instead of passing through R8: must FAIL on that row.
 4. The solution with TP1 added to "Not fitted": must FAIL on that row.
+5. The solution with the volts written the schematic's way, 1V8 and 3V3: must PASS.
 
 The board check runs once, and every case reuses its counts. Needs the fetched boards.
 Exit status 0 when every case gives its expected verdict.
@@ -43,11 +44,14 @@ def main():
     u2 = solution.replace("| VDD_IO | 17, 64 | +3V3 | R4, R8, R13 | 3.3 |",
                           "| VDD_IO | 17, 64 | +3V3 | R4, U2, R13 | 1.8 |")
     tp1 = solution.replace("R1, R3, R6, R7, R11, R12, U2, U3, J2,", "R1, R3, R6, R7, R11, R12, U2, U3, J2, TP1,")
-    assert u2 != solution and tp1 != solution, "solutions/breakout-notes.md changed; update selftest.py"
+    v3v3 = solution.replace("| 1.8 |", "| 1V8 |").replace("| 3.3 |", "| 3V3 |")
+    assert u2 != solution and tp1 != solution and v3v3.count("| 3V3 |") == 2 and "| 1V8 |" in v3v3, \
+        "solutions/breakout-notes.md changed; update selftest.py"
     cases = [("starter, all TODO", STARTER, 1, "Chip pins: TODO"),
              ("reference solution", SOLUTION, 0, "PASS"),
              ("VDD_IO through U2 (DNP)", u2, 1, "U2 is marked DNP"),
-             ("TP1 listed as not fitted", tp1, 1, "TP1 is not marked DNP")]
+             ("TP1 listed as not fitted", tp1, 1, "TP1 is not marked DNP"),
+             ("volts written 1V8 and 3V3", v3v3, 0, "PASS")]
     results = []
     for label, notes, want_rc, want_text in cases:
         if not os.path.exists(notes):
