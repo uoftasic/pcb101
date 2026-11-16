@@ -74,10 +74,8 @@ for l in F.Cu B.Cu; do
     $R pcb "$DIP/dip-dock.kicad_pcb" "$TMP/dip-dock-$l.svg" "$l,Edge.Cuts"
     png "$TMP/dip-dock-$l.svg" "$IMG/tt-dip-dock-$(echo "${l%%.Cu}" | tr "A-Z" "a-z")cu.png" 300
 done
-for l in F.Cu In1.Cu In2.Cu B.Cu; do
-    $R pcb "$SKY/breakout-sky-qfn.kicad_pcb" "$TMP/sky-$l.svg" "$l,Edge.Cuts"
-    png "$TMP/sky-$l.svg" "$IMG/tt-sky-breakout-$(echo "${l%%.Cu}" | tr 'A-Z' 'a-z')cu.png" 500
-done
+$R pcb "$SKY/breakout-sky-qfn.kicad_pcb" "$TMP/sky-In1.Cu.svg" "In1.Cu,Edge.Cuts"
+png "$TMP/sky-In1.Cu.svg" "$IMG/tt-sky-breakout-in1cu.png" 500
 
 # The chip's footprint and symbol, as KiCad and Tiny Tapeout ship them.
 $R fp /usr/share/kicad/footprints/Package_DFN_QFN.pretty QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm \

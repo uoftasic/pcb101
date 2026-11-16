@@ -11,6 +11,8 @@ Utilities for PB101 — PCB Design with KiCad under the UofT ASIC org (`uoftasic
 | `init-template.py` | Fill `pb101` / title / description after using the template |
 | `screenshots/kicad/shot.sh` | KiCad GUI screenshots in the pinned image under Xvfb; see [`screenshots/kicad/README.md`](screenshots/kicad/README.md) |
 | `screenshots/kicad/render.sh` | `kicad-cli` 3D renders and SVG plots of boards, schematics, footprints and symbols |
+| `figures/kicad_figures.sh` | The KiCad renders and plots on the guide pages, made with `render.sh` (needs the fetched boards and `pdftoppm`) |
+| `figures/*.py` | The diagrams on the guide pages, drawn with matplotlib and schemdraw (`pip install -r figures/requirements.txt`); each script's docstring says which page it's for |
 
 ## Usage
 
