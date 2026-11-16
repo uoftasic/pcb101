@@ -32,7 +32,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
    <details>
    <summary>Answer</summary>
 
-   So that the checks run the way the course's own checks do: as an ordinary uid, with KiCad's default library tables copied into an empty home folder (the first thing `build.sh` does). A job `container:` runs as the image's user or as root, and [Outputs in CI](../guide/outputs-in-ci.md) shows that root in this image has no library tables and gets different warning counts. The course's own `labs.yml` workflow runs its checks the same way, and for the same reason.
+   So that the checks run the way the course's own checks do: as an ordinary uid, with KiCad's default library tables copied into an empty home folder (the first thing `build.sh` does). A job `container:` runs as the image's own user unless you override it, and wafer.space's workflow overrides it with `--user root`; [Outputs in CI](../guide/outputs-in-ci.md) shows that root in this image has no library tables and gets different warning counts. The course's own `labs.yml` workflow runs its checks the same way, and for the same reason.
 
    </details>
 
@@ -62,7 +62,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
    <details>
    <summary>Answer</summary>
 
-   Green. A step fails only when its command exits with a status other than 0, and the TODOs are comments, so every stage of `build.sh` succeeds and the artifact has no drill file, BOM, position file or renders in it. That's why the lab's check looks at the files the build made as well as at its exit status.
+   Green. A step fails only when its command exits with a status other than 0, and the TODOs are comments, so every stage of `build.sh` succeeds and the artifact has no drill file, BOM, position file, renders or copper plots in it. That's why the lab's check looks at the files the build made as well as at its exit status.
 
    </details>
 
@@ -89,7 +89,7 @@ Which files in your repository's folder belong in git, and which should git neve
 
 ## Part 3: Finish the fabrication files and review images
 
-What does a fab, an assembler and a reviewer each need from your CI?
+What do a fab, an assembler and a reviewer each need from your CI?
 
 1. Write the five commands the TODOs in `ci/build.sh` ask for. `kicad-cli` documents itself: run, for example,
 
@@ -217,7 +217,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   The renders and the copper plots in `review/`, compared with the ones from the commit before. A board file diff is text but not readable: moving one part rewrites its position and every track and zone fill around it. [KiCad files in git](../guide/kicad-files-in-git.md) shows a "minor" commit to Tiny Tapeout's demo board that changed 5,770 lines.
+   The renders and the copper plots in `review/`, compared with the ones from the commit before. A board file diff is text, but moving one part changes its position, the tracks you reroute and the zone fills around it, and the lines that record those are hard to read as a change. [KiCad files in git](../guide/kicad-files-in-git.md) shows a "minor" commit to Tiny Tapeout's demo board that changed 5,770 lines.
 
    </details>
 

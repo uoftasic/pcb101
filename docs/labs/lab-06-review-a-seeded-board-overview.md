@@ -191,6 +191,6 @@ Submit: nothing for this lab. Keep `REVIEW.md` and `QUOTE.md` in your repository
 ## Going further (optional)
 
 - Review a classmate's Lab 04 board in a pull request on their repository, against the same checklist, with the renders and plots their workflow built. This needs someone working at the same pace, which is why it isn't a required part.
-- Get quotes from a second and a third fabricator for the same zip, and compare their DFM reports: a fabricator that flags something another doesn't is telling you about its process, not only about your board.
+- Get quotes from a second and a third fabricator for the same zip, and compare their DFM reports. The files are the same, so where one fabricator flags something another doesn't, the difference is in their processes.
 
 Next on the [Course path](../index.md#course-path): read [Boards for chips: carriers, motherboards and characterization boards](../guide/boards-for-chips.md), then do the [Capstone: A board for a team chip](capstone-a-board-for-a-team-chip-overview.md).
