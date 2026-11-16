@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Openbox settings for the screenshot rig: every normal window (an editor, not a dialog)
+     opens maximized, so each capture has the same size as the virtual screen. -->
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <focus>
+    <focusNew>yes</focusNew>
+    <followMouse>no</followMouse>
+  </focus>
+  <placement>
+    <policy>Smart</policy>
+    <center>yes</center>
+  </placement>
+  <desktops>
+    <number>1</number>
+  </desktops>
+  <applications>
+    <application class="*" type="normal">
+      <maximized>yes</maximized>
+    </application>
+  </applications>
+</openbox_config>
