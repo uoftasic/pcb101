@@ -11,7 +11,7 @@ The numbers come from gitlab.com/kicad/libraries/kicad-footprint-generator at 09
   src/generators/package/no_lead/footprint.py  F = 0.1 mm and P = 0.05 mm, and the 0.2 mm
                                               minimum from the exposed pad to the other pads
   src/kilibs/util/toleranced_size.py          how tolerances add (root sum of squares)
-The pads this prints match the footprint in kicad/kicad:10.0.8 (0.85 x 0.25 mm at x = -4.45 mm).
+The pads this prints match the footprint in kicad/kicad:10.0.5 (0.85 x 0.25 mm at x = -4.45 mm).
 
     python3 scripts/figures/qfn_land_pattern.py   # prints the working and writes
                                                   # docs/assets/img/pkg-qfn64-land-pattern.svg

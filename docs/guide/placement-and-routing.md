@@ -5,7 +5,7 @@
   - Tiny Tapeout's boards at the commits in labs/common/upstream.json, parsed on Nov 16, 2026:
     DIP dock (breakout-pcb 91a2bf1, dip-dock.kicad_pcb and .kicad_pro and .kicad_dru),
     demo board (tt-demo-pcb bbf3dd1), SKY130 breakout (breakout-sky-qfn.kicad_pcb).
-    Capacitor distances: pcbnew in kicad/kicad:10.0.8, centre of each capacitor pad to
+    Capacitor distances: pcbnew in kicad/kicad:10.0.5, centre of each capacitor pad to
     the centre of the nearest U4 pad on the same net.
   - kicad-tinytapeout-pmod-lib README (9ee6345): 0.9 in / 22.86 mm, Shift+P, order.
   - JLCPCB capabilities, https://jlcpcb.com/capabilities/pcb-capabilities, read Nov 16, 2026.
