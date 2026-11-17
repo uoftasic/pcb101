@@ -153,7 +153,7 @@ Do the files CI built describe your board?
 
    ![GerbView with its File menu open over the SimProc Pmod's Gerbers](../assets/img/kicad-gerbview-file-menu.png)
 
-   *GerbView's File menu in KiCad 10.0.5, over the ten files `ci/build.sh fab` wrote for our Lab 04 board. We opened these from the command line (`gerbview out/fab/*.gbr out/fab/*.drl`), which also works if KiCad's programs are on your path.*
+   *GerbView's File menu in KiCad 10.0.5, over the nine Gerbers and the drill file that `ci/build.sh fab` wrote for our Lab 04 board. We opened these from the command line (`gerbview out/fab/*.gbr out/fab/*.drl`), which also works if KiCad's programs are on your path.*
 
 2. Before you look closely, write down how many layers the Layers Manager should list and what function GerbView should give each.
 
