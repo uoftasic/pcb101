@@ -157,7 +157,7 @@ ok   SKY130 breakout against its expected counts  PASS
 
 A lab's reference solution is a KiCad project anywhere under `labs/<lab-id>/solutions/`. `check_solutions.py` finds every `.kicad_pro` there, runs the board check on each (reading its `check-expect.json` if it has one), keeps the reports in `results/<lab-id>/<project>/`, and prints a table. With no solutions yet it prints `No reference solutions yet: nothing matches labs/*/solutions/**/*.kicad_pro.` and exits 0.
 
-[`.github/workflows/labs.yml`](../../.github/workflows/labs.yml) runs on every change to `labs/**`, once a week, and when started by hand. It pulls the pinned image, fetches the boards, runs the self-test, then runs `check_solutions.py` and uploads the reports. It calls `kicad.sh` like everyone else rather than running as a job `container:`, so CI sees the same user setup and library tables as the counts on the lab pages.
+[`.github/workflows/labs.yml`](../../.github/workflows/labs.yml) runs on every change to `labs/**`, once a week, and when started by hand. It pulls the pinned image, fetches the boards, runs the self-test, then runs `check_solutions.py`, then each lab's own `src/selftest.py`, and uploads the reports. It calls `kicad.sh` like everyone else rather than running as a job `container:`, so CI sees the same user setup and library tables as the counts on the lab pages. Lab 05's self-test is the exception: it runs the lab's `check.sh`, which starts containers of the KiCad image and of KiBot's image itself, so CI runs it on the runner rather than through `kicad.sh`.
 
 ## Tiny Tapeout's boards: `fetch_boards.py`
 

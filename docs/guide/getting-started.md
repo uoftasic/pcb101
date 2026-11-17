@@ -9,7 +9,7 @@ The facts about KiCad's downloads on this page come from kicad.org, read on Nove
 ## Requirements
 
 - **A computer that runs KiCad 10.** KiCad's [system requirements](https://www.kicad.org/help/system-requirements/) ask for a 64-bit processor, 1 GB of RAM (">2G RAM recommended"), up to 10 GB of disk space, and a graphics card with OpenGL 2.1 or greater that supports hardware shaders. A screen of 1280 × 1024 works, but KiCad recommends 1920 × 1080 or more, because at lower resolutions some toolbar buttons are hidden and you have to reach those commands through the menus.
-- **Docker**, which you set up in [IC101](https://uoftasic.com/ic101/). The checks pull the KiCad image the first time they run, which is a download of 808 MB and takes 2.6 GB on disk once it's unpacked.
+- **Docker**, which you set up in [IC101](https://uoftasic.com/ic101/). The checks pull the KiCad image the first time they run, which is a download of 808 MB and takes 2.6 GB on disk once it's unpacked. Lab 05 also pulls KiBot's image, a download of 1,347 MB that takes 3.9 GB on disk.
 - **git and a GitHub account**, from IC101 and IC102. From Lab 03 on you keep your board in a repository of your own on GitHub, and in Lab 05 GitHub Actions checks it on every push.
 
 ## KiCad and the workbench
