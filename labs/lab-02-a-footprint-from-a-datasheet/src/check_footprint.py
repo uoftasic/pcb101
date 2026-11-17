@@ -112,7 +112,7 @@ class Pad:
     def paste_box(self):
         """The paste opening: the pad grown on each side by solder_paste_margin plus
         solder_paste_margin_ratio times the pad's size along that axis. We checked the
-        ratio's meaning by plotting F.Paste with kicad-cli 10.0.8: a 2.05 x 4.05 mm pad with
+        ratio's meaning by plotting F.Paste with kicad-cli 10.0.5: a 2.05 x 4.05 mm pad with
         a ratio of -0.1 plotted as a 1.64 x 3.24 mm opening, 64 % of the pad."""
         if "F.Paste" not in self.layers:
             return None
@@ -171,12 +171,14 @@ def signature(pads):
 
 
 def library_match(pads):
-    """The KiCad library footprint with the same pads as these, if there is one."""
+    """The KiCad library footprint with the same pads as these, if there is one, and how
+    many footprints the library holds (0 when it isn't there to search)."""
     if not os.path.isdir(KICAD_QFN):
-        return None, False
+        return None, 0
     mine = signature(pads)
     count = len(mine)
-    for path in sorted(glob.glob(os.path.join(KICAD_QFN, "*.kicad_mod"))):
+    paths = sorted(glob.glob(os.path.join(KICAD_QFN, "*.kicad_mod")))
+    for path in paths:
         with open(path, encoding="utf-8") as f:
             text = f.read()
         if text.count('(pad "') - text.count('(pad ""') != count:
@@ -184,8 +186,8 @@ def library_match(pads):
         from kicad_sexpr import parse
         theirs = signature([Pad(p) for p in children(parse(text), "pad")])
         if theirs == mine:
-            return os.path.basename(path)[:-len(".kicad_mod")], True
-    return None, True
+            return os.path.basename(path)[:-len(".kicad_mod")], len(paths)
+    return None, len(paths)
 
 
 def expected_positions(centre_long, centre_short):
@@ -300,7 +302,7 @@ def check_footprint(path, mine, rows):
         for i, m in enumerate(msgs):
             rows.append((False, label if i == 0 else "", m))
     else:
-        lib = "and matches none of KiCad's 779 QFN footprints" if searched else "(KiCad's library not searched)"
+        lib = f"and matches none of KiCad's {searched} QFN footprints" if searched else "(KiCad's library not searched)"
         rows.append((True, label, f"25 pads where your numbers put them, paste {100 * cover:.0f} %, {lib}"))
     return fp
 
