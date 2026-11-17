@@ -225,6 +225,8 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    Found 1 unique warning/s (36 total, 3 filtered)
    ```
 
+   The text in quotes on each output's line is that output's `comment`. Our configuration gives each output one (`Interactive HTML BOM` and `Design report`). An output without a comment makes the same file, and its line reads `- '' (ibom) [ibom]`.
+
    The warning, W182, comes from the way KiBot reads a schematic. It looks for each symbol's instance under a sheet path of zeros, while our schematic records each one under the schematic's own UUID, so KiBot falls back to the symbol's first instance, as the message says. Our schematic is one sheet and each of its 33 symbols has only one instance, so that's the right one. KiBot prints the warning once and counts it for each symbol.
 
 6. Open `out/kibot/pmod-ibom.html` in a browser and click a row of the BOM: its parts light up on the drawing of the board. You should see the parts and rows you wrote down in step 3. Ours has 12 parts in 8 rows:
