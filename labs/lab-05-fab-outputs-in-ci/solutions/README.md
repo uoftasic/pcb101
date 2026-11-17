@@ -9,7 +9,7 @@
 | `ci/check_board.py`, `ci/kicad-image.txt` | copies of `labs/common/`'s; the self-test checks they're identical |
 | `.gitignore` | Tiny Tapeout's (`tt-demo-pcb` at bbf3dd1), with `.history/` and `out/` added |
 
-What the build wrote for Lab 04's board, in `kicad/kicad:10.0.8`:
+What the build wrote for Lab 04's board, in `kicad/kicad:10.0.5`:
 
 | Folder | Files |
 |---|---|

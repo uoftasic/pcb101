@@ -9,7 +9,7 @@ The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoft
 - Finish [Lab 03](lab-03-a-pmod-for-one-projects-pins-overview.md): its check passes on your own repository.
 - Read the pages on row 7 of the [course path](../index.md#course-path): [Protecting the chip's I/O](../guide/protecting-the-chips-io.md), [Supplies, back-powering and ESD](../guide/supplies-back-powering-and-esd.md), [Measuring current](../guide/measuring-current.md) and [Bringing up a chip](../guide/bringing-up-a-chip.md). The numbers this lab asks you to work out come from them.
 
-The lab takes about 1 hour 30 minutes: roughly 20 minutes for Part 1, 15 each for Parts 2 to 4, and 25 for the bring-up plan. Those are our estimates, but we timed the check itself: it took 17 to 47 seconds in our runs, depending on how busy the computer was.
+The lab takes about 1 hour 30 minutes: roughly 20 minutes for Part 1, 15 each for Parts 2 to 4, and 25 for the bring-up plan. Those are our estimates, but we timed the check itself: it took 18 seconds in our run, with the container limited to one CPU.
 
 Copy the bring-up plan's template into your repository and run the Lab 04 check on the board as Lab 03 left it:
 

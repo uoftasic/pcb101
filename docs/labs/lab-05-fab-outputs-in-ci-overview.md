@@ -11,7 +11,7 @@ The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uof
 
 The check is bash, as in Labs 03 and 04, so on Windows run it in WSL. It runs git inside the course image as well as KiCad, and we have run it only on Linux.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates, but we timed the check itself: with one CPU it took 55 s on our reference repository, and 91 s with `--planted`, because that builds a second commit.
+The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4 and 20 for Part 5. Those are our estimates, but we timed the check itself: with one CPU it took 32 s on our reference repository, and 47 s with `--planted`, because that builds a second commit.
 
 ## Part 1: Add the workflow
 
@@ -61,7 +61,7 @@ The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 10 for Par
    It first runs `bash ci/build.sh all` in the pinned image and prints what that prints, then one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
 
    ```text
-     ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.8 by digest, and uploads out/
+     ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.5 by digest, and uploads out/
      ok    check      the board check passes
      ok    gerbers    9 Gerbers and pmod-job.gbrjob in out/fab/
      FAIL  drill      no drill file (.drl) in out/fab/
@@ -116,7 +116,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 3. Run the check. You should see every row `ok` except the last line's reminder about Part 5. Ours:
 
    ```text
-     ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.8 by digest, and uploads out/
+     ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.5 by digest, and uploads out/
      ok    check      the board check passes
      ok    gerbers    9 Gerbers and pmod-job.gbrjob in out/fab/
      ok    drill      pmod.drl: 65 holes, all inside the outline
@@ -139,7 +139,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 
    </details>
 
-5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, named Board, for your commit, and the run's page lists the job's steps and, once it has finished, the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/ic103/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py): all six succeeded in 11 s, and the artifact held 21 files. On GitHub, pulling the image (812 MB) adds to that, and we haven't timed it there.
+5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, named Board, for your commit, and the run's page lists the job's steps and, once it has finished, the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/ic103/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py): all six succeeded in 15 s, and the artifact held 21 files. On GitHub, pulling the image (808 MB) adds to that, and we haven't timed it there.
 
 ## Part 4: Look at what the fab will get
 
@@ -149,7 +149,7 @@ Do the files CI built describe your board?
 
    ![GerbView with its File menu open over the SimProc Pmod's Gerbers](../assets/img/kicad-gerbview-file-menu.png)
 
-   *GerbView's File menu in KiCad 10.0.8, over the ten files `ci/build.sh fab` wrote for our Lab 04 board. We opened these from the command line (`gerbview out/fab/*.gbr out/fab/*.drl`), which also works if KiCad's programs are on your path.*
+   *GerbView's File menu in KiCad 10.0.5, over the ten files `ci/build.sh fab` wrote for our Lab 04 board. We opened these from the command line (`gerbview out/fab/*.gbr out/fab/*.drl`), which also works if KiCad's programs are on your path.*
 
 2. Before you look closely, write down how many layers the Layers Manager should list and what function GerbView should give each.
 
@@ -180,7 +180,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 
    ![The Design Rules Checker with a clearance violation and a thermal relief error](../assets/img/kicad-drc-planted-clearance.png)
 
-   *The Design Rules Checker in KiCad 10.0.8 on our board with the track dragged down: a clearance violation between the track and J1's pad 7 (0.1600 mm against 0.2000 mm), and an incomplete thermal relief on pad 11, whose connection to the GND zone the track now blocks. The other 32 items are the warnings the board had before.*
+   *The Design Rules Checker in KiCad 10.0.5 on our board with the track dragged down: a clearance violation between the track and J1's pad 7 (0.1600 mm against 0.2000 mm), and an incomplete thermal relief on pad 11, whose connection to the GND zone the track now blocks. The other 32 items are the warnings the board had before.*
 
    The dialog's Schematic Parity tab says "(not run)". Does that mean your CI doesn't check parity either?
 
@@ -241,7 +241,7 @@ Submit: nothing for this lab. Keep the workflow; the capstone asks for a green r
 
 ## Going further (optional)
 
-- Add an interactive HTML BOM with [KiBot](https://github.com/INTI-CMNB/KiBot). We haven't run KiBot in this course: its newest KiCad 10 image carries 10.0.5, not the 10.0.8 the checks use, and its GitHub Action builds from a `:latest` tag. If you try it, name a fixed image tag, as [Outputs in CI](../guide/outputs-in-ci.md) explains, and keep the checks on the pinned `kicad/kicad` image.
+- Add an interactive HTML BOM with [KiBot](https://github.com/INTI-CMNB/KiBot). We haven't run KiBot itself in this course yet. Its newest KiCad 10 image, `1.9.1-2_k10.0.5_d13.2_b4.2.4LTS`, carries 10.0.5, the same version as the checks, but its GitHub Action builds from a `:latest` tag. If you try it, name that fixed image tag and its digest, as [Outputs in CI](../guide/outputs-in-ci.md#kibot) explains, and keep the checks on the pinned `kicad/kicad` image.
 - Save the list of outputs in the project as a jobset and run it with `kicad-cli jobset run`, so that the outputs live next to the board instead of in `build.sh`. We haven't tried a jobset yet either.
 
 Next on the [Course path](../index.md#course-path): read [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), then do [Lab 06: Review a seeded board](lab-06-review-a-seeded-board-overview.md).

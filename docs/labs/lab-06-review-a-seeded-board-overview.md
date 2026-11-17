@@ -10,7 +10,7 @@ The lab's files are in [`labs/lab-06-review-a-seeded-board/`](https://github.com
 - Read [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), row 11 of the [course path](../index.md#course-path). Its ten-line checklist is the one you review against, and `REVIEW.md` asks for the number of the line each fault breaks.
 - Don't open `labs/lab-06-review-a-seeded-board/solutions/` until you've finished. It lists the faults.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those are our estimates, but we timed the checks themselves on a copy of the seeded board, with one CPU: the board check took 18 s and Lab 04's check 19 s, and the Lab 06 check, which only reads your two files and your board, took under a second.
+The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those are our estimates, but we timed the checks themselves on a copy of the seeded board, with one CPU: the board check took 19 s and Lab 04's check 20 s, and the Lab 06 check, which only reads your two files and your board, took under a second.
 
 ## Part 1: What the checks say
 
