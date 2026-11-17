@@ -15,7 +15,7 @@ You don't need to have designed a board before. You do need the circuits you lea
 | Track | IC |
 | Prerequisites | [IC101](https://uoftasic.com/ic101/), then IC102 (either version), and circuits from class. [AD103](https://uoftasic.com/ad103/) helps with the analog capstone brief and [DD102](https://uoftasic.com/dd102/) with the digital one. |
 | Tools | KiCad 10.0 on your own computer; Docker, which you set up in IC101, for the checks; git and a GitHub account. |
-| Checks | `kicad/kicad:10.0.5`, pinned by digest. Every count and message the labs show comes from a run in that image, except KiBot's in Lab 05, which come from KiBot's own image with KiCad 10.0.5, also pinned by digest. |
+| Checks | `kicad/kicad:10.0.5`, pinned by digest. Every count and message the labs show comes from a run in that image, apart from KiBot's output in Lab 05, which comes from KiBot's own image (with KiCad 10.0.5), also pinned by digest. |
 | Total time | About 21.5 hours, self-paced. The course path rows below add up to 21 h 25 min. |
 
 IC102 is on the list because from Lab 03 on you work in a board repository of your own on GitHub: every later lab commits to it, Lab 05 runs GitHub Actions on it, and you hand in the capstone as a repository and a commit.
