@@ -9,8 +9,8 @@
 # (labs/common/README.md).
 #
 # The weekly run catches breakage that comes from outside this repo: a pinned Tiny Tapeout
-# commit that GitHub stops serving, a pinned image digest that Docker Hub stops serving, or
-# a change to GitHub's runners.
+# commit that GitHub stops serving, a pinned image digest that Docker Hub or GitHub's
+# registry stops serving, or a change to GitHub's runners.
 name: Labs
 
 on:

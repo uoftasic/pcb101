@@ -28,6 +28,7 @@ Those FAILs are what should happen, because in KiCad 10.0.5 the breakout has 10 
 |---|---|
 | `kicad-image.txt` | the pinned image, `kicad/kicad:10.0.5@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de`; every other script reads it from here |
 | `kicad.sh` | runs any command in the pinned image, as your uid, with the repo mounted |
+| `kibot-image.txt`, `kibot.sh` | KiBot's pinned image, `ghcr.io/inti-cmnb/kicad10_auto_full:1.9.1-2_k10.0.5_d13.2_b4.2.4LTS@sha256:96e75f885b15617c6b38aef11db7856a93f4367cab7a0b6c2b30465557619330` (KiBot 1.9.1 with KiCad 10.0.5), and the script that runs a command in it through `kicad.sh`; Lab 05 runs KiBot with them |
 | `image-entry.sh` | runs inside the image before the command, and gives your uid the image's default library tables |
 | `check_board.py` | the board check: ERC, DRC, unconnected items and schematic parity, with PASS or FAIL |
 | `check_solutions.py` | runs the board check on every lab's reference solution; CI runs this |
@@ -53,7 +54,7 @@ labs/common/kicad.sh python3 labs/common/check_board.py board.kicad_pro
 ic103: KiCad image kicad/kicad@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de
 ```
 
-The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `IC103_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `IC103_QUIET=1` to drop the digest line. `IC103_IMAGE` runs another image instead of the pinned one; the course's render script uses it to run 3D renders in `kicad/kicad:10.0.5-full`, which has KiCad's 3D models of parts.
+The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `IC103_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `IC103_QUIET=1` to drop the digest line. `IC103_IMAGE` runs another image instead of the pinned one; the course's render script uses it to run 3D renders in `kicad/kicad:10.0.5-full`, which has KiCad's 3D models of parts, and `kibot.sh` uses it to run KiBot's image, with `IC103_IMAGE_LABEL=KiBot` so that the line it prints says `ic103: KiBot image` and the digest.
 
 Running as your uid means starting with an empty home folder, and so with no KiCad library tables. Without them, ERC and DRC report every standard library as missing, and the SKY130 breakout's ERC warnings go from 97 to 233 and its DRC warnings from 120 to 128 (the errors stay 10 and 0). The image's own user, `kicad`, has the two tables in `/home/kicad/.config/kicad/10.0/`, but that folder is readable only by `kicad`. Its `fp-lib-table` and `sym-lib-table` are byte-for-byte the defaults KiCad ships in `/usr/share/kicad/template/` (we compared them with `cmp`), so `image-entry.sh` copies those. Every run then sees the same libraries as the image's default user, whoever runs it.
 
