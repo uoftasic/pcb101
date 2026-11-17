@@ -1,6 +1,6 @@
 # KiCad screenshots and figures
 
-Two tools make the course's KiCad images. `render.sh` runs `kicad-cli` for 3D renders and SVG plots, which is all a figure needs when it only has to show a design. `shot.sh` takes real screenshots of KiCad's editors, for the steps where a student has to find something in the GUI. Both are tools for whoever writes the course pages, and we have run them only on Linux. Both use KiCad 10.0.5: `shot.sh` and `render.sh`'s plots use the image pinned in [`labs/common/kicad-image.txt`](../../../labs/common/kicad-image.txt) (`kicad/kicad:10.0.5`, by digest), and `render.sh`'s 3D renders use the image in [`render-image.txt`](render-image.txt) (`kicad/kicad:10.0.5-full`, by digest), which has the same `kicad-cli` and KiCad's 3D models of parts as well. Set `IC103_RENDER_IMAGE` to render in another image.
+Two tools make the course's KiCad images. `render.sh` runs `kicad-cli` for 3D renders and SVG plots, which is all a figure needs when it only has to show a design. `shot.sh` takes real screenshots of KiCad's editors, for the steps where a student has to find something in the GUI. Both are tools for whoever writes the course pages, and we have run them only on Linux. Both use KiCad 10.0.5. `shot.sh`, and the plots from `render.sh`, use the image pinned in [`labs/common/kicad-image.txt`](../../../labs/common/kicad-image.txt) (`kicad/kicad:10.0.5`, by digest). The 3D renders from `render.sh` use the image in [`render-image.txt`](render-image.txt) (`kicad/kicad:10.0.5-full`, by digest), which has the same `kicad-cli` and KiCad's 3D models of parts as well. Set `IC103_RENDER_IMAGE` to render in another image.
 
 ## GUI screenshots
 
@@ -17,11 +17,11 @@ That writes three PNGs into `docs/assets/img/`, each 1600 × 1000. It took 118 s
 | `kicad-pcb-editor-sky-breakout.png` | the PCB Editor with the same board |
 | `kicad-footprint-editor-sky-breakout-u4.png` | the Footprint Editor with U4, the chip's QFN-64, opened from that board |
 
-We ran it three times. The Footprint Editor capture was byte-identical every time, and so was the Schematic Editor's in the two runs that waited for the libraries. Two of the three PCB Editor captures were byte-identical, and the third differed in 252,097 pixels, among them the count on the status-bar badge described below. So compare a changed screenshot by eye before you conclude that KiCad or the board changed.
+We ran it three times. The Footprint Editor capture was byte-identical every time, and so was the Schematic Editor's in the two runs that waited for the libraries. Two of the three PCB Editor captures were byte-identical, and the third differed in 252,097 pixels, including the count on the status-bar badge described below. So compare a changed screenshot by eye before you conclude that KiCad or the board changed.
 
 `shot.sh` builds the image `ic103/kicad-shot:10.0.5` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 35 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends, or after 10 minutes where GNU `timeout` is installed. Only the output folder is written.
 
-Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background. Sampled every 2 s with `ps` during the shot above, under a 2 GB limit, `pcbnew` peaked at 2,252,672 KiB (2.1 GiB) resident, and the run completed. We ran the shots with `IC103_DOCKER_ARGS="--cpus 1 --memory 2g"`.
+Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background. We sampled `ps` every 2 s during the shot above, under a 2 GB limit, and `pcbnew` peaked at 2,252,672 KiB (2.1 GiB) resident; the run completed. We ran the shots with `IC103_DOCKER_ARGS="--cpus 1 --memory 2g"`.
 
 ### The first-run wizard
 
@@ -39,7 +39,7 @@ The rest of the rig:
 - Captures use ImageMagick's `import -window root`. `xwd -root` returned the Footprint Editor's menus, toolbars and panels as solid black, because they are drawn in windows whose visual differs from the root window's.
 - `capture` waits until the screen hasn't changed for 6 s before it grabs, because KiCad can draw an editor's canvas several seconds before its panels.
 - PNGs are written without timestamps.
-- In KiCad 10.0.5 every editor shows a red "9+" badge at the right-hand end of its status bar. Clicked, it lists messages such as "Library 'GPU': Library not found in library table", although `GPU` and the other libraries it names are in the table the rig copies and in `/usr/share/kicad/symbols/`. ERC in the same session still counted 97 warnings on the breakout, as `kicad-cli` does. The 10.0.8 shots had no badge. We left it in the shots.
+- In KiCad 10.0.5 every editor shows a red "9+" badge at the right-hand end of its status bar. Clicking it lists messages such as "Library 'GPU': Library not found in library table", although `GPU` and the other libraries it names are in the table the rig copies and in `/usr/share/kicad/symbols/`. ERC in the same session still counted 97 warnings on the breakout, as `kicad-cli` does. The 10.0.8 shots had no badge. We left it in the shots.
 
 ### Shot files
 
