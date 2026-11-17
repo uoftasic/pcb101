@@ -10,7 +10,7 @@
 | `ci/check_board.py`, `ci/kicad-image.txt`, `ci/kibot-image.txt` | copies of `labs/common/`'s; the self-test checks they're identical |
 | `.gitignore` | Tiny Tapeout's (`tt-demo-pcb` at bbf3dd1), with `.history/` and `out/` added |
 
-What the build wrote for Lab 04's board, in `kicad/kicad:10.0.5`, and KiBot in its image:
+What the build wrote for Lab 04's board in `kicad/kicad:10.0.5`, and what KiBot wrote in its own image:
 
 | Folder | Files |
 |---|---|
@@ -20,4 +20,4 @@ What the build wrote for Lab 04's board, in `kicad/kicad:10.0.5`, and KiBot in i
 | `out/review/` | `pmod-top.png`, `pmod-bottom.png` (1568 × 872), `pmod-F_Cu.svg`, `pmod-B_Cu.svg`, `pmod-schematic.pdf` |
 | `out/kibot/` | `pmod-ibom.html` (12 parts in 8 rows), `pmod-report.txt` (64.0 × 32.0 mm; drill tools 0.4 mm × 1, 0.9 mm × 25, 1.1 mm × 39, which are the 65 holes with 0.1 mm added to each plated one) |
 
-The planted commit in the self-test is [`../src/planted.py`](../src/planted.py) applied to the board. Its board check fails with `drc.error: 2 (want 0)`: a `clearance` error between the moved +3V3 track and J1's pad 7 (0.1600 mm against 0.2000 mm), and a `starved_thermal` error on J1's pad 11, whose GND zone connection the track now blocks.
+The planted commit in the self-test is [`../src/planted.py`](../src/planted.py) applied to the board. Its board check fails with `drc.error: 2 (want 0)`: a `clearance` error between the moved +3V3 track and J1's pad 7 (0.1600 mm against 0.2000 mm), and a `starved_thermal` error on J1's pad 11, whose connection to the GND zone the track now blocks.
