@@ -6,8 +6,10 @@
 # The symbol chooser (Place > Place Symbols, A), filtered to the Pmod connector, in the template
 # a student starts from.
 work labs/lab-03-a-pmod-for-one-projects-pins/template
+# Wait for KiCad 10.0.5 to finish loading the symbol libraries before opening the chooser:
+# opened while they were still loading, the chooser didn't take the typed filter.
 launch eeschema pmod.kicad_sch 'pmod.*Schematic Editor'
-pause 5
+pause 45
 key a
 wait_window 'Choose Symbol' 90
 pause 10
@@ -38,7 +40,7 @@ quit pcbnew
 
 # The symbol chooser again, filtered to the two-line ESD array Lab 04 adds.
 launch eeschema pmod.kicad_sch 'pmod.*Schematic Editor'
-pause 5
+pause 45
 key a
 wait_window 'Choose Symbol' 90
 pause 10

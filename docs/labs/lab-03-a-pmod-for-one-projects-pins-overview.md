@@ -70,7 +70,7 @@ What does SimProc need from a board, pin by pin?
 
    ![The Choose Symbol dialog filtered to PMOD_PERIPH](../assets/img/kicad-symbol-chooser-pmod.png)
 
-   *The Choose Symbol dialog in KiCad 10.0.8, opened with A in the template's schematic and filtered to `PMOD_PERIPH`. The symbol already names its footprint, `TinyTapeout_PMOD:PinHeader_2x06_P2.54mm_PMODPeriph2B`.*
+   *The Choose Symbol dialog in KiCad 10.0.5, opened with A in the template's schematic and filtered to `PMOD_PERIPH`. The symbol already names its footprint, `TinyTapeout_PMOD:PinHeader_2x06_P2.54mm_PMODPeriph2B`.*
 
    J1 will go in the demo board's input socket, J2 in the bidirectional one and J3 in the output one. Each symbol's pins follow the sockets: `IO1` to `IO4` on pins 1 to 4 carry bits 0 to 3, `IO5` to `IO8` on pins 7 to 10 carry bits 4 to 7, pins 5 and 11 are GND and pins 6 and 12 are the demo board's 3.3 V.
 
@@ -124,7 +124,7 @@ Where exactly do the three connectors have to be?
 
    ![The Position Relative To Reference Item dialog over J2](../assets/img/kicad-position-relative-to.png)
 
-   *Position Relative To in KiCad 10.0.8, opened with Shift+P on J2 of our finished board. The Properties panel on the left shows J2's position, its 90° orientation and the Locked box you'll tick in step 5.*
+   *Position Relative To in KiCad 10.0.5, opened with Shift+P on J2 of our finished board. The Properties panel on the left shows J2's position, its 90° orientation and the Locked box you'll tick in step 5.*
 
    You should see J2's Position X in the Properties panel exactly 22.86 mm more than J1's, and its Position Y the same. Why 22.86 mm?
 
@@ -143,7 +143,7 @@ Where exactly do the three connectors have to be?
 
    ![The three Pmod connectors on a 64 x 32 mm outline](../assets/img/pmod-connectors-top.png)
 
-   *Three connectors 22.86 mm apart on our outline, rendered by `kicad-cli` 10.0.8 in the course image. The image has no 3D models of parts, so the render shows pads, silkscreen and the board, without the plastic of the connectors.*
+   *Three connectors 22.86 mm apart on our outline, rendered by `kicad-cli` 10.0.5 with the parts' 3D models. They're angled pin headers, so their pins stick out past the board's top edge.*
 
    You should see the connectors pass, with your own positions in place of ours:
 
@@ -196,11 +196,11 @@ Can every connection be made on two layers, with the bottom layer kept as a grou
 
    </details>
 
-Look at your board in KiCad's 3D viewer (View > 3D Viewer, Alt+3). If your KiCad has its 3D models (the Linux Lite AppImage doesn't), you'll see the parts; the course image has none, which is why our render below shows only pads and silkscreen.
+Look at your board in KiCad's 3D viewer (View > 3D Viewer, Alt+3). If your KiCad has its 3D models (the Linux Lite AppImage doesn't), you'll see the parts, as in our render below.
 
 ![The Lab 03 reference Pmod for SimProc, from the top](../assets/img/pmod-simproc-lab03-top.png)
 
-*Our Lab 03 board, which is one of many layouts that would do, rendered by `kicad-cli` 10.0.8 without 3D models. The `uio` lines from J2's upper row run straight down on the top layer, and those from its lower row cross to the right on the bottom layer, to the pull-down network RN1 and the switches SW1.*
+*Our Lab 03 board, which is one of many layouts that would do, rendered by `kicad-cli` 10.0.5 with the parts' 3D models. The `uio` lines from J2's upper row run straight down on the top layer, and those from its lower row cross to the right on the bottom layer, to the pull-down network RN1 and the switches SW1.*
 
 ## Part 5: Check the connections against SimProc's pin list
 

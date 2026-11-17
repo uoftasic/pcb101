@@ -54,9 +54,9 @@ The DIP dock's settings have "Use extended X2 format" turned off, so KiCad write
 
 Which layers become Gerbers, and with what options, is a setting stored in the board file. In the PCB Editor it's the Plot dialog, under File → Plot:
 
-![The Plot dialog in KiCad 10.0.8's PCB Editor, with the DIP dock open](../assets/img/kicad-plot-dialog-dip-dock.png)
+![The Plot dialog in KiCad 10.0.5's PCB Editor, with the DIP dock open](../assets/img/kicad-plot-dialog-dip-dock.png)
 
-*The PCB Editor's Plot dialog (File → Plot) with the DIP dock open, in KiCad 10.0.8. Under "Include Layers" the designer ticked F.Cu, B.Cu, both paste, silkscreen and mask layers, Edge.Cuts and F.Fab. On the right, "Use drill/place file origin" is ticked and "Use extended X2 format (recommended)" isn't. "Generate Drill Files..." at the bottom opens a second dialog for the drill file.*
+*The PCB Editor's Plot dialog (File → Plot) with the DIP dock open, in KiCad 10.0.5. Under "Include Layers" the designer ticked F.Cu, B.Cu, both paste, silkscreen and mask layers, Edge.Cuts and F.Fab. On the right, "Use drill/place file origin" is ticked and "Use extended X2 format (recommended)" isn't. "Generate Drill Files..." at the bottom opens a second dialog for the drill file.*
 
 `kicad-cli pcb export gerbers` uses those settings only when you pass `--board-plot-params`. Without it, it uses its own defaults, and on the DIP dock the difference was large. With `--board-plot-params` it wrote the ten `.gbr` files above. Without it, it wrote 26 files, one for every layer the board has, including the courtyards, the margin and eight user layers such as `dip-dock-User_Eco1.gbr`, and it gave the main layers the old Protel extensions instead of `.gbr`: `dip-dock-F_Cu.gtl`, `dip-dock-B_Cu.gbl`, `dip-dock-F_Mask.gts`, `dip-dock-Edge_Cuts.gm1` and so on. The layers the fab needs are in both sets, but from the second a fabricator has to work out which 10 of the 26 files matter, and its silkscreen isn't the same: the board's settings subtract the solder mask from the silkscreen, and `kicad-cli`'s defaults don't.
 
@@ -85,7 +85,7 @@ The drill file has to use the same origin as the Gerbers, and in our first expor
 
 ![GerbView showing the DIP dock's Gerbers with the drill holes offset to the lower right of the board](../assets/img/kicad-gerbview-dip-dock-drill-absolute.png)
 
-*The DIP dock's ten Gerbers and a drill file made with `kicad-cli`'s default drill origin, in GerbView (KiCad 10.0.8). The board sits above and to the right of the origin; the orange holes from `dip-dock.drl` are below and to the right of it. Neither export printed a warning, and both succeeded.*
+*The DIP dock's ten Gerbers and a drill file made with `kicad-cli`'s default drill origin, in GerbView (KiCad 10.0.5). The board sits above and to the right of the origin; the orange holes from `dip-dock.drl` are below and to the right of it. Neither export printed a warning, and both succeeded.*
 
 Exported again with `--drill-origin plot`, which uses the same origin as the plot, the holes sit in their pads:
 

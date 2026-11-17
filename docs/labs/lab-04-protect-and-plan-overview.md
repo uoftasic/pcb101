@@ -99,7 +99,7 @@ Where does static get onto your board, and where does the protection have to sit
 
    ![The Choose Symbol dialog filtered to SP0502](../assets/img/kicad-symbol-chooser-sp0502.png)
 
-   *Choose Symbol in KiCad 10.0.8, filtered to `SP0502`. Pins 1 and 2 are the two protected lines and pin 3 goes to GND.*
+   *Choose Symbol in KiCad 10.0.5, filtered to `SP0502`. Pins 1 and 2 are the two protected lines and pin 3 goes to GND.*
 
 2. Connect its pins 1 and 2 to the header's pins 2 and 3, on the header side of the series resistors, and pin 3 to GND. Why there, rather than at the Pmod connectors?
 

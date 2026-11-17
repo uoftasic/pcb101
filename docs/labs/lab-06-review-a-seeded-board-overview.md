@@ -81,7 +81,7 @@ Which faults does a person find that the checks don't?
 
    ![The seeded SimProc Pmod in the PCB Editor](../assets/img/kicad-pcb-editor-seeded-board.png)
 
-   *The seeded board as it opens in KiCad 10.0.8's PCB Editor. It has the same parts as your Lab 04 board, in much the same places.*
+   *The seeded board as it opens in KiCad 10.0.5's PCB Editor. It has the same parts as your Lab 04 board, in much the same places.*
 
 2. Go through the checklist one line at a time, and for each line look at every part and every line of the plan it applies to. Where to look in KiCad:
 
@@ -89,7 +89,7 @@ Which faults does a person find that the checks don't?
 
      ![J4 selected on Lab 04's reference board, with its footprint named in the status bar](../assets/img/kicad-properties-j4.png)
 
-     *J4 selected on Lab 04's reference board (Ctrl+F, then J4), in KiCad 10.0.8. The status bar reads `Footprint: Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical`; Footprint Properties (E) gives the same name as its Library link.*
+     *J4 selected on Lab 04's reference board (Ctrl+F, then J4), in KiCad 10.0.5. The status bar reads `Footprint: Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical`; Footprint Properties (E) gives the same name as its Library link.*
 
    - For connections (line 3), click a net in the Schematic Editor or a track in the PCB Editor to highlight it, follow it from the Pmod connector to every part it reaches, and compare with the pin list and with the silkscreen's labels.
    - For values (line 5), read every resistor's value and ask what current it lets through.
