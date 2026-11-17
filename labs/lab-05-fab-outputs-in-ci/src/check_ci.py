@@ -7,10 +7,19 @@ fab and a reviewer need, and does it go red on a broken board?
 Run it through the lab's check.sh, from your board repository, so that it runs in the course's
 pinned KiCad image. REPO is the repository's root folder (default: the current folder). It
 runs `bash ci/build.sh all` there, the same script and stages your workflow runs, and then
-checks what it built and what git sees:
+checks what it built and what git sees.
 
-  workflow   a workflow in .github/workflows/ runs ci/build.sh check, fab and images and
-             uploads out/, and ci/kicad-image.txt names the image by its digest
+KiBot's stage runs in another image, which a check inside the KiCad image can't start, so
+check.sh runs this script twice, the way your workflow runs its steps: first with
+`--stage build`, which runs `ci/build.sh all` and exits 0 if it passed, 1 if it didn't and 2
+if the check couldn't run; then, if the build passed, `bash ci/build.sh kibot` in the KiBot
+image; then with `--stage grade --build-exit N --kibot-exit M` (M is `skipped` if KiBot
+didn't run), which checks everything without building again. Run without --stage, as the
+capstone's check does, it builds and checks in one go and leaves out the KiBot rows.
+
+  workflow   a workflow in .github/workflows/ runs ci/build.sh check, fab and images (and,
+             with --stage grade, kibot) and uploads out/, and ci/kicad-image.txt (and
+             ci/kibot-image.txt) names the image by its digest
   check      `ci/build.sh check` passes: no ERC or DRC errors, no unconnected items, no parity items
   gerbers    out/fab/ has a Gerber for each copper, mask and silkscreen layer and the outline,
              and a Gerber job file
@@ -20,6 +29,12 @@ checks what it built and what git sees:
   position   a CSV position file in out/assembly/, in millimetres, with every part where the board has it
   images     out/review/ has a top and a bottom render (PNG), a plot of each copper layer (SVG)
              and the schematic (PDF)
+  ibom       (with --stage grade) an interactive HTML BOM under out/kibot/ that lists every
+             footprint the board puts in a BOM, except those marked Do not populate, and
+             nothing else
+  report     (with --stage grade) KiBot's design report under out/kibot/, whose board size is
+             the outline's in the Gerbers and whose drill tools add up to the holes in the
+             drill file
   gitignore  after the build, `git status` shows nothing untracked, and git tracks none of
              KiCad's local files (.kicad_prl, backups, lock files, fp-info-cache, .history/)
   planted    (with --planted REV) REV is an earlier commit on this branch, and
@@ -43,6 +58,8 @@ import tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "common"))
 from kicad_sexpr import parse, children, child  # noqa: E402
+sys.path.insert(0, HERE)
+import ibom  # noqa: E402
 
 LAYERS = ["F_Cu", "B_Cu", "F_Mask", "B_Mask", "F_Silkscreen", "B_Silkscreen", "Edge_Cuts"]
 KICAD_LOCAL = [r"\.kicad_prl$", r"-backups/", r"\.lck$", r"(^|/)fp-info-cache$", r"(^|/)\.history/",
@@ -59,7 +76,7 @@ def git(repo, *args):
 
 
 def board_items(pcb):
-    """Footprints on the board: ref -> (x, y, in_bom, in_pos), and the outline's corners."""
+    """Footprints on the board: ref -> (x, y, in_bom, in_pos, dnp)."""
     with open(pcb, encoding="utf-8") as f:
         root = parse(f.read())
     fps = {}
@@ -68,7 +85,8 @@ def board_items(pcb):
         at = child(fp, "at")
         attr = child(fp, "attr") or []
         fps[props.get("Reference", "?")] = (float(at[1]), float(at[2]),
-                                            "exclude_from_bom" not in attr, "exclude_from_pos_files" not in attr)
+                                            "exclude_from_bom" not in attr, "exclude_from_pos_files" not in attr,
+                                            "dnp" in attr)
     return fps
 
 
@@ -101,9 +119,9 @@ def drill_hits(path):
     return hits
 
 
-def check_outputs(repo, name, rows):
-    pcb = os.path.join(repo, name + ".kicad_pcb")
-    fps = board_items(pcb)
+def check_outputs(repo, fps, rows):
+    """The rows for ci/build.sh's own outputs. Returns the outline's box in the Gerbers and
+    the drill hits, which the report row compares with KiBot's report."""
     fab = os.path.join(repo, "out", "fab")
     asm = os.path.join(repo, "out", "assembly")
     rev = os.path.join(repo, "out", "review")
@@ -122,11 +140,11 @@ def check_outputs(repo, name, rows):
     # Drill: every hit inside the outline as the Gerbers draw it.
     drl = sorted(f for f in files if f.endswith(".drl"))
     edge = [f for f in files if re.search(r"-Edge_Cuts\.(gbr|gm1)$", f)]
+    box = gerber_box(os.path.join(fab, edge[0])) if edge else None
+    hits = [h for f in drl for h in drill_hits(os.path.join(fab, f))]
     if not drl:
         rows.append((False, "drill", "no drill file (.drl) in out/fab/"))
     else:
-        hits = [h for f in drl for h in drill_hits(os.path.join(fab, f))]
-        box = gerber_box(os.path.join(fab, edge[0])) if edge else None
         if not hits:
             rows.append((False, "drill", f"{', '.join(drl)} has no holes in it"))
         elif box is None:
@@ -214,6 +232,116 @@ def check_outputs(repo, name, rows):
                      f"not a real image: {', '.join(bad)}"))
     else:
         rows.append((True, "images", f"{len(have)} files in out/review/: renders, copper plots and the schematic"))
+    return {"box": box, "hits": hits, "drl": drl}
+
+
+def kibot_files(repo):
+    """Files KiBot wrote: everything under out/kibot/."""
+    top = os.path.join(repo, "out", "kibot")
+    found = []
+    for d, _, fs in os.walk(top):
+        found += [os.path.join(d, f) for f in fs]
+    return sorted(found)
+
+
+def report_numbers(text):
+    """From a KiBot 1.9.1 design report with the default template: the board size in mm, and
+    the count of each drill tool (the "Drill tools" list: vias and pads, at their drill sizes)."""
+    size = re.search(r"^Board size: ([\d.]+)x([\d.]+) mm", text, re.M)
+    tools, inside = [], False
+    for line in text.splitlines():
+        if line.startswith("Drill tools"):
+            inside = True
+            continue
+        if inside:
+            m = re.match(r"^- .*\((\d+)\)\s*$", line)
+            if m:
+                tools.append(int(m.group(1)))
+            elif line.strip() and tools:
+                break
+    return (float(size.group(1)), float(size.group(2))) if size else None, tools
+
+
+def check_kibot(repo, fps, built, kibot_exit, rows):
+    """The ibom and report rows, for the outputs `ci/build.sh kibot` wrote into out/kibot/."""
+    if kibot_exit == "skipped":
+        why = "`ci/build.sh kibot` didn't run, because an earlier stage failed, as in your workflow"
+        rows.append((False, "ibom", why))
+        rows.append((False, "report", why))
+        return
+    if kibot_exit != "0":
+        why = f"`ci/build.sh kibot` exited {kibot_exit}; KiBot's message is above"
+        rows.append((False, "ibom", why))
+        rows.append((False, "report", why))
+        return
+    files = kibot_files(repo)
+    rel = lambda p: os.path.relpath(p, os.path.join(repo, "out", "kibot"))  # noqa: E731
+
+    # The interactive BOM: every footprint that belongs in a BOM, none marked DNP, nothing else.
+    pages = []
+    for f in files:
+        if f.endswith(".html"):
+            with open(f, encoding="utf-8", errors="replace") as fh:
+                if ibom.is_ibom(fh.read()):
+                    pages.append(f)
+    if not pages:
+        rows.append((False, "ibom", "no interactive HTML BOM in out/kibot/ (the .html that an ibom output writes)"))
+    else:
+        page = pages[0]
+        try:
+            data = ibom.read(page)
+            group_rows, listed, skipped = ibom.bom_refs(data)
+        except (ValueError, KeyError, IndexError, TypeError) as e:
+            group_rows = None
+            rows.append((False, "ibom", f"{rel(page)}: couldn't read its board data ({e})"))
+        if group_rows is not None:
+            want = {r for r, v in fps.items() if v[2] and not v[4]}
+            dnp = {r for r, v in fps.items() if v[4]}
+            listed_set = set(listed)
+            stray = sorted(listed_set - set(fps))
+            shown_dnp = sorted(listed_set & dnp)
+            lost = sorted(want - listed_set)
+            if stray:
+                rows.append((False, "ibom", f"{rel(page)} lists {', '.join(stray[:8])}, which isn't on this board; "
+                             "was it made from another board file?"))
+            elif shown_dnp:
+                rows.append((False, "ibom", f"{rel(page)} lists {', '.join(shown_dnp)}, which the board marks "
+                             "Do not populate; give the ibom output a filter for DNP parts (dnf_filter)"))
+            elif lost:
+                rows.append((False, "ibom", f"{rel(page)} doesn't list {', '.join(lost[:8])}"
+                             + (" ..." if len(lost) > 8 else "")))
+            else:
+                left = f"; {', '.join(sorted(dnp))}, marked DNP, left out" if dnp else ", none of them marked DNP"
+                rows.append((True, "ibom", f"{rel(page)}: {len(listed)} parts in {len(group_rows)} rows{left}"))
+
+    # The design report: the board's size and holes, the same as in the Gerbers and the drill file.
+    reports = []
+    for f in files:
+        if "report" in os.path.basename(f).lower() and f.endswith((".txt", ".md")):
+            with open(f, encoding="utf-8", errors="replace") as fh:
+                reports.append((f, fh.read()))
+    reports = [(f, t) for f, t in reports if "Board size:" in t]
+    if not reports:
+        rows.append((False, "report", "no design report in out/kibot/ (a .txt from a report output, with a "
+                     "'Board size:' line)"))
+        return
+    page, text = reports[0]
+    size, tools = report_numbers(text)
+    box, hits = built["box"], built["hits"]
+    if size is None or not tools:
+        rows.append((False, "report", f"{rel(page)} has no board size or no drill tools; use the default template"))
+    elif box is None:
+        rows.append((False, "report", f"{rel(page)}: no outline Gerber in out/fab/ to compare its board size with"))
+    elif abs(size[0] - (box[2] - box[0])) > 0.1 or abs(size[1] - (box[3] - box[1])) > 0.1:
+        rows.append((False, "report", f"{rel(page)} says the board is {size[0]:g} x {size[1]:g} mm, and the outline in "
+                     f"the Gerbers is {box[2] - box[0]:g} x {box[3] - box[1]:g} mm"))
+    elif not built["drl"]:
+        rows.append((False, "report", f"{rel(page)}: no drill file in out/fab/ to compare its holes with"))
+    elif sum(tools) != len(hits):
+        rows.append((False, "report", f"{rel(page)} counts {sum(tools)} holes and {', '.join(built['drl'])} has {len(hits)}"))
+    else:
+        rows.append((True, "report", f"{rel(page)}: {size[0]:g} x {size[1]:g} mm and {sum(tools)} holes, "
+                     f"as in the Gerbers and {', '.join(built['drl'])}"))
 
 
 def check_git(repo, rows):
@@ -286,47 +414,9 @@ def check_planted(repo, rev, rows):
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def main():
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("repo", nargs="?", default=".")
-    ap.add_argument("--planted", metavar="REV", help="the commit with the error you planted in Part 5")
-    args = ap.parse_args()
-    repo = os.path.abspath(args.repo)
-    pros = glob.glob(os.path.join(repo, "*.kicad_pro"))
-    if len(pros) != 1:
-        print(f"check_ci: {repo} holds {len(pros)} .kicad_pro files; run this in your board repository", file=sys.stderr)
-        return 2
-    name = os.path.basename(pros[0])[:-len(".kicad_pro")]
-    if run(["git", "rev-parse", "--show-toplevel"], repo).returncode != 0:
-        print(f"check_ci: {repo} isn't a git repository", file=sys.stderr)
-        return 2
-    rows = []
-
-    # The workflow file and the image it names.
-    wfs = sorted(glob.glob(os.path.join(repo, ".github", "workflows", "*.y*ml")))
-    text = ""
-    for w in wfs:
-        with open(w, encoding="utf-8") as f:
-            text += f.read()
-    image = ""
-    if os.path.exists(os.path.join(repo, "ci", "kicad-image.txt")):
-        with open(os.path.join(repo, "ci", "kicad-image.txt")) as f:
-            image = f.readline().strip()
-    lost = [s for s in ("ci/build.sh check", "ci/build.sh fab", "ci/build.sh images", "upload-artifact")
-            if s not in text]
-    if not wfs:
-        rows.append((False, "workflow", "no workflow in .github/workflows/"))
-    elif lost:
-        rows.append((False, "workflow", f"{os.path.relpath(wfs[0], repo)} doesn't run {', '.join(lost)}"))
-    elif "@sha256:" not in image:
-        rows.append((False, "workflow", "ci/kicad-image.txt doesn't name the image by its digest (…@sha256:…)"))
-    else:
-        rows.append((True, "workflow", f"{os.path.relpath(wfs[0], repo)} runs check, fab and images in "
-                     f"{image.split('@')[0]} by digest, and uploads out/"))
-
-    if not os.path.exists(os.path.join(repo, "ci", "build.sh")):
-        print("check_ci: no ci/build.sh; copy the lab's starter/ into your repository first", file=sys.stderr)
-        return 2
+def build(repo):
+    """Run `bash ci/build.sh all` in REPO, after removing out/, and print what it printed.
+    Returns its exit status."""
     shutil.rmtree(os.path.join(repo, "out"), ignore_errors=True)
     print("IC103 Lab 05: bash ci/build.sh all, as your workflow runs it", flush=True)
     print("-" * 72, flush=True)
@@ -337,19 +427,99 @@ def main():
                        r"Successfully created|\s*$)")
     print("\n".join(l for l in b.stdout.splitlines() if not noise.match(l)), flush=True)
     print("-" * 72, flush=True)
+    return b.returncode
+
+
+def check_row(repo, rc, rows):
+    """The check row, from build.sh's exit status (None if only pass or fail is known) and
+    the board check's summary."""
     summary = os.path.join(repo, "out", "reports", "summary.json")
-    if b.returncode == 0:
-        rows.append((True, "check", "the board check passes"))
-    elif os.path.exists(summary):
+    v = None
+    if os.path.exists(summary):
         with open(summary) as f:
             v = json.load(f)
+    if rc == 0 or (v and v.get("verdict") == "PASS"):
+        # If a later stage failed, the rows for its files say so.
+        rows.append((True, "check", "the board check passes"))
+    elif v:
         rows.append((False, "check", "the board check fails: " + ", ".join(f"{x['key']} {x['got']} (want {x['want']})"
                                                                           for x in v.get("failures", []))
                      + "; the fab and images stages didn't run"))
+    elif rc is None:
+        rows.append((False, "check", "ci/build.sh stopped before the board check had a verdict; its message is above"))
     else:
-        rows.append((False, "check", f"ci/build.sh exited {b.returncode} before the board check had a verdict"))
+        rows.append((False, "check", f"ci/build.sh exited {rc} before the board check had a verdict"))
 
-    check_outputs(repo, name, rows)
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("repo", nargs="?", default=".")
+    ap.add_argument("--planted", metavar="REV", help="the commit with the error you planted in Part 6")
+    ap.add_argument("--stage", choices=["build", "grade"],
+                    help="build: run ci/build.sh all and stop; grade: check what's there (check.sh runs both)")
+    ap.add_argument("--build-exit", type=int, help="with --stage grade: 0 if the build stage passed, 1 if not")
+    ap.add_argument("--kibot-exit", help="with --stage grade: the exit status of ci/build.sh kibot, or skipped")
+    args = ap.parse_args()
+    repo = os.path.abspath(args.repo)
+    pros = glob.glob(os.path.join(repo, "*.kicad_pro"))
+    if len(pros) != 1:
+        print(f"check_ci: {repo} holds {len(pros)} .kicad_pro files; run this in your board repository", file=sys.stderr)
+        return 2
+    name = os.path.basename(pros[0])[:-len(".kicad_pro")]
+    if run(["git", "rev-parse", "--show-toplevel"], repo).returncode != 0:
+        print(f"check_ci: {repo} isn't a git repository", file=sys.stderr)
+        return 2
+    if not os.path.exists(os.path.join(repo, "ci", "build.sh")):
+        print("check_ci: no ci/build.sh; copy the lab's starter/ into your repository first", file=sys.stderr)
+        return 2
+    if args.stage == "build":
+        return 0 if build(repo) == 0 else 1
+    with_kibot = args.stage == "grade"
+    if with_kibot and (args.build_exit is None or args.kibot_exit is None):
+        print("check_ci: --stage grade needs --build-exit and --kibot-exit", file=sys.stderr)
+        return 2
+    rows = []
+
+    # The workflow file and the images it names.
+    wfs = sorted(glob.glob(os.path.join(repo, ".github", "workflows", "*.y*ml")))
+    text = ""
+    for w in wfs:
+        with open(w, encoding="utf-8") as f:
+            text += f.read()
+    images = {}
+    for kind in ("kicad", "kibot"):
+        images[kind] = ""
+        if os.path.exists(os.path.join(repo, "ci", f"{kind}-image.txt")):
+            with open(os.path.join(repo, "ci", f"{kind}-image.txt")) as f:
+                images[kind] = f.readline().strip()
+    need = ["ci/build.sh check", "ci/build.sh fab", "ci/build.sh images"]
+    need += ["ci/build.sh kibot"] if with_kibot else []
+    lost = [s for s in need + ["upload-artifact"] if s not in text]
+    if not wfs:
+        rows.append((False, "workflow", "no workflow in .github/workflows/"))
+    elif lost:
+        rows.append((False, "workflow", f"{os.path.relpath(wfs[0], repo)} doesn't run {', '.join(lost)}"))
+    elif "@sha256:" not in images["kicad"]:
+        rows.append((False, "workflow", "ci/kicad-image.txt doesn't name the image by its digest (…@sha256:…)"))
+    elif with_kibot and "@sha256:" not in images["kibot"]:
+        rows.append((False, "workflow", "ci/kibot-image.txt doesn't name the image by its digest (…@sha256:…)"))
+    elif with_kibot:
+        rows.append((True, "workflow", f"{os.path.relpath(wfs[0], repo)} runs check, fab and images in "
+                     f"{images['kicad'].split('@')[0]} and kibot in {images['kibot'].split('@')[0].split('/')[-1]}, "
+                     "both by digest, and uploads out/"))
+    else:
+        rows.append((True, "workflow", f"{os.path.relpath(wfs[0], repo)} runs check, fab and images in "
+                     f"{images['kicad'].split('@')[0]} by digest, and uploads out/"))
+
+    if with_kibot:
+        check_row(repo, None if args.build_exit else 0, rows)
+    else:
+        check_row(repo, build(repo), rows)
+
+    fps = board_items(os.path.join(repo, name + ".kicad_pcb"))
+    built = check_outputs(repo, fps, rows)
+    if with_kibot:
+        check_kibot(repo, fps, built, args.kibot_exit, rows)
     check_git(repo, rows)
     if args.planted:
         check_planted(repo, args.planted, rows)
@@ -363,7 +533,7 @@ def main():
     failed = sum(1 for ok, *_ in rows if not ok)
     print()
     print(f"{'PASS' if not failed else 'FAIL'}  {name}: {len(rows) - failed} of {len(rows)} Lab 05 checks ok"
-          + ("" if args.planted else "; add --planted REV once you've done Part 5"))
+          + ("" if args.planted else "; add --planted REV once you've done Part 6"))
     return 1 if failed else 0
 
 

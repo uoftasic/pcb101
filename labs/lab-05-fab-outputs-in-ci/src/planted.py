@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The error we plant in Lab 05, Part 5, on Lab 04's reference board.
+"""The error we plant in Lab 05, Part 6, on Lab 04's reference board.
 
     python3 labs/lab-05-fab-outputs-in-ci/src/planted.py BOARD.kicad_pcb
 
