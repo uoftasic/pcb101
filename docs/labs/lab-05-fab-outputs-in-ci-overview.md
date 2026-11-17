@@ -1,6 +1,6 @@
 # Lab 05: Fab outputs in CI
 
-In this lab you give your board repository a GitHub Actions workflow. On every push it checks the board, builds the files a fabricator needs (Gerbers, a drill file, a BOM and a position file) and the images a reviewer looks at, has KiBot make an interactive BOM and a design report, and uploads all of it as one artifact. You'll finish the build script that does the work, write the `.gitignore` that keeps KiCad's own files out of git, look at the Gerbers the way the fab will, write KiBot's configuration, and then break the board on purpose to watch the run go red.
+In this lab you give your board repository a GitHub Actions workflow. On every push it checks the board and builds the files a fabricator needs (Gerbers, a drill file, a BOM and a position file) and the images a reviewer looks at. Then KiBot makes an interactive BOM and a design report, and the workflow uploads all of it as one artifact. You'll finish the build script that does the work, write the `.gitignore` that keeps KiCad's own files out of git, look at the Gerbers the way the fab will, write KiBot's configuration, and then break the board on purpose to watch the run go red.
 
 The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-05-fab-outputs-in-ci) in the course repo.
 
@@ -52,13 +52,13 @@ The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Par
 
    </details>
 
-4. `build.sh` has five TODOs, which you'll do in Part 3, `ci/board.kibot.yaml` has three, for Part 5, and there's no `.gitignore` yet. Before you run anything, write down which rows of the Lab 05 check you expect to fail. Then run it:
+4. `build.sh` has five TODOs, which you'll do in Part 3, and `ci/board.kibot.yaml` has three, which you'll do in Part 5. There's no `.gitignore` yet either. Before you run anything, write down which rows of the Lab 05 check you expect to fail. Then run it:
 
    ```bash
    ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh
    ```
 
-   It first runs `bash ci/build.sh all` in the pinned KiCad image and prints what that prints. If that passed, it runs `bash ci/build.sh kibot` in the KiBot image, as your workflow would, and then prints one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
+   It first runs `bash ci/build.sh all` in the pinned KiCad image and prints what that prints. If the build passes, it runs `bash ci/build.sh kibot` in the KiBot image, as your workflow would. Either way, it then prints one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
 
    ```text
      ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.5 and kibot in kicad10_auto_full:1.9.1-2_k10.0.5_d13.2_b4.2.4LTS, both by digest, and uploads out/
@@ -176,29 +176,29 @@ Do the files CI built describe your board?
 
 How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, and keep the whole run on one version of KiCad?
 
-1. Look at what the starter put in place for KiBot. [KiBot](https://github.com/INTI-CMNB/KiBot) is a program, free software under the AGPL-3.0, that drives KiCad from a YAML file and makes outputs `kicad-cli` doesn't. It needs a good deal of software besides KiCad, so it runs in an image of its own, `ghcr.io/inti-cmnb/kicad10_auto_full`, which `ci/kibot-image.txt` names by its digest. That image carries KiBot 1.9.1 and KiCad 10.0.5, the same version as the course's checks. The workflow's "KiBot outputs" step pulls it and runs `bash ci/build.sh kibot` in it, the same way the steps before it run theirs, rather than through KiBot's own GitHub Action, which builds its image from a tag that moves with every KiBot release ([Outputs in CI](../guide/outputs-in-ci.md#kibot) has the details). The `kibot` stage at the end of `build.sh` runs KiBot on `ci/board.kibot.yaml` and has it write what it makes into `out/kibot/`. That configuration file is the part you write.
+1. Look at what the starter put in place for KiBot. [KiBot](https://github.com/INTI-CMNB/KiBot) is a program that drives KiCad from a YAML file and makes outputs that `kicad-cli` doesn't. It's free software, under the AGPL-3.0. It needs a good deal of software besides KiCad, so it runs in an image of its own, `ghcr.io/inti-cmnb/kicad10_auto_full`, which `ci/kibot-image.txt` names by its digest. That image carries KiBot 1.9.1 and KiCad 10.0.5, the same version as the course's checks. The workflow's "KiBot outputs" step pulls it and runs `bash ci/build.sh kibot` in it, the same way the steps before it run theirs. KiBot also has a GitHub Action of its own, but the action builds its image from a tag that moves with every KiBot release, so the workflow doesn't use it ([Outputs in CI](../guide/outputs-in-ci.md#kibot) has the details). The `kibot` stage at the end of `build.sh` runs KiBot on `ci/board.kibot.yaml` and has it write what it makes into `out/kibot/`. You'll finish that configuration file in step 4.
 
-   KiBot can also run ERC and DRC itself, as what it calls preflights. Why does the workflow keep its checks in `check_board.py`, in KiCad's own image, and use KiBot only for outputs?
+   KiBot can also run ERC and DRC itself; it calls them preflights. Why does the workflow keep its checks in `check_board.py`, in KiCad's own image, and use KiBot only for outputs?
 
    <details>
    <summary>Answer</summary>
 
-   Because KiBot's DRC, as it comes, doesn't fail on what `check_board.py` fails on, and because its KiCad is a different build. We tried KiBot's checks on Lab 04's reference board through `kibot.sh`. With `erc: true` and `drc: true` under `preflight:`, KiBot fails only on errors, and KiCad reports a missing footprint as a parity warning: with R3 deleted from the board, KiBot printed `WARNING:(W145) (missing_footprint) Missing footprint R3 (10)` and exited 0, which is the green run that [Outputs in CI](../guide/outputs-in-ci.md#checks-that-fail-the-run) warns about. With its `warnings_as_errors: true` option it fails on every warning instead, and the unchanged board failed on its 32 silkscreen warnings (`DRC warnings: 32, promoted as errors`, exit status 5). `check_board.py` failed the board without R3 (`FAIL  parity.warning: 1 (want 0)`) and passed the unchanged one. KiBot's `filters` option can turn chosen kinds of warning into errors, one kind at a time, so you could bring it close, but then the course would have two definitions of a passing board to keep in step.
+   Because KiBot's DRC, with its default settings, doesn't fail on everything that `check_board.py` fails on, and because its KiCad is a different build. We tried KiBot's checks on Lab 04's reference board through `kibot.sh`. With `erc: true` and `drc: true` under `preflight:`, KiBot fails only on errors, but KiCad reports a missing footprint as a parity warning. With R3 deleted from the board, KiBot printed `WARNING:(W145) (missing_footprint) Missing footprint R3 (10)` and exited 0, which is the green run that [Outputs in CI](../guide/outputs-in-ci.md#checks-that-fail-the-run) warns about. With its `warnings_as_errors: true` option it fails on every warning instead, and the unchanged board failed on its 32 silkscreen warnings (`DRC warnings: 32, promoted as errors`, exit status 5). `check_board.py` failed the board without R3 (`FAIL  parity.warning: 1 (want 0)`) and passed the unchanged one. KiBot's `filters` option can turn chosen kinds of warning into errors, one kind at a time, so you could make KiBot fail on nearly the same things, but the course would then have two definitions of a passing board to keep in step.
 
-   The other reason is the KiCad inside. KiBot's image carries KiCad's Ubuntu build of 10.0.5, with the 10.0.4 symbol and footprint libraries, and warning counts depend on the libraries. Every count on the course's pages comes from `kicad/kicad:10.0.5`, so the gate stays there, and KiBot's step runs only after it has passed.
+   The other reason is that KiBot's image carries KiCad's Ubuntu build of 10.0.5, with the 10.0.4 symbol and footprint libraries, and warning counts depend on the libraries. Every count on the course's pages comes from `kicad/kicad:10.0.5`, so the check that passes or fails a board stays in that image, and KiBot's step runs only after it has passed.
 
    </details>
 
-2. See what KiBot can make. Its own help runs in its image, through the course's `kibot.sh`:
+2. See what KiBot can make by running its help in KiBot's image, through the course's `kibot.sh`:
 
    ```bash
    ~/ic103/labs/common/kibot.sh kibot --help-list-outputs
    ~/ic103/labs/common/kibot.sh kibot --help-output ibom
    ```
 
-   The first lists 56 types of output. Many of them are files `kicad-cli` makes too, such as Gerbers, drill files and position files. Two that it doesn't make are `ibom`, an interactive HTML BOM, and `report`, a design report written for whoever orders the board. `kicad-cli pcb export stats` writes a board statistics report that overlaps with the second, but it gives each hole at its finished size and leaves out what KiBot adds for the fab, such as the drill sizes, a Eurocircuits board class and an estimate of the solder paste. The second command prints every option of the `ibom` output, and `kibot --help-output report` and `kibot --help-filters` do the same for the report and for KiBot's filters.
+   The first lists 56 types of output. Many of them are files `kicad-cli` makes too, such as Gerbers, drill files and position files. Two that `kicad-cli` doesn't make are `ibom`, an interactive HTML BOM, and `report`, a design report written for whoever orders the board. `kicad-cli pcb export stats` writes a board statistics report that overlaps with KiBot's `report`, but it gives each hole at its finished size and leaves out what KiBot adds for the fab, such as the drill sizes, a Eurocircuits board class and an estimate of the solder paste. The second command prints every option of the `ibom` output, and `kibot --help-output report` and `kibot --help-filters` do the same for the report and for KiBot's filters.
 
-3. Before you write anything, write down which of your board's parts the interactive BOM should list, and how many rows it will have if parts with the same value and footprint share a row. Then decide what it should do with a part marked DNP ([Tiny Tapeout's boards, part by part](../guide/tiny-tapeouts-boards-part-by-part.md#unfitted-footprints-and-dnp) explains the mark): should a part you won't fit be on the list you solder from?
+3. Before you change the configuration, write down which of your board's parts the interactive BOM should list, and how many rows it will have if parts with the same value and footprint share a row. Then decide what it should do with a part marked DNP ([Tiny Tapeout's boards, part by part](../guide/tiny-tapeouts-boards-part-by-part.md#unfitted-footprints-and-dnp) explains the mark): should a part you won't fit be on the list you solder from?
 
 4. Finish the three TODOs in `ci/board.kibot.yaml`. Things to decide as you go:
 
@@ -240,11 +240,11 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    <details>
    <summary>Answer</summary>
 
-   It would have listed the part like any other. The course's self-test marks J4 DNP on our board, in the schematic and on the board, and runs the check twice. With `dnf_filter` naming the filter, the ibom listed 11 parts in 7 rows and left J4 out. With that line taken out, it listed J4 again, and the check's `ibom` row failed with `pmod-ibom.html lists J4, which the board marks Do not populate; give the ibom output a filter for DNP parts (dnf_filter)`. The BOM that `kicad-cli` made from the schematic listed all 12 parts both times.
+   It would have listed the part like any other. The course's self-test marks J4 DNP in our schematic and on our board, and runs the check twice. With `dnf_filter` naming the filter, the ibom listed 11 parts in 7 rows and left J4 out. With that line taken out, it listed J4 again, and the check's `ibom` row failed with `pmod-ibom.html lists J4, which the board marks Do not populate; give the ibom output a filter for DNP parts (dnf_filter)`. The BOM that `kicad-cli` made from the schematic listed all 12 parts both times.
 
    </details>
 
-7. Open `out/kibot/pmod-report.txt`. It's a plain-text report for whoever orders the board: its size and layers, the sizes a fab's rules are about (clearance, track width, drills, vias and annular ring), the holes, and an estimate of the solder paste. Compare its holes with the count you wrote down in Part 3, step 2. Ours lists three drill tools:
+7. Open `out/kibot/pmod-report.txt`. It's a plain-text report for whoever orders the board. It gives the board's size and layers, the sizes that a fab's rules are about (clearance, track width, drills, vias and annular ring), the holes, and an estimate of the solder paste. Compare its holes with the count you wrote down in Part 3, step 2. Ours lists three drill tools:
 
    ```text
    Drill tools (including vias and computing adjusts and rounding):
@@ -263,7 +263,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
 
    </details>
 
-   Some lines of the report aren't about your board at all. Our board file records no stack-up, so the finish (HAL), the material (FR4) and the colours of the solder mask and silkscreen are KiBot's defaults, and so is the "yes" after micro vias and buried/blind vias, which says what KiBot assumes the rules allow; the "Total" line under them counts the vias the board really has. Check those lines against what you'll order before you hand the report to anyone.
+   Some lines of the report are KiBot's defaults rather than facts about your board. Our board file records no stack-up, so the finish (HAL), the material (FR4) and the colours of the solder mask and silkscreen are KiBot's defaults. So is the "yes" after micro vias and buried/blind vias, which says what KiBot assumes the rules allow; the "Total" line under them counts the vias the board really has. Check those lines against what you'll order before you hand the report to anyone.
 
 8. Run the Lab 05 check. You should see the two new rows `ok`:
 
@@ -272,7 +272,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
      ok    report     pmod-report.txt: 64 x 32 mm and 65 holes, as in the Gerbers and pmod.drl
    ```
 
-   and the last line `PASS  pmod: 10 of 10 Lab 05 checks ok; add --planted REV once you've done Part 6`. The `ibom` row reads the board data inside the page and compares its BOM with the footprints on your board: every part that belongs in a BOM is listed, no part marked DNP, and nothing that isn't on the board. The `report` row compares the report's board size with the outline in the Gerbers, and its drill tools with the holes in the drill file. Then commit `ci/board.kibot.yaml` and push. The run's "KiBot outputs" step now makes the two files, and the artifact has a `kibot/` folder. Our local run of the workflow, with one CPU for each container, succeeded in all seven steps in 30 s, and the artifact held 23 files.
+   and the last line `PASS  pmod: 10 of 10 Lab 05 checks ok; add --planted REV once you've done Part 6`. The `ibom` row reads the board data inside the page and compares its BOM with the footprints on your board. It passes when every part that belongs in a BOM is listed, none of the listed parts is marked DNP, and the BOM has nothing that isn't on the board. The `report` row compares the report's board size with the outline in the Gerbers, and its drill tools with the holes in the drill file. Then commit `ci/board.kibot.yaml` and push. The run's "KiBot outputs" step now makes the two files, and the artifact has a `kibot/` folder. Our local run of the workflow, with one CPU for each container, succeeded in all seven steps in 30 s, and the artifact held 23 files.
 
 ## Part 6: Break it on purpose
 
@@ -305,7 +305,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
        starved_thermal          Thermal relief connection to zone incomplete (layer F.Cu; zone min spoke count 2; actual 1)  [Zone 'GND' [GND] on F.Cu, priority 0; PTH pad 11 [GND] of J1]
    ```
 
-   and then eight rows fail: `check` (`the board check fails: drc.error 2 (want 0); the fab and images stages didn't run`), then `gerbers`, `drill`, `bom`, `position` and `images`, because `build.sh` stops at the first stage that fails and the later stages never made their files, and then `ibom` and `report` (`` `ci/build.sh kibot` didn't run, because an earlier stage failed, as in your workflow ``), because the check, like the workflow, runs KiBot only after the build has passed.
+   and then eight rows fail. The first is `check` (`the board check fails: drc.error 2 (want 0); the fab and images stages didn't run`). `gerbers`, `drill`, `bom`, `position` and `images` fail because `build.sh` stops at the first stage that fails, so the later stages never made their files. `ibom` and `report` fail too (`` `ci/build.sh kibot` didn't run, because an earlier stage failed, as in your workflow ``), because the check, like the workflow, runs KiBot only after the build has passed.
 
 5. Commit the broken board with a message that says what you did, and push. On GitHub you should see a red run: the step "ERC, DRC and schematic parity" fails with the same board check output as above, "Fabrication files", "Review images" and "KiBot outputs" are skipped, and the upload step still runs, so the artifact holds `reports/` and nothing else. Our local run of the workflow did the same: the check step exited 1, the next three were skipped, and the artifact had three files, `drc.json`, `erc.json` and `summary.json`.
 
