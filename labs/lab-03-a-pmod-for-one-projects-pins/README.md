@@ -20,7 +20,7 @@ cd ~/simproc-pmod                                              # your board repo
 `check.sh` is bash, for Linux, macOS and WSL. Without bash, this does the same from your board repository; we have run it on Linux and not on Windows:
 
 ```bash
-docker run --rm -v "${PWD}:/work" -v "<path to ic103>:/w" -w /work kicad/kicad:10.0.8@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34 python3 /w/labs/common/check_pmod.py .
+docker run --rm -v "${PWD}:/work" -v "<path to ic103>:/w" -w /work kicad/kicad:10.0.5@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de python3 /w/labs/common/check_pmod.py .
 ```
 
 ## Rows of the check

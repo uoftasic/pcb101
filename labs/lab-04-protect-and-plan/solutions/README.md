@@ -1,6 +1,6 @@
 # Lab 04 reference: the protected SimProc Pmod
 
-`simproc-pmod/` is Lab 03's reference board with the Lab 04 parts added, and its `BRINGUP.md`. It passes the Lab 04 check: `PASS  pmod.kicad_pro: board check PASS; 17 of 17 Pmod checks ok; bring-up plan PASS` (ERC 0, DRC 0 errors and 32 warnings, 0 unconnected, 0 parity, in `kicad/kicad:10.0.8`). It was written by Lab 03's [`make_reference.py`](../../lab-03-a-pmod-for-one-projects-pins/src/make_reference.py) `protected`.
+`simproc-pmod/` is Lab 03's reference board with the Lab 04 parts added, and its `BRINGUP.md`. It passes the Lab 04 check: `PASS  pmod.kicad_pro: board check PASS; 17 of 17 Pmod checks ok; bring-up plan PASS` (ERC 0, DRC 0 errors and 32 warnings, 0 unconnected, 0 parity, in `kicad/kicad:10.0.5`). It was written by Lab 03's [`make_reference.py`](../../lab-03-a-pmod-for-one-projects-pins/src/make_reference.py) `protected`.
 
 | Part | Value | Footprint | Net | Where (mm, degrees) |
 |---|---|---|---|---|

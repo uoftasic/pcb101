@@ -1,6 +1,6 @@
 # Lab 03 reference: the SimProc Pmod
 
-`simproc-pmod/` is one board that passes the Lab 03 check: `PASS  pmod.kicad_pro: board check PASS; 14 of 14 Pmod checks ok` (ERC 0, DRC 0 errors and 30 warnings, 0 unconnected, 0 parity, in `kicad/kicad:10.0.8`). Open it after your own check passes. It was written by [`../src/make_reference.py`](../src/make_reference.py) `routed`, not drawn by hand, so its schematic is tidy rather than pretty.
+`simproc-pmod/` is one board that passes the Lab 03 check: `PASS  pmod.kicad_pro: board check PASS; 14 of 14 Pmod checks ok` (ERC 0, DRC 0 errors and 30 warnings, 0 unconnected, 0 parity, in `kicad/kicad:10.0.5`). Open it after your own check passes. It was written by [`../src/make_reference.py`](../src/make_reference.py) `routed`, not drawn by hand, so its schematic is tidy rather than pretty.
 
 | Part | Value | Footprint | Where (mm, degrees) |
 |---|---|---|---|

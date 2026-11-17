@@ -2,7 +2,7 @@
 
 Each folder is a whole board repository: the KiCad project, `DESIGN.md`, `BRINGUP.md`, and Lab 05's `ci/`, `.github/workflows/board.yml` and `.gitignore`. Nothing in either has been built or measured; every expected value is worked out from part values and the sources each `DESIGN.md` names.
 
-| Folder | Brief | Board check in `kicad/kicad:10.0.8` | Capstone check |
+| Folder | Brief | Board check in `kicad/kicad:10.0.5` | Capstone check |
 |---|---|---|---|
 | `simproc-pmod-brief-d/` | D: the SimProc Pmod | ERC 0; DRC 0 errors, 33 warnings (24 `silk_edge_clearance`, 6 `silk_over_copper`, 3 `silk_overlap`); 0 unconnected; 0 parity | `PASS  pmod, Brief D: 5 of 5 capstone checks ok` |
 | `source-board-brief-a/` | A: a source for an0 on J13 | ERC 0; DRC 0 errors, 0 warnings; 0 unconnected; 0 parity | `PASS  source, Brief A: 8 of 8 capstone checks ok` |

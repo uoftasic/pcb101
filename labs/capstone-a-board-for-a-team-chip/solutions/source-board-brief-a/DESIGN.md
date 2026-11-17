@@ -40,7 +40,7 @@ Brief: A. Project: CrossWalk, the team's 8-bit SAR ADC (uoftasic/crosswalk, `clo
 
 ## Checks
 
-- The board check passes in `kicad/kicad:10.0.8`: ERC 0, DRC 0 errors and 0 warnings, 0 unconnected items, 0 parity items.
+- The board check passes in `kicad/kicad:10.0.5`: ERC 0, DRC 0 errors and 0 warnings, 0 unconnected items, 0 parity items.
 - `src/make_brief_a.py` compared J1's 32 pads with J13's in the demo board file, relative to pad 1, and they match.
 - Lab 05's check passes on the repository: the fabrication files, the review images and the `.gitignore`.
 - Against the course checklist: the footprints are the parts named (line 1); J1's pin 1 is at J13's pin 1 (line 2); only J13 pin 4 is driven (line 3); there is no IC, so nothing needs decoupling (line 4); J1 mates a header on the demo board rather than a cable, so it has no ESD part (line 6); TP1 and TP2 are where `BRINGUP.md` measures (line 8); Board Setup holds JLCPCB's minimums (line 9).

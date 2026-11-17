@@ -43,7 +43,7 @@ Brief: D. Project: SimProc, `tt_um_ieeeuoftasic_simproc` (uoftasic/simproc), on 
 
 ## Checks
 
-- The board check passes in `kicad/kicad:10.0.8`: ERC 0, DRC 0 errors and 33 warnings (24 `silk_edge_clearance` and 6 `silk_over_copper` from Tiny Tapeout's Pmod footprint, 3 `silk_overlap`), 0 unconnected items, 0 parity items.
+- The board check passes in `kicad/kicad:10.0.5`: ERC 0, DRC 0 errors and 33 warnings (24 `silk_edge_clearance` and 6 `silk_over_copper` from Tiny Tapeout's Pmod footprint, 3 `silk_overlap`), 0 unconnected items, 0 parity items.
 - Lab 04's check passes: 17 of 17 Pmod checks, and the bring-up plan.
 - Lab 05's check passes on the repository: the fabrication files, the review images and the `.gitignore`.
 - Against the course checklist: J4's pitch is 2.54 mm (line 1); the connections match SimProc's pin list, with switch *k* on `uio[k−1]` (line 3); there are no ICs, so nothing needs decoupling (line 4); D1's pin 3, its common pin, is on GND (line 6); `BRINGUP.md` unplugs the dongle before the kit is switched off (line 7) and measures only at TP1 to TP4 and connector pins (line 8); Board Setup holds JLCPCB's minimums, 1.0 mm text and 0.15 mm strokes (line 9).
