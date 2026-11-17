@@ -18,7 +18,7 @@ ERC works from the pin types in the symbol, so a pin drawn with the wrong type c
 
 ## Footprints and their layers
 
-A footprint is a set of numbered **pads** plus drawings on the board's technical layers. The pad numbers join it to the symbol. Symbol pin 17 connects to whatever pad is numbered 17, so the chip's pin 65, `ThermalPad`, connects to the footprint's pad 65, which is the exposed pad. KiCad checks only that the numbers match, not that a pin and its pad are the same terminal of the package, so a symbol and a footprint made from two different datasheets can disagree without any check reporting it.
+A footprint is a set of numbered **pads** plus drawings on the board's technical layers. The pad numbers join it to the symbol. Symbol pin 17 connects to whatever pad is numbered 17, so the symbol's pin 65, `ThermalPad`, connects to the footprint's pad 65, which is the exposed pad. KiCad checks only that the numbers match, not that a pin and its pad are the same terminal of the package, so a symbol and a footprint made from two different datasheets can disagree without any check reporting it.
 
 These are the layers a footprint draws on, and what each one becomes:
 
