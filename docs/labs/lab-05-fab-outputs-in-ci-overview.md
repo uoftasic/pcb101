@@ -1,6 +1,6 @@
 # Lab 05: Fab outputs in CI
 
-In this lab you give your board repository a GitHub Actions workflow. On every push it checks the board and builds the files a fabricator needs (Gerbers, a drill file, a BOM and a position file) and the images a reviewer looks at. Then KiBot makes an interactive BOM and a design report, and the workflow uploads all of it as one artifact. You'll finish the build script that does the work, write the `.gitignore` that keeps KiCad's own files out of git, look at the Gerbers the way the fab will, write KiBot's configuration, and then break the board on purpose to watch the run go red.
+In this lab you give your board repository a GitHub Actions workflow. On every push it runs ERC, DRC and the schematic parity check on your board. Then it builds the Gerbers and the drill file that a fab needs, the BOM and the position file that an assembler needs, and renders, copper plots and a PDF of the schematic for whoever reviews the board. KiBot then makes an interactive BOM and a design report, and the workflow uploads all of these files as one artifact. You'll write the `.gitignore` that keeps KiCad's local files and the build's outputs out of git, and finish the commands in the build script that the workflow runs. Then you'll open the Gerbers in GerbView to see them as the fab will, and write KiBot's configuration. Last, you'll break the board on purpose and check that the workflow fails on it.
 
 The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-05-fab-outputs-in-ci) in the course repo.
 
@@ -9,9 +9,9 @@ The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uof
 - Finish [Lab 04](lab-04-protect-and-plan-overview.md): its check passes on your repository, and the commit it checked is pushed to GitHub.
 - Read the pages on row 9 of the [course path](../index.md#course-path): [Fabrication outputs](../guide/fabrication-outputs.md), [Outputs in CI](../guide/outputs-in-ci.md) and [KiCad files in git](../guide/kicad-files-in-git.md).
 
-The check is bash, as in Labs 03 and 04, so on Windows run it in WSL. It runs git inside the course image as well as KiCad, and we have run it only on Linux. It also runs KiBot, in KiBot's own image, which is a 1,347 MB download the first time.
+The check is a bash script, as in Labs 03 and 04, so on Windows you run it in WSL. It runs both KiCad and git inside the course image, and we have run it only on Linux. It also runs KiBot, in KiBot's own image, which is a 1,347 MB download the first time you run the check.
 
-The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4, 25 for Part 5 and 20 for Part 6. Those are our estimates, but we timed the check itself: with one CPU for each container it took 26 s on our reference repository, and 42 s with `--planted`, because that builds a second commit.
+The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Part 2, 25 for Part 3, 10 for Part 4, 25 for Part 5 and 20 for Part 6. Those times are our estimates. We did time the check itself. With one CPU for each container, it took 26 s on our reference repository, and 42 s with `--planted`, because that also runs the board check on a second commit.
 
 ## Part 1: Add the workflow
 
@@ -23,16 +23,16 @@ The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Par
    git status
    ```
 
-   You should see two new folders, `.github/` and `ci/`, and `pmod.kicad_prl`, which is still untracked because Lab 03 had you leave it out of your commits. `.github/workflows/board.yml` is the workflow. `ci/build.sh` is the script it runs, `ci/check_board.py` is a copy of the course's board check, and `ci/kicad-image.txt` names the pinned KiCad image by its digest. `ci/kibot-image.txt` does the same for KiBot's image, and `ci/board.kibot.yaml` is KiBot's configuration, which you'll finish in Part 5.
+   You should see `git status` list two new folders, `.github/` and `ci/`, and also `pmod.kicad_prl`, which is still untracked because Lab 03 had you leave it out of your commits. `.github/workflows/board.yml` is the workflow, and `ci/build.sh` is the script it runs. `ci/check_board.py` is a copy of the course's board check. `ci/kicad-image.txt` names the pinned KiCad image by its digest, and `ci/kibot-image.txt` does the same for KiBot's image. `ci/board.kibot.yaml` is KiBot's configuration, which you'll finish in Part 5.
 
-2. Read `board.yml`. After checking out your commit, it pulls the image named in `ci/kicad-image.txt`, then runs `bash ci/build.sh check`, `fab` and `images` as three steps, each in a fresh container. A fourth step pulls the KiBot image named in `ci/kibot-image.txt` and runs `bash ci/build.sh kibot` in it, and the last uploads the folder `out/` as an artifact called `board-outputs`. Then read `ci/build.sh`, which holds everything those four steps do.
+2. Read `board.yml`. After checking out your commit, it pulls the image named in `ci/kicad-image.txt`, then runs `bash ci/build.sh check`, `fab` and `images` as three steps, each in a fresh container. A fourth step pulls the KiBot image named in `ci/kibot-image.txt` and runs `bash ci/build.sh kibot` in it, and the last step uploads the folder `out/` as an artifact called `board-outputs`. Then read `ci/build.sh`, which has the commands that those four steps run.
 
    Why does the workflow start the containers with `docker run` as the runner's own uid, rather than running the whole job in the image with GitHub's `container:` setting?
 
    <details>
    <summary>Answer</summary>
 
-   So that the checks run the way the course's own checks do: as an ordinary uid, with KiCad's default library tables copied into an empty home folder (the first thing `build.sh` does). A job `container:` runs as the image's own user unless you override it, and wafer.space's workflow overrides it with `--user root`; [Outputs in CI](../guide/outputs-in-ci.md) shows that root in this image has no library tables and gets different warning counts. The course's own `labs.yml` workflow runs its checks the same way, and for the same reason.
+   So that the checks run the way the course's own checks do, as an ordinary uid, with KiCad's default library tables copied into an empty home folder. `build.sh` copies the tables before it runs any stage. A job `container:` runs as the image's own user unless you override it, and wafer.space's workflow overrides it with `--user root`. [Outputs in CI](../guide/outputs-in-ci.md) shows that root in this image has no library tables, so its warning counts differ from the course's. The course's own `labs.yml` workflow also starts its containers with `docker run`, through `kicad.sh`, for the same reason.
 
    </details>
 
@@ -58,7 +58,7 @@ The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Par
    ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh
    ```
 
-   It first runs `bash ci/build.sh all` in the pinned KiCad image and prints what that prints. If the build passes, it runs `bash ci/build.sh kibot` in the KiBot image, as your workflow would. Either way, it then prints one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
+   It first runs `bash ci/build.sh all` in the pinned KiCad image and prints that command's output, apart from the renders' progress lines. If the build passes, it runs `bash ci/build.sh kibot` in the KiBot image, as your workflow would. Either way, it then prints one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
 
    ```text
      ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.5 and kibot in kicad10_auto_full:1.9.1-2_k10.0.5_d13.2_b4.2.4LTS, both by digest, and uploads out/
@@ -77,13 +77,13 @@ The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Par
 
 ## Part 2: Keep KiCad's own files out of git
 
-Which files in your repository's folder belong in git, and which should git never see?
+Which files in your repository's folder belong in git, and which should git ignore?
 
-1. Run `git status` again. It lists `out/`, which the build just wrote, and `pmod.kicad_prl`, which `kicad-cli` writes next to any project it reads. If you've opened the board in KiCad since Lab 04, there may also be a `pmod-backups/` folder, a `.history/` folder or lock files ending in `.lck`. [KiCad files in git](../guide/kicad-files-in-git.md) says what each one is.
+1. Run `git status` again. It lists `out/`, which the build just wrote, and `pmod.kicad_prl`, which `kicad-cli` writes next to any project it reads. If you've saved the board in KiCad, it may also list a `.history/` folder or a `pmod-backups/` folder, and while the board is open in KiCad, it lists lock files ending in `.lck`. [KiCad files in git](../guide/kicad-files-in-git.md) says what each one is.
 
 2. Make a `.gitignore` in the repository's root folder. Start from Tiny Tapeout's, which [KiCad files in git](../guide/kicad-files-in-git.md) prints in full, and add the two lines it doesn't have: `.history/` for KiCad 10's local history, and `out/` for everything `build.sh` writes. CI makes `out/` again on every run, so it never needs to be in git.
 
-3. Run `git status`. You should see only `.gitignore` as new, apart from anything you haven't committed yet. If a file you meant to ignore still shows as modified, git is already tracking it, and `git rm --cached` followed by a commit stops that.
+3. Run `git status`. You should see `.gitignore` as the only new file, apart from any files of your own that you haven't committed yet. If a file you meant to ignore still shows as modified, git is already tracking it. Run `git rm --cached` on it and commit, and git stops tracking it.
 
 4. Tiny Tapeout's demo board repository lists `fp-info-cache` in its `.gitignore`, and git still tracks the file. How?
 
@@ -100,22 +100,22 @@ Which files in your repository's folder belong in git, and which should git neve
 
 What do a fab, an assembler and a reviewer each need from your CI?
 
-1. Write the five commands the TODOs in `ci/build.sh` ask for. Each `kicad-cli` command prints its own options with `--help`; for example, run
+1. Write the five commands that the TODOs in `ci/build.sh` ask for. Each `kicad-cli` command prints its own options with `--help`; for example, run
 
    ```bash
    ~/ic103/labs/common/kicad.sh kicad-cli pcb export drill --help
    ```
 
-   and the same for `sch export bom`, `pcb export pos`, `pcb render` and `pcb export svg`. Keep the file names the comments give, because the check looks for them. Things to decide as you go:
+   and the same for `sch export bom`, `pcb export pos`, `pcb render` and `pcb export svg`. Keep the file names that the comments give, because the check finds each file by its name. Things to decide as you go:
 
-   - The drill file has to use the same origin as the Gerbers. Look at File > Plot in the PCB Editor: if "Use drill/place file origin" isn't ticked, the Gerbers use the absolute origin, and so should the drill file (`--drill-origin`). On our board the drill/place origin was never moved from (0, 0), so `absolute` and `plot` wrote the same file. On a board where someone has placed that origin, such as the DIP dock, the two put the holes in different places.
-   - An assembler wants the position file as CSV, in millimetres (`--format`, `--units`); the defaults are a text table in inches.
+   - The drill file has to use the same origin as the Gerbers. To see which origin the Gerbers use, open File > Plot in the PCB Editor. If "Use drill/place file origin" isn't ticked, the Gerbers use the absolute origin, and so should the drill file (`--drill-origin`). On our board the drill/place origin was never moved from (0, 0), so `absolute` and `plot` wrote the same file. On a board where someone has placed that origin, such as the DIP dock, the two options put the holes in different places.
+   - An assembler wants the position file as CSV, in millimetres (`--format`, `--units`), but by default the command writes a text table in inches.
    - A render takes `--side top` or `--side bottom`.
    - For the copper plots, `--layers F.Cu,B.Cu` with `--mode-multi` writes one SVG per layer, `--common-layers Edge.Cuts` adds the outline to each, and `--page-size-mode 2` with `--exclude-drawing-sheet` crops them to the board.
 
-2. Before you run it, count the holes your drill file should have: every pad with a hole, and every via. Write the number down. On our board it's 65: 36 pins in the three Pmod connectors, 3 in the dongle header, 16 in the switch, 9 in the resistor network and 1 via.
+2. Before you run the check, count the holes that your drill file should have, one for every pad with a hole and one for every via, and write the number down. On our board it's 65: 36 pins in the three Pmod connectors, 3 in the dongle header, 16 in the switch, 9 in the resistor network and 1 via.
 
-3. Run the check. You should see every row `ok` except `ibom` and `report`, which wait for Part 5. Ours:
+3. Run the check. You should see every row `ok` except `ibom` and `report`, which fail until you've done Part 5. Our rows were:
 
    ```text
      ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.5 and kibot in kicad10_auto_full:1.9.1-2_k10.0.5_d13.2_b4.2.4LTS, both by digest, and uploads out/
@@ -132,9 +132,9 @@ What do a fab, an assembler and a reviewer each need from your CI?
    FAIL  pmod: 8 of 10 Lab 05 checks ok; add --planted REV once you've done Part 6
    ```
 
-   The drill row compares every hole with the outline in the Edge.Cuts Gerber, so a drill file made in a different origin from the Gerbers fails it. That's the mistake [Fabrication outputs](../guide/fabrication-outputs.md) shows on the DIP dock.
+   The drill row checks that every hole lies inside the outline in the Edge.Cuts Gerber, so a drill file made in a different origin from the Gerbers fails it. [Fabrication outputs](../guide/fabrication-outputs.md) shows that mistake on the DIP dock.
 
-4. Our BOM has 12 rows and our position file only 10 parts. Open `out/assembly/` and find the two that are missing from the position file. Why would KiCad leave them out?
+4. Our BOM has 12 rows and our position file only 10 parts. Open `out/assembly/` and find the two parts that the position file leaves out. Why would KiCad leave them out?
 
    <details>
    <summary>Answer</summary>
@@ -143,13 +143,13 @@ What do a fab, an assembler and a reviewer each need from your CI?
 
    </details>
 
-5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, named Board, for your commit, and the run's page lists the job's steps and, once it has finished, the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run, even though KiBot has nothing to make yet. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/ic103/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py), with each container limited to one CPU: all seven succeeded in 35 s, and the artifact held 21 files. On GitHub, pulling the two images (808 MB and 1,347 MB) adds to that, and we haven't timed it there.
+5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, which is named Board, for your commit. The run's page lists the job's steps, and once the run has finished, it also has the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run, even though KiBot has nothing to make yet. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/ic103/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py), with each container limited to one CPU. All seven steps succeeded in 35 s, and the artifact held 21 files. On GitHub the run also has to pull the two images (808 MB and 1,347 MB), which adds to that time, and we haven't timed a run there.
 
 ## Part 4: Look at what the fab will get
 
 Do the files CI built describe your board?
 
-1. Unzip the artifact, open GerbView (the Gerber Viewer, from KiCad's project manager), and use File > Open Gerber Plot File(s)... for every `.gbr` in `fab/`, then File > Open Excellon Drill File(s)... for the `.drl`. The `out/fab/` folder the check wrote on your own machine has the same files.
+1. Unzip the artifact, open GerbView (the Gerber Viewer, from KiCad's project manager), and use File > Open Gerber Plot File(s)... for every `.gbr` in `fab/`, then File > Open Excellon Drill File(s)... for the `.drl`. The `out/fab/` folder that the check wrote on your own machine has the same files.
 
    ![GerbView with its File menu open over the SimProc Pmod's Gerbers](../assets/img/kicad-gerbview-file-menu.png)
 
@@ -157,7 +157,7 @@ Do the files CI built describe your board?
 
 2. Before you look closely, write down how many layers the Layers Manager should list and what function GerbView should give each.
 
-3. Compare the view with your board in the PCB Editor. You should see every drill hit (the small dots of the drill layer) in the middle of its pad, and the Layers Manager listing every file with the function GerbView read from it, such as "Copper, L1" for the top copper and "Profile, NP" for the outline:
+3. Compare the view with your board in the PCB Editor. You should see every drill hit (the small dots of the drill layer) in the middle of its pad, and the Layers Manager listing every file with the function that GerbView read from it, such as "Copper, L1" for the top copper and "Profile, NP" for the outline:
 
    ![GerbView with the SimProc Pmod's nine Gerbers and drill file](../assets/img/kicad-gerbview-simproc-pmod.png)
 
@@ -168,7 +168,7 @@ Do the files CI built describe your board?
    <details>
    <summary>Answer</summary>
 
-   You'd change the drill file's origin. The Gerbers and the drill file share nothing but their coordinates, so if the board's plot settings use the drill/place origin, the drill file needs `--drill-origin plot`, and if they don't, `absolute`. [Fabrication outputs](../guide/fabrication-outputs.md) shows the DIP dock with exactly this offset.
+   You'd change the drill file's origin. The drill file and the Gerbers line up only through their coordinates. If the board's plot settings use the drill/place origin, the drill file needs `--drill-origin plot`, and if they don't, it needs `absolute`. [Fabrication outputs](../guide/fabrication-outputs.md) shows this offset on the DIP dock.
 
    </details>
 
@@ -176,7 +176,7 @@ Do the files CI built describe your board?
 
 How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, and keep the whole run on one version of KiCad?
 
-1. Look at what the starter put in place for KiBot. [KiBot](https://github.com/INTI-CMNB/KiBot) is a program that drives KiCad from a YAML file and makes outputs that `kicad-cli` doesn't. It's free software, under the AGPL-3.0. It needs a good deal of software besides KiCad, so it runs in an image of its own, `ghcr.io/inti-cmnb/kicad10_auto_full`, which `ci/kibot-image.txt` names by its digest. That image carries KiBot 1.9.1 and KiCad 10.0.5, the same version as the course's checks. The workflow's "KiBot outputs" step pulls it and runs `bash ci/build.sh kibot` in it, the same way the steps before it run theirs. KiBot also has a GitHub Action of its own, but the action builds its image from a tag that moves with every KiBot release, so the workflow doesn't use it ([Outputs in CI](../guide/outputs-in-ci.md#kibot) has the details). The `kibot` stage at the end of `build.sh` runs KiBot on `ci/board.kibot.yaml` and has it write what it makes into `out/kibot/`. You'll finish that configuration file in step 4.
+1. Look at what the starter put in place for KiBot. [KiBot](https://github.com/INTI-CMNB/KiBot) is a program that drives KiCad from a YAML file, and it can make outputs that `kicad-cli` can't. It's free software, under the AGPL-3.0. It needs a good deal of software besides KiCad, so it runs in an image of its own, `ghcr.io/inti-cmnb/kicad10_auto_full`, which `ci/kibot-image.txt` names by its digest. That image carries KiBot 1.9.1 and KiCad 10.0.5, the same KiCad version that the course's checks use. The workflow's "KiBot outputs" step pulls the image and runs `bash ci/build.sh kibot` in it with `docker run`, as the steps before it run theirs. KiBot also has a GitHub Action of its own, but the action builds its image from a tag that moves with every KiBot release, so the workflow doesn't use it ([Outputs in CI](../guide/outputs-in-ci.md#kibot) has the details). The `kibot` stage at the end of `build.sh` runs KiBot on `ci/board.kibot.yaml` and has it write what it makes into `out/kibot/`. You'll finish that configuration file in step 4.
 
    KiBot can also run ERC and DRC itself; it calls them preflights. Why does the workflow keep its checks in `check_board.py`, in KiCad's own image, and use KiBot only for outputs?
 
@@ -196,7 +196,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    ~/ic103/labs/common/kibot.sh kibot --help-output ibom
    ```
 
-   The first lists 56 types of output. Many of them are files `kicad-cli` makes too, such as Gerbers, drill files and position files. Two that `kicad-cli` doesn't make are `ibom`, an interactive HTML BOM, and `report`, a design report written for whoever orders the board. `kicad-cli pcb export stats` writes a board statistics report that overlaps with KiBot's `report`, but it gives each hole at its finished size and leaves out what KiBot adds for the fab, such as the drill sizes, a Eurocircuits board class and an estimate of the solder paste. The second command prints every option of the `ibom` output, and `kibot --help-output report` and `kibot --help-filters` do the same for the report and for KiBot's filters.
+   The first lists 56 types of output. Many of them are files that `kicad-cli` makes too, such as Gerbers, drill files and position files. Two that `kicad-cli` doesn't make are `ibom`, an interactive HTML BOM, and `report`, a design report written for whoever orders the board. `kicad-cli pcb export stats` writes a board statistics report that overlaps with KiBot's `report`. It gives each hole at its finished size, though, and it leaves out what KiBot adds for the fab, such as the drill sizes, a Eurocircuits board class and an estimate of the solder paste. The second command prints every option of the `ibom` output, and `kibot --help-output report` and `kibot --help-filters` do the same for the report and for KiBot's filters.
 
 3. Before you change the configuration, write down which of your board's parts the interactive BOM should list, and how many rows it will have if parts with the same value and footprint share a row. Then decide what it should do with a part marked DNP ([Tiny Tapeout's boards, part by part](../guide/tiny-tapeouts-boards-part-by-part.md#unfitted-footprints-and-dnp) explains the mark): should a part you won't fit be on the list you solder from?
 
@@ -229,7 +229,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
 
    The warning, W182, comes from the way KiBot reads a schematic. It looks for each symbol's instance under a sheet path of zeros, while our schematic records each one under the schematic's own UUID, so KiBot falls back to the symbol's first instance, as the message says. Our schematic is one sheet and each of its 33 symbols has only one instance, so that's the right one. KiBot prints the warning once and counts it for each symbol.
 
-6. Open `out/kibot/pmod-ibom.html` in a browser and click a row of the BOM: its parts light up on the drawing of the board. You should see the parts and rows you wrote down in step 3. Ours has 12 parts in 8 rows:
+6. Open `out/kibot/pmod-ibom.html` in a browser. When you click a row of the BOM, its parts light up on the drawing of the board. You should see the parts and rows that you wrote down in step 3. Ours has 12 parts in 8 rows:
 
    ![KiBot's interactive BOM for the SimProc Pmod, with the row for R1 and R2 selected and both resistors highlighted on the front of the board](../assets/img/kibot-ibom-simproc-pmod.png)
 
@@ -244,7 +244,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
 
    </details>
 
-7. Open `out/kibot/pmod-report.txt`. It's a plain-text report for whoever orders the board. It gives the board's size and layers, the sizes that a fab's rules are about (clearance, track width, drills, vias and annular ring), the holes, and an estimate of the solder paste. Compare its holes with the count you wrote down in Part 3, step 2. Ours lists three drill tools:
+7. Open `out/kibot/pmod-report.txt`. It's plain text, and it gives the board's size and layers, the sizes that a fab's rules are about (clearance, track width, drills, vias and annular ring), the holes, and an estimate of the solder paste. Compare its holes with the count that you wrote down in Part 3, step 2. Ours lists three drill tools:
 
    ```text
    Drill tools (including vias and computing adjusts and rounding):
@@ -259,7 +259,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    <details>
    <summary>Answer</summary>
 
-   They're the sizes of the drills rather than of the finished holes. Copper is plated onto the wall of a plated hole after it's drilled, which makes the hole smaller, so the drill has to be larger than the hole in the footprint. KiBot allows 0.1 mm for that on every plated hole, and the report says so under "Important sizes": "The above values are real drill sizes, they add 0.1 mm (4 mils) to plated holes (PTH)". Every hole on our board is plated, so all three sizes moved.
+   They're the sizes of the drills rather than of the finished holes. Copper is plated onto the wall of a plated hole after it's drilled, which makes the hole smaller, so the drill has to be larger than the hole in the footprint. KiBot allows 0.1 mm for that on every plated hole, and the report says so under "Important sizes": "The above values are real drill sizes, they add 0.1 mm (4 mils) to plated holes (PTH)". Every hole on our board is plated, so all three tools are 0.1 mm larger than the holes.
 
    </details>
 
@@ -272,7 +272,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
      ok    report     pmod-report.txt: 64 x 32 mm and 65 holes, as in the Gerbers and pmod.drl
    ```
 
-   and the last line `PASS  pmod: 10 of 10 Lab 05 checks ok; add --planted REV once you've done Part 6`. The `ibom` row reads the board data inside the page and compares its BOM with the footprints on your board. It passes when every part that belongs in a BOM is listed, none of the listed parts is marked DNP, and the BOM has nothing that isn't on the board. The `report` row compares the report's board size with the outline in the Gerbers, and its drill tools with the holes in the drill file. Then commit `ci/board.kibot.yaml` and push. The run's "KiBot outputs" step now makes the two files, and the artifact has a `kibot/` folder. Our local run of the workflow, with one CPU for each container, succeeded in all seven steps in 30 s, and the artifact held 23 files.
+   and the last line `PASS  pmod: 10 of 10 Lab 05 checks ok; add --planted REV once you've done Part 6`. The `ibom` row reads the board data inside the page and compares its BOM with the footprints on your board. It passes when every part that belongs in a BOM is listed, none of the listed parts is marked DNP, and the BOM has nothing that isn't on the board. The `report` row compares the report's board size with the outline in the Gerbers, and checks that its drill tools add up to the number of holes in the drill file. Then commit `ci/board.kibot.yaml` and push. The run's "KiBot outputs" step now makes the two files, and the artifact has a `kibot/` folder. Our local run of the workflow, with one CPU for each container, succeeded in all seven steps in 30 s, and the artifact held 23 files.
 
 ## Part 6: Break it on purpose
 
@@ -286,7 +286,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 
    ![The Design Rules Checker with a clearance violation and a thermal relief error](../assets/img/kicad-drc-planted-clearance.png)
 
-   *The Design Rules Checker in KiCad 10.0.5 on our board with the track dragged down: a clearance violation between the track and J1's pad 7 (0.1600 mm against 0.2000 mm), and an incomplete thermal relief on pad 11, whose connection to the GND zone the track now blocks. The other 32 items are the warnings the board had before.*
+   *The Design Rules Checker in KiCad 10.0.5 on our board with the track dragged down. It lists a clearance violation between the track and J1's pad 7 (0.1600 mm against 0.2000 mm), and an incomplete thermal relief on pad 11, because the track now blocks part of that pad's connection to the GND zone. The other 32 items are the warnings that the board had before.*
 
    The dialog's Schematic Parity tab says "(not run)". Does that mean your CI doesn't check parity either?
 
@@ -297,7 +297,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 
    </details>
 
-4. Run the Lab 05 check. You should see the board check fail inside the build, with the error your drag made:
+4. Run the Lab 05 check. You should see the board check fail inside the build, with the errors that your drag made:
 
    ```text
      DRC errors (2):
@@ -307,9 +307,9 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 
    and then eight rows fail. The first is `check` (`the board check fails: drc.error 2 (want 0); the fab and images stages didn't run`). `gerbers`, `drill`, `bom`, `position` and `images` fail because `build.sh` stops at the first stage that fails, so the later stages never made their files. `ibom` and `report` fail too (`` `ci/build.sh kibot` didn't run, because an earlier stage failed, as in your workflow ``), because the check, like the workflow, runs KiBot only after the build has passed.
 
-5. Commit the broken board with a message that says what you did, and push. On GitHub you should see a red run: the step "ERC, DRC and schematic parity" fails with the same board check output as above, "Fabrication files", "Review images" and "KiBot outputs" are skipped, and the upload step still runs, so the artifact holds `reports/` and nothing else. Our local run of the workflow did the same: the check step exited 1, the next three were skipped, and the artifact had three files, `drc.json`, `erc.json` and `summary.json`.
+5. Commit the broken board with a message that says what you did, and push. On GitHub you should see a red run. The step "ERC, DRC and schematic parity" fails with the same board check output as above, GitHub skips "Fabrication files", "Review images" and "KiBot outputs", and the upload step still runs, so the artifact holds `reports/` and nothing else. Our local run of the workflow did the same. Its check step exited 1, the next three steps were skipped, and the artifact had three files, `drc.json`, `erc.json` and `summary.json`.
 
-6. Fix the board: move the track back (or undo with Ctrl+Z before you close the editor), save, run the check until it passes, commit, and push. You should see a green run on GitHub, with the full artifact again.
+6. Fix the board by moving the track back, or by undoing the drag with Ctrl+Z before you close the editor. Then save, run the check until it passes, commit, and push. You should see a green run on GitHub, with the full artifact again.
 
 7. Find the hash of the commit with the planted error (`git log --oneline` lists it) and run the check with it:
 
@@ -317,7 +317,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
    ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
-   It builds that commit again in a temporary folder and checks that its board check fails. You should see an eleventh row, `ok    planted    367a4f1, an earlier commit on this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 11 of 11 Lab 05 checks ok`.
+   It copies that commit's files into a temporary folder, runs `bash ci/build.sh check` there, and checks that the board check fails. You should see an eleventh row, `ok    planted    367a4f1, an earlier commit on this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 11 of 11 Lab 05 checks ok`.
 
 ## Finishing
 
@@ -330,7 +330,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Look first at the renders and the copper plots in `review/`, and compare them with the ones from the commit before. A board file diff is text, but moving one part changes its position, the tracks you reroute and the zone fills around it, and the lines that record those are hard to read as a change. [KiCad files in git](../guide/kicad-files-in-git.md) shows a "minor" commit to Tiny Tapeout's demo board that changed 5,770 lines.
+   Look first at the renders and the copper plots in `review/`, and compare them with the ones from the commit before. Moving one part changes its position, the tracks rerouted to reach it and the zone fills around it, and in the board file's text diff, the lines that record those changes are hard to read as one change. [KiCad files in git](../guide/kicad-files-in-git.md) shows a "minor" commit to Tiny Tapeout's demo board that changed 5,770 lines.
 
    </details>
 
@@ -347,6 +347,6 @@ Submit: nothing for this lab. Keep the workflow; the capstone asks for a green r
 
 ## Going further (optional)
 
-- Save the list of outputs in the project as a jobset and run it with `kicad-cli jobset run`, so that the outputs live next to the board instead of in `build.sh`. We haven't tried a jobset in this course yet.
+- Save the list of outputs in the project as a jobset and run it with `kicad-cli jobset run`, so that the list lives in a file next to the board instead of in `build.sh`. We haven't tried a jobset in this course yet.
 
 Next on the [Course path](../index.md#course-path): read [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), then do [Lab 06: Review a seeded board](lab-06-review-a-seeded-board-overview.md).
