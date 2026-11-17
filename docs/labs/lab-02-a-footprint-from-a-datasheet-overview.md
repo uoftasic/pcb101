@@ -100,7 +100,7 @@ Can you turn your numbers into a footprint that KiCad will check?
 
 2. Place one pad with the pad tool on the right-hand toolbar, then press E on it to open its properties:
 
-   ![KiCad 10.0.8's Pad Properties dialog for pad 1 of the reference footprint: SMD, pad number 1, position -0.75, -2.67 mm, rounded rectangle with a 25 % corner, size 0.26 × 0.89 mm, on F.Cu with F.Paste and F.Mask.](../assets/img/kicad-pad-properties-rhl0024a.png)
+   ![KiCad 10.0.5's Pad Properties dialog for pad 1 of the reference footprint: SMD, pad number 1, position -0.75, -2.67 mm, rounded rectangle with a 25 % corner, size 0.26 × 0.89 mm, on F.Cu with F.Paste and F.Mask.](../assets/img/kicad-pad-properties-rhl0024a.png)
 
    Make it pad 2: SMD, rounded rectangle, 0.89 mm in X by 0.26 mm in Y, at X = −1.67 and Y = −2.25, with your own numbers in place of these if they differ. Leave F.Paste and F.Mask ticked. KiCad's Y axis points down, so negative Y is the top of the footprint.
 
