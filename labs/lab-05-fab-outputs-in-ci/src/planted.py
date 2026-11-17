@@ -6,8 +6,11 @@
 It does to the board file what dragging a track does in the PCB Editor: the 0.4 mm +3V3
 track that runs along the top edge from J1 to J2, at y = 51.6 mm, moves 1 mm down to
 y = 52.6 mm, and the two tracks it meets stretch to follow it. Its lower edge is then
-0.16 mm from the upper row of J1's pads, less than the 0.2 mm clearance, so DRC reports a
-clearance error for each of those pads that isn't on +3V3. Nothing is disconnected.
+0.16 mm from the upper row of J1's pads, less than the 0.2 mm clearance from each of those
+pads that isn't on +3V3. DRC reports only one clearance error per track unless it's run with
+--all-track-errors, so the board check reports one, with pad 7, and an incomplete thermal
+relief on pad 11, whose GND zone connection the track now blocks. With --all-track-errors,
+DRC lists clearance errors with pads 7 to 11 and with the GND zone. Nothing is disconnected.
 """
 import sys
 
