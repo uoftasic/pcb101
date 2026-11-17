@@ -19,7 +19,7 @@ This is the board that carries a SKY130 chip, so it's the one most of the team's
 
 ![A 3D render of the top of Tiny Tapeout's SKY130 QFN breakout](../assets/img/tt-sky-breakout-top.png){fig-alt="Top view of a square green board. A QFN chip, rotated 45 degrees, sits in the middle as a dark square package with leads along its four sides. A row of twelve plated holes along the top edge is labelled GND, ENA, RST, INC, VCCD, VDDIO and VDDA, with R14, R13 and R15 below the last three. Small resistors and capacitors are grouped near the top corners, with the regulator U1, a small black package, on the left, and only the empty pads of U2 on the right. Text reads QFN breakout for Sky130 v3.2. The empty pads of U3 are near the bottom edge, and four round test points are labelled in0, io1, clk and rst."}
 
-*The top of the SKY130 QFN breakout, rendered by `kicad-cli` 10.0.5 from the board file, with KiCad's 3D models of the parts. Under them are the pads, holes, silkscreen and copper under the solder mask. `kicad-cli pcb render` leaves out the models of parts marked DNP, so U2 and U3 show only their pads. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh), as are the other renders on this page.*
+*The top of the SKY130 QFN breakout, rendered by `kicad-cli` 10.0.5 from the board file, with KiCad's 3D models of the parts. The rest of the render is the pads, holes, silkscreen and the copper under the solder mask. `kicad-cli pcb render` leaves out the models of parts marked DNP, so U2 and U3 show only their pads. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh), as are the other renders on this page.*
 
 The chip, U4, sits in the middle in KiCad's own footprint `QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm`: a 9 × 9 mm QFN with 64 pins at 0.5 mm pitch and a 7.65 mm square exposed pad underneath. Its schematic symbol, `Openframe_QFN_TT06_REV2`, comes from Tiny Tapeout's own library. The chip is placed at 45° to the board's edges, which the board file records as a rotation of 135°.
 
@@ -27,7 +27,7 @@ Around it are footprints for the parts that power it. There are two SOT-23-5 foo
 
 So the board has room for more than one way of powering the chip, and a breakout as built uses one of them. In Lab 01 you work out which parts are fitted, and so which way this revision is built, by following each supply from the connector to the chip's pins.
 
-![A 3D render of the bottom of the same breakout](../assets/img/tt-sky-breakout-bottom.png){fig-alt="Bottom view of the same square board. Two long, narrow grey connectors with fine-pitch pins, one near the left edge and one near the right edge, are the two connectors that plug into the demo board. The rest of the bottom is copper under solder mask, with vias and a few small pads."}
+![A 3D render of the bottom of the same breakout](../assets/img/tt-sky-breakout-bottom.png){fig-alt="Bottom view of the same square board. Two long, narrow grey connectors with fine-pitch pins, one near the left edge and one near the right edge, are the two that plug into the demo board. The rest of the bottom is copper under solder mask, with vias and a few small pads."}
 
 *The bottom of the breakout, with its two Hirose DF12 connectors: J1 with 60 pins and J3 with 50. They plug into the demo board and carry every signal and supply between the two boards.*
 
