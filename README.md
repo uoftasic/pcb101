@@ -1,6 +1,6 @@
 # IC103 — PCB Design with KiCad
 
-Design the boards a chip sits on. The labs cover schematics, footprints from datasheets, layout, protection, fab outputs in CI and board review, and the capstone is a bring-up board for a team chip.
+Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.
 
 Part of the UofT ASIC Team education materials (`uoftasic`), in the IC track after IC101 and IC102.
 Course site: <https://uoftasic.com/ic103/> · Education hub: <https://edu.uoftasic.com/>
