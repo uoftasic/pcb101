@@ -8,6 +8,9 @@
 work labs/common/upstream/breakout-pcb
 
 launch eeschema breakout-sky-qfn/breakout-sky-qfn.kicad_sch 'breakout-sky-qfn.*Schematic Editor'
+# KiCad 10.0.5 goes on loading the symbol libraries after the window opens, with a progress
+# bar in the status bar. With one CPU it had finished 40 s later in our runs.
+pause 40
 capture kicad-schematic-editor-sky-breakout
 quit eeschema
 

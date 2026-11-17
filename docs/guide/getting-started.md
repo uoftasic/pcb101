@@ -26,9 +26,9 @@ The major version matters because a KiCad file doesn't open in an older major ve
 
 Going the other way works. KiCad 10 opens boards saved by KiCad 9, and Tiny Tapeout's SKY130 breakout, the first board you open in Lab 01, is one of those. KiCad tells you so in a bar across the top of the canvas:
 
-![The PCB Editor in KiCad 10.0.8 with Tiny Tapeout's SKY130 QFN breakout open](../assets/img/kicad-pcb-editor-sky-breakout.png)
+![The PCB Editor in KiCad 10.0.5 with Tiny Tapeout's SKY130 QFN breakout open](../assets/img/kicad-pcb-editor-sky-breakout.png)
 
-*Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), open in the PCB Editor of KiCad 10.0.8. The bar under the toolbars says "This file was created by an older version of KiCad. It will be converted to the new format when saved." The board itself is 50 × 50 mm with four copper layers, which is why the Appearance panel on the right lists In1.Cu and In2.Cu as well as F.Cu and B.Cu.*
+*Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), open in the PCB Editor of KiCad 10.0.5. The bar under the toolbars says "This file was created by an older version of KiCad. It will be converted to the new format when saved." The board itself is 50 × 50 mm with four copper layers, which is why the Appearance panel on the right lists In1.Cu and In2.Cu as well as F.Cu and B.Cu.*
 
 The conversion happens only if you save. Once you have saved the board, it's a 10.0 file and KiCad 9 can't open it any more, which is harmless for a copy you fetched for a lab but worth knowing before you open someone else's project.
 
