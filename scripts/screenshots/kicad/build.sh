@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build ic103/kicad-shot:<version>, the pinned KiCad image plus Xvfb, openbox, xdotool,
-# xwd and ImageMagick. About 30 MB on top of the KiCad image.
+# xwd and ImageMagick. About 35 MB on top of the KiCad image.
 #
 #   scripts/screenshots/kicad/build.sh
 set -euo pipefail
