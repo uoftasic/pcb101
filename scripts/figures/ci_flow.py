@@ -34,7 +34,7 @@ d.config(margin=0.3)
 # Top row: the push, the runner, the pinned image
 push = box(d, 0, 0, "git push\nto your repository", w=3.8)
 runner = box(d, 5.6, 0, "GitHub Actions runner\nchecks out the commit")
-image = box(d, 11.6, 0, "kicad/kicad:10.0.8\npinned by its digest")
+image = box(d, 11.6, 0, "kicad/kicad:10.0.5\npinned by its digest")
 d.add(elm.Arrow().at(push.E).to(runner.W))
 d.add(elm.Arrow().at(runner.E).to(image.W))
 

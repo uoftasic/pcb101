@@ -3,8 +3,9 @@
 
 Commit 293a3e2 of TinyTapeout/tt-demo-pcb (2026-06-23, "minor pcb cleanup") changed
 tinytapeout-demo.kicad_pcb by 2,851 added and 2,919 removed lines. This script renders the
-board's top before and after that commit with `kicad-cli pcb render` in the pinned image
-(scripts/screenshots/kicad/render.sh), and writes docs/assets/img/tt-demo-293a3e2-review.png:
+board's top before and after that commit with `kicad-cli pcb render` in the render image,
+with the parts' 3D models (scripts/screenshots/kicad/render.sh), and writes
+docs/assets/img/tt-demo-293a3e2-review.png:
 the two renders side by side, and a third panel with every pixel that changed drawn in red,
 thickened so that it survives the scaling, over a faded copy of the new board.
 

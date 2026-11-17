@@ -3,9 +3,9 @@
     python3 labs/common/fetch_boards.py
     IC103_DOCKER_ARGS="--cpus 1 --memory 2g" python3 scripts/figures/dip_dock_render.py
 
-Runs `kicad-cli pcb render` in the pinned image through scripts/screenshots/kicad/render.sh
-and writes docs/assets/img/ic103-dip-dock-top.png. The image has no 3D models of parts,
-so the render shows the bare board: copper, mask, silkscreen and holes.
+Runs `kicad-cli pcb render` through scripts/screenshots/kicad/render.sh, in the render image
+(kicad/kicad:10.0.5-full, which has KiCad's 3D models of parts), and writes
+docs/assets/img/ic103-dip-dock-top.png: the board with its parts.
 """
 import os
 import subprocess
