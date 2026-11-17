@@ -57,7 +57,7 @@ KLC is a convention for a library that has to work for everyone, so its numbers 
 
 ## Footprints for the same package {#one-package-many-footprints}
 
-The image the course's checks run in has 155 footprint libraries, and `Package_DFN_QFN` alone holds 779 footprints. Thirty of them have names that start `QFN-64-1EP_9x9mm_P0.5mm`: the same 9 × 9 mm body and 0.5 mm pitch, with exposed pads from 3.4 mm to 7.65 mm square, some with thermal vias and some without. The name spells out what you need to match: the package, the pin count, `1EP` for one exposed pad, the body size, the pitch and the exposed pad's size.
+The image the course's checks run in has 155 footprint libraries, and `Package_DFN_QFN` alone holds 776 footprints. Thirty of them have names that start `QFN-64-1EP_9x9mm_P0.5mm`: the same 9 × 9 mm body and 0.5 mm pitch, with exposed pads from 3.4 mm to 7.65 mm square, some with thermal vias and some without. The name spells out what you need to match: the package, the pin count, `1EP` for one exposed pad, the body size, the pitch and the exposed pad's size.
 
 So picking a footprint by its body size and pin count isn't enough. A QFN-64 package with a 4.7 mm exposed pad would sit on the 7.65 mm footprint's pad with solder spread far past its own, and one with a 7.65 mm pad would overhang a 4.7 mm footprint's. Tiny Tapeout's IHP breakout, for example, uses a footprint of Tiny Tapeout's own, `QFN-64-1EP_9x9mm_P0.5mm_EP4.7x4.7mm_IHP_C`. The package drawing in the part's datasheet decides which footprint is right, and Lab 02 is about working from one.
 

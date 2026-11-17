@@ -12,7 +12,7 @@ Package: [`labs/lab-02-a-footprint-from-a-datasheet/`](https://github.com/uoftas
 - Read [Schematics other people can read](../guide/schematics-other-people-can-read.md), [Symbols, footprints and libraries](../guide/symbols-footprints-and-libraries.md) and [From die to package](../guide/from-die-to-package.md).
 - Download TI's [SN74LVC8T245 datasheet](https://www.ti.com/lit/ds/symlink/sn74lvc8t245.pdf). We used revision SCES584D (June 2005, revised May 2026), and the page numbers below are that revision's PDF pages. If TI has revised it since, find the package outline headed "RHL0024A" near the end; the drawing we used is numbered 4225250/C.
 
-The SN74LVC8T245 moves eight signals between two supplies, each anywhere from 1.65 V to 5.5 V, which is the kind of part that sits between a Tiny Tapeout chip's 3.3 V pins and something running at another voltage. KiCad 10.0.8's `Package_DFN_QFN` library has 779 footprints and none of them is this package: the only RHL footprints in it, `Texas_VQFN-RHL-20` and its thermal-via version, are for a 20-pin package, with 21 pads counting the exposed pad.
+The SN74LVC8T245 moves eight signals between two supplies, each anywhere from 1.65 V to 5.5 V, which is the kind of part that sits between a Tiny Tapeout chip's 3.3 V pins and something running at another voltage. KiCad 10.0.5's `Package_DFN_QFN` library has 776 footprints and none of them is this package: the only RHL footprints in it, `Texas_VQFN-RHL-20` and its thermal-via version, are for a 20-pin package, with 21 pads counting the exposed pad.
 
 ## Part 1: Read the drawing
 
@@ -121,7 +121,7 @@ Can you turn your numbers into a footprint that KiCad will check?
 
    ![The reference footprint in the Footprint Editor, loaded from library ic103: pads 1 to 24 around exposed pad 25, the pin 1 triangle on the silkscreen, the body outline with its cut corner on F.Fab, and the courtyard.](../assets/img/kicad-footprint-editor-rhl0024a.png)
 
-7. Save, and run the check from Part 2 again. You should see `ok  Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 779 QFN footprints`, with your own paste percentage in place of the reference's 66. It compares every pad with your `pads.md` to within 0.01 mm, so if a pad is off it names the pad and where your numbers put it.
+7. Save, and run the check from Part 2 again. You should see `ok  Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 776 QFN footprints`, with your own paste percentage in place of the reference's 66. It compares every pad with your `pads.md` to within 0.01 mm, so if a pad is off it names the pad and where your numbers put it.
 
 Check: the Footprint row says `ok`.
 
@@ -134,7 +134,7 @@ Which pins does the schematic need, and what kind is each one?
    <details>
    <summary>Answer</summary>
 
-   It has 24 pins and no pin for the exposed pad, so pad 25 would get no net. Its footprint filters include `Texas*VQFN*RHL*`, which in KiCad 10.0.8's library matches only `Texas_VQFN-RHL-20` and `Texas_VQFN-RHL-20_ThermalVias`, footprints for a 20-pin package whose description cites a different part's datasheet. A footprint for the wrong pin count can look plausible in a filtered list, which is one reason to read the drawing yourself.
+   It has 24 pins and no pin for the exposed pad, so pad 25 would get no net. Its footprint filters include `Texas*VQFN*RHL*`, which in KiCad 10.0.5's library matches only `Texas_VQFN-RHL-20` and `Texas_VQFN-RHL-20_ThermalVias`, footprints for a 20-pin package whose description cites a different part's datasheet. A footprint for the wrong pin count can look plausible in a filtered list, which is one reason to read the drawing yourself.
 
    </details>
 
@@ -161,11 +161,11 @@ Check: the check's Symbol row says `ok  Symbol  25 pins with Table 4-1's names a
 
 Do your symbol and footprint work together the way KiCad expects?
 
-1. Run the check once more. With both files in place, it now builds a one-part KiCad project in `results/fit/`: a schematic with your symbol, a label on every pin and a PWR_FLAG on each net that needs a driver, and a board with your footprint placed and every pad given its pin's net. Then it runs `labs/common/check_board.py` on that project. In our two runs, with the container limited to one CPU, the whole check took 46 s and 48 s. On the reference solution it ends:
+1. Run the check once more. With both files in place, it now builds a one-part KiCad project in `results/fit/`: a schematic with your symbol, a label on every pin and a PWR_FLAG on each net that needs a driver, and a board with your footprint placed and every pad given its pin's net. Then it runs `labs/common/check_board.py` on that project. In our three runs, with the container limited to one CPU, the whole check took 18 to 43 s. On the reference solution it ends:
 
    ```text
      ok        pads.md    Z, G, X, pad lengths and centres within 0.02 mm of the course's
-     ok        Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 779 QFN footprints
+     ok        Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 776 QFN footprints
      ok        Symbol     25 pins with Table 4-1's names and types, footprint ic103:RHL0024A
      ok        Fit        ERC, DRC and parity clean on a board with your part (17 ERC and 0 DRC warnings)
 
@@ -179,7 +179,7 @@ Do your symbol and footprint work together the way KiCad expects?
    ```text
      MISMATCH  pads.md    X, long sides: 0.32 is more than 0.02 mm from the course's value
      MISMATCH             X, short sides: 0.32 is more than 0.02 mm from the course's value
-     ok        Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 779 QFN footprints
+     ok        Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 776 QFN footprints
      ok        Symbol     25 pins with Table 4-1's names and types, footprint ic103:RHL0024A
      MISMATCH  Fit        drc.error 18 (clearance 18)
    ```
@@ -207,7 +207,7 @@ Check: the check prints `PASS`.
 | Pads | 0.89 × 0.26 mm, centres at ±1.67 and ±2.67 mm | within 0.02 mm |
 | Paste on the exposed pad | 50 to 80 % | rule |
 | Fit project | 0 ERC errors, 0 DRC errors, 0 parity items | exact |
-| `check_footprint.py` run time | 46 and 48 s in our runs, with both files in place and one CPU | ballpark |
+| `check_footprint.py` run time | 18 to 43 s in our runs, with both files in place and one CPU | ballpark |
 
 ## Finishing
 

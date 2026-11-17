@@ -13,8 +13,8 @@ from the repo root:
 labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/check_footprint.py
 ```
 
-It ends with `PASS` or `FAIL`. With a footprint and a symbol in place, it took 46 s and 48 s
-in our two runs, with the container limited to one CPU. On the folder as shipped it prints
+It ends with `PASS` or `FAIL`. With a footprint and a symbol in place, it took 18 to 43 s
+in our three runs, with the container limited to one CPU. On the folder as shipped it prints
 `FAIL  4 of 4 parts have a MISMATCH: pads.md, Footprint, Symbol and Fit`.
 
 ## Files
@@ -36,7 +36,7 @@ in our two runs, with the container limited to one CPU. On the folder as shipped
 
 `labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/selftest.py` runs
 the self-test, which ends with `7 of 7 cases gave the expected verdict`. In our runs it took
-about 3 to 5 min with the container limited to one CPU.
+97 s and 164 s with the container limited to one CPU.
 
 The datasheet is TI's and isn't copied here; `data/rhl0024a.json` holds only the numbers
 the lab uses, each with the page it's on.
