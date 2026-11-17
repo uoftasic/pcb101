@@ -35,7 +35,7 @@ The conversion happens only if you save. Once you have saved the board, it's a 1
 Within the 10.0 series, the patch releases (10.0.1, 10.0.2 and so on) share a file format. The three we checked in KiCad's source, 10.0.0, 10.0.5 and 10.0.8, all write boards as version 20260206 and schematics as version 20260306, so a 10.0 release opens files from any other, and KiCad encourages everyone to keep up with the latest bugfix release. Patch releases can still differ in what ERC and DRC report. On November 16, 2026 we ran the course's checks in both 10.0.5 and 10.0.8, in KiCad's Docker images, and compared the counts:
 
 - On the course's own reference boards, for Labs 03 and 04 and the capstone, every count was the same.
-- On Tiny Tapeout's SKY130 breakout, a board saved by KiCad 9 that you open in Lab 01, the errors were the same, 10 from ERC and none from DRC. The warnings weren't: 10.0.5 reported 97 ERC and 120 DRC warnings where 10.0.8 reported 103 and 123. 10.0.5 also reported 37 schematic parity warnings that 10.0.8 didn't, every one of them about a part's Datasheet field, which is `~` on the board and empty in the schematic.
+- On Tiny Tapeout's SKY130 breakout, a board saved by KiCad 9 that you open in Lab 01, the errors were the same, 10 from ERC and none from DRC, but the warning counts differed: 10.0.5 reported 97 ERC and 120 DRC warnings where 10.0.8 reported 103 and 123. 10.0.5 also reported 37 schematic parity warnings that 10.0.8 didn't, every one of them about a part's Datasheet field, which is `~` on the board and empty in the schematic.
 - On a copy of one of KiCad's demo boards with a GND track laid across a VCC track, both found the tracks crossing and a solder mask bridge, and 10.0.5 also reported the GND track as shorting to a pad of a third net, so it counted three DRC errors where 10.0.8 counted two.
 
 So if your own KiCad is a later 10.0 release, expect the same results on boards like the ones you'll draw, different warning counts on older boards such as Tiny Tapeout's, and now and then a different number of errors on a board with something wrong with it. The course's checks always run 10.0.5 in the pinned image, whatever you have installed, and their results are the ones the labs go by.
@@ -47,7 +47,7 @@ KiCad's [Windows page](https://www.kicad.org/download/windows/) says "KiCad supp
 - `kicad-10.0.8-x86_64.exe`, for the Intel and AMD processors that most Windows laptops have;
 - `kicad-10.0.8-arm64.exe`, for a Windows computer with an ARM processor.
 
-Those are the current release. For 10.0.5, the same page says "Previous releases should be available for download on: https://downloads.kicad.org/kicad/windows/explore/stable", and that list had `kicad-10.0.5-x86_64.exe` and `kicad-10.0.5-arm64.exe`.
+Those are for the current release, 10.0.8. For 10.0.5, the same page says "Previous releases should be available for download on: https://downloads.kicad.org/kicad/windows/explore/stable", and that list had `kicad-10.0.5-x86_64.exe` and `kicad-10.0.5-arm64.exe`.
 
 Each installer is code-signed, and Windows checks the signature when you run it. The page says a valid signature names KiCad Services Corporation as the signer, and links a guide to checking that yourself.
 
@@ -77,7 +77,7 @@ You can also install KiCad through your distribution. The [Linux packages page](
 
 Arch Linux, FreeBSD, Gentoo, openSUSE and Linux Mint are listed too, as platforms the KiCad team doesn't officially support.
 
-The page heads the PPA's commands "10.0.8 Stable Release", and it doesn't say how to get an older 10.0 release from any of these. The nearest it comes is for Ubuntu: "Older stable releases of KiCad are available in other similarly-named PPAs", and `sudo apt install kicad=<version>`, which it gives for going back from the testing PPA to a stable release. So if you install from your distribution, you'll most likely have a later 10.0 release than the course's, and the end of [Which version to install](#which-version-to-install) says what that changes.
+The page heads the PPA's commands "10.0.8 Stable Release", and it doesn't say how to get an older 10.0 release from any of these. The nearest it comes is for Ubuntu, where it says "Older stable releases of KiCad are available in other similarly-named PPAs" and gives `sudo apt install kicad=<version>` for going back from the testing PPA to a stable release. So if you install from your distribution, you'll most likely have a later 10.0 release than the course's, and the end of [Which version to install](#which-version-to-install) says what that changes.
 
 Whichever way you install it, run KiCad in an X11 session if you can. The same page says "The KiCad team does not support running KiCad on Wayland due to the much higher incidence of related bugs and problems", and that bug reports about freezes, crashes, window size and position, focus and similar problems "will not be investigated unless they can be reproduced on an X11 system".
 
