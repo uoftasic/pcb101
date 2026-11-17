@@ -127,7 +127,7 @@ Instead of listing every export in the workflow, you can save the list in the pr
 
    </details>
 
-3. You run ERC on the SKY130 breakout in a container as root and get 236 warnings. The lab page says 103. Which number is wrong?
+3. You run ERC on the SKY130 breakout in a container as root and get 233 warnings. The lab page says 97. Which number is wrong?
 
    <details>
    <summary>Answer</summary>

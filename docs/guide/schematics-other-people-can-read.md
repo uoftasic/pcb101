@@ -4,7 +4,7 @@ This page answers: *KiCad drew every wire where I put it, so what is ERC complai
 
 A schematic is read far more often than it's drawn. The person who reviews your board reads it, so does whoever brings the board up, and so do you, six months later, with a probe in one hand. ERC, KiCad's electrical rules check, is the first of those readers, and the most literal. It can only check what the schematic says about itself, so a schematic that states its intent clearly is easier for ERC and for people alike. This page covers how KiCad decides what is connected, what ERC checks, the ten ERC errors on Tiny Tapeout's SKY130 breakout that you met in [Lab 01](../labs/lab-01-open-a-board-you-didnt-design-overview.md), and the habits that make a schematic readable.
 
-Every count and message on this page comes from `kicad-cli` 10.0.8 in the course's pinned image, on the breakout at `TinyTapeout/breakout-pcb` 91a2bf1, the same setup as Lab 01.
+Every count and message on this page comes from `kicad-cli` 10.0.5 in the course's pinned image, on the breakout at `TinyTapeout/breakout-pcb` 91a2bf1, the same setup as Lab 01.
 
 ## Nets, labels and power symbols
 
@@ -52,7 +52,7 @@ ERC reports an undriven net once, at one of its power pins, however many power p
 
 ![The supply section of the SKY130 breakout's schematic](../assets/img/tt-sky-breakout-sch-supplies.png){fig-alt="Part of a KiCad schematic titled Core Voltage Selection, with two near-identical blocks. In the upper block, VCC* SUPPLY, a dotted box labelled SRC select holds +5V and +3V3 power symbols, each feeding a 0 ohm resistor, R1 (crossed out) and R2, to a net labelled VCIN. VCIN goes to pins 1 and 3 of U1, an AP2112K-1.8, with a 10 uF capacitor C6 to ground. U1's pin 5, VOUT, connects to C18, 1 uF, C21, 100 nF, a small diamond-shaped power flag and a power symbol labelled VCC REG. A crossed-out 0 ohm resistor R7, labelled bypass, runs from VCIN to the output. The lower block, VDD* SUPPLY, has the same shape with R3 (crossed out) and R4 feeding VDIN, a crossed-out U2, and R8, labelled bypass, not crossed out, joining VDIN to VDD REG. A note at the top right reads: Breakout is fed 3v3 (guaranteed) and 5V (assumes USB supply) and regulates core voltages as needed. Each LDO has jumpers to select source or bypass completely. A note at the bottom right reads: For Sky: VCC* 1v8, VDD* 3v3."}
 
-*The supply section of the breakout's schematic, rev 3.1 by its title block, plotted by `kicad-cli` 10.0.8. The crossed-out symbols are the DNP parts. The small diamonds by `VCC_{REG}` and `VDD_{REG}` are the two power flags. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh).*
+*The supply section of the breakout's schematic, rev 3.1 by its title block, plotted by `kicad-cli` 10.0.5. The crossed-out symbols are the DNP parts. The small diamonds by `VCC_{REG}` and `VDD_{REG}` are the two power flags. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh).*
 
 All ten come from the supply section in the figure. `+3V3`, `+5V` and `GND` reach the breakout on the pins of its two DF12 connectors, and every pin of both connector symbols is passive, so ERC sees no source for any of them. `/VCIN` and `/VDIN`, the regulators' inputs, are fed from `+3V3` through the 0 Ω links R2 and R4, which are passive resistors, so those nets have power-input pins (the regulators' VIN) and no power output. `VCCD`, `VDD_{IO}` and `VDDA`, the chip's three supplies, are each joined to a regulator's output net through another 0 Ω link (R14, R13 and R15), so they have the same problem.
 
@@ -64,7 +64,7 @@ So put a power flag where a supply enters through parts that ERC treats as passi
 
 ## Warnings that come from the libraries
 
-Besides the ten errors, ERC reports 103 warnings on the breakout in the course's setup: 69 `lib_symbol_mismatch`, such as "Symbol 'GND' doesn't match copy in library 'power'", 22 `lib_symbol_issues`, such as "The current configuration does not include the symbol library 'psypassives'", and the 12 label warnings above. The first two kinds compare the copies of symbols saved in the schematic with the libraries KiCad has set up, which is why their counts change from one KiCad installation to another. [Symbols, footprints and libraries](symbols-footprints-and-libraries.md) explains where those copies come from.
+Besides the ten errors, ERC reports 97 warnings on the breakout in the course's setup: 63 `lib_symbol_mismatch`, such as "Symbol 'GND' doesn't match copy in library 'power'", 22 `lib_symbol_issues`, such as "The current configuration does not include the symbol library 'psypassives'", and the 12 label warnings above. The first two kinds compare the copies of symbols saved in the schematic with the libraries KiCad has set up, which is why their counts change from one KiCad installation to another. [Symbols, footprints and libraries](symbols-footprints-and-libraries.md) explains where those copies come from.
 
 ## Habits that make a schematic readable
 

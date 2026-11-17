@@ -4,7 +4,7 @@ This page answers: *what does a fabricator actually need from you to make a boar
 
 A board house doesn't open your `.kicad_pcb`. It works from a set of plain files that any CAM program can read: one Gerber file for each layer it has to make, a drill file that says where the holes go, and, if it also assembles the board, a bill of materials (BOM) and a position file. KiCad writes all of them, from the PCB Editor's menus or from `kicad-cli`, and in [Lab 05](../labs/lab-05-fab-outputs-in-ci-overview.md) a CI workflow writes them for you on every push. This page goes through them on a real 2-layer board, so that when you open your own outputs you know what you are looking at.
 
-The board is Tiny Tapeout's DIP dock (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), the 2-layer host board for their DIP carriers, which the course uses as the closest reference for the Pmod you draw in Lab 03. Its Gerber job file gives it as 85.05 × 85.05 mm, 2 copper layers and 1.561 mm thick, and the PCB Editor counts 370 pads, 111 vias and 535 track segments. Every file name, size and line quoted below comes from `kicad-cli` 10.0.8 in the course's pinned image, run on November 16, 2026.
+The board is Tiny Tapeout's DIP dock (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), the 2-layer host board for their DIP carriers, which the course uses as the closest reference for the Pmod you draw in Lab 03. Its Gerber job file gives it as 85.05 × 85.05 mm, 2 copper layers and 1.561 mm thick, and the PCB Editor counts 370 pads, 111 vias and 535 track segments. Every file name, size and line quoted below comes from `kicad-cli` 10.0.5 in the course's pinned image, run on the evening of November 16, 2026 in Toronto, when it was already November 17 in UTC, the time the files record.
 
 ## One Gerber per layer
 
@@ -34,15 +34,15 @@ Next to the Gerbers, KiCad writes a job file, `dip-dock-job.gbrjob`. It's JSON, 
 A Gerber file is text, and the first lines say what it is. These are the first ten lines of `dip-dock-F_Cu.gbr`:
 
 ```text
-G04 #@! TF.GenerationSoftware,KiCad,Pcbnew,10.0.8*
-G04 #@! TF.CreationDate,2026-11-16T07:27:55+00:00*
+G04 #@! TF.GenerationSoftware,KiCad,Pcbnew,10.0.5*
+G04 #@! TF.CreationDate,2026-11-17T01:02:51+00:00*
 G04 #@! TF.ProjectId,dip-dock,6469702d-646f-4636-9b2e-6b696361645f,1.0*
 G04 #@! TF.SameCoordinates,PX3fe56c0PY5cfbb60*
 G04 #@! TF.FileFunction,Copper,L1,Top*
 G04 #@! TF.FilePolarity,Positive*
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW 10.0.8) date 2026-11-16 07:27:55*
+G04 Created by KiCad (PCBNEW 10.0.5) date 2026-11-17 01:02:51*
 %MOMM*%
 ```
 
@@ -58,7 +58,7 @@ Which layers become Gerbers, and with what options, is a setting stored in the b
 
 *The PCB Editor's Plot dialog (File → Plot) with the DIP dock open, in KiCad 10.0.5. Under "Include Layers" the designer ticked F.Cu, B.Cu, both paste, silkscreen and mask layers, Edge.Cuts and F.Fab. On the right, "Use drill/place file origin" is ticked and "Use extended X2 format (recommended)" isn't. "Generate Drill Files..." at the bottom opens a second dialog for the drill file.*
 
-`kicad-cli pcb export gerbers` uses those settings only when you pass `--board-plot-params`. Without it, it uses its own defaults, and on the DIP dock the difference was large. With `--board-plot-params` it wrote the ten `.gbr` files above. Without it, it wrote 26 files, one for every layer the board has, including the courtyards, the margin and eight user layers such as `dip-dock-User_Eco1.gbr`, and it gave the main layers the old Protel extensions instead of `.gbr`: `dip-dock-F_Cu.gtl`, `dip-dock-B_Cu.gbl`, `dip-dock-F_Mask.gts`, `dip-dock-Edge_Cuts.gm1` and so on. The layers the fab needs are in both sets, but from the second a fabricator has to work out which 10 of the 26 files matter, and its silkscreen isn't the same: the board's settings subtract the solder mask from the silkscreen, and `kicad-cli`'s defaults don't.
+`kicad-cli pcb export gerbers` uses those settings only when you pass `--board-plot-params`. Without it, it uses its own defaults, and on the DIP dock the difference was large. With `--board-plot-params` it wrote the ten `.gbr` files above. Without it, it wrote 26 Gerbers and a job file, a Gerber for every layer the board has, including the courtyards, the margin and ten user layers such as `dip-dock-User_Eco1.gbr`, and it gave the main layers the old Protel extensions instead of `.gbr`: `dip-dock-F_Cu.gtl`, `dip-dock-B_Cu.gbl`, `dip-dock-F_Mask.gts`, `dip-dock-Edge_Cuts.gm1` and so on. The layers the fab needs are in both sets, but from the second a fabricator has to work out which 10 of the 26 Gerbers matter, and its silkscreen isn't the same: the board's settings subtract the solder mask from the silkscreen, and `kicad-cli`'s defaults don't.
 
 The simplest way to avoid that is to set the Plot dialog up once, save the board, and have every export, by hand or in CI, use `--board-plot-params`. Then the files you looked at in the GUI are the files CI sends to the fab.
 
@@ -68,10 +68,10 @@ Holes aren't in the layer Gerbers. They go in a drill file, which KiCad writes i
 
 ```text
 M48
-; DRILL file KiCad 10.0.8 date 2026-11-16T07:27:55
+; DRILL file KiCad 10.0.5 date 2026-11-17T01:03:09
 ; FORMAT={-:-/ absolute / metric / decimal}
-; #@! TF.CreationDate,2026-11-16T07:27:55+00:00
-; #@! TF.GenerationSoftware,Kicad,Pcbnew,10.0.8
+; #@! TF.CreationDate,2026-11-17T01:03:09+00:00
+; #@! TF.GenerationSoftware,Kicad,Pcbnew,10.0.5
 ; #@! TF.FileFunction,MixedPlating,1,2
 FMAT,2
 METRIC
@@ -105,7 +105,7 @@ The **position file** (`kicad-cli pcb export pos`, also called a pick-and-place 
 
 ## One-file formats: IPC-2581, ODB++ and STEP
 
-Gerbers and a drill file are the usual set. Two other formats put the whole board, stackup, nets and parts included, in one file, and `kicad-cli` writes both. For the DIP dock, `pcb export ipc2581` wrote a 5.1 MB XML file (IPC-2581 revision C, the default), and `pcb export odb` wrote ODB++ as a 291 kB zip of 113 entries. The ODB++ export printed 88 warnings like this one, because the board's stitching vias are footprints that share reference designators:
+Gerbers and a drill file are the usual set. Two other formats put the whole board, stackup, nets and parts included, in one file, and `kicad-cli` writes both. For the DIP dock, `pcb export ipc2581` wrote a 5.1 MB XML file (IPC-2581 revision C, the default), and `pcb export odb` wrote ODB++ as a 292 kB zip of 113 entries. The ODB++ export printed 88 warnings like this one, because the board's stitching vias are footprints that share reference designators:
 
 ```text
 Warning: Component 'STITCH12' has an ambiguous designator after conversion; renamed to 'STITCH12_1' for ODB++ export.
