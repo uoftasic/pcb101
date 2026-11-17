@@ -67,9 +67,15 @@ jobs:
       - name: Run each lab's checker on its starter, solution and known-bad variants
         run: |
           for t in labs/*/src/selftest.py; do
+            case "$t" in labs/lab-05-*) continue ;; esac   # the next step
             echo "== $t"
             labs/common/kicad.sh python3 "$t"
           done
+
+      # Lab 05's check runs KiBot in its own image as well as KiCad, so its self-test starts
+      # containers of both images itself and runs on the runner rather than in the image.
+      - name: Run Lab 05's checker, which also runs KiBot
+        run: python3 labs/lab-05-fab-outputs-in-ci/src/selftest.py
 
       - name: Keep the reports
         if: always()
