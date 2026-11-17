@@ -16,7 +16,7 @@ You don't need to have designed a board before. You do need the circuits you lea
 | Prerequisites | [IC101](https://uoftasic.com/ic101/), then IC102 (either version), and circuits from class. [AD103](https://uoftasic.com/ad103/) helps with the analog capstone brief and [DD102](https://uoftasic.com/dd102/) with the digital one. |
 | Tools | KiCad 10.0 on your own computer; Docker, which you set up in IC101, for the checks; git and a GitHub account. |
 | Checks | `kicad/kicad:10.0.5`, pinned by digest. Every count and message the labs show comes from a run in that image. |
-| Total time | About 21 hours, self-paced. The course path rows below add up to 21 h 0 min. |
+| Total time | About 21.5 hours, self-paced. The course path rows below add up to 21 h 25 min. |
 
 IC102 is on the list because from Lab 03 on you work in a board repository of your own on GitHub: every later lab commits to it, Lab 05 runs GitHub Actions on it, and you hand in the capstone as a repository and a commit.
 
@@ -44,7 +44,7 @@ Work down the table in order. A Read row points you to one or more guide pages, 
 | 7 | Read | [Protecting the chip's I/O](guide/protecting-the-chips-io.md) · [Supplies, back-powering and ESD](guide/supplies-back-powering-and-esd.md) · [Measuring current](guide/measuring-current.md) · [Bringing up a chip](guide/bringing-up-a-chip.md) | 1 h |
 | 8 | Do | [Lab 04: Protect and plan](labs/lab-04-protect-and-plan-overview.md). Add series resistors, ESD protection and a current-sense point to your Lab 03 board, and write its `BRINGUP.md` with the checks before power and an expected reading for every step. | 1 h 30 min |
 | 9 | Read | [Fabrication outputs](guide/fabrication-outputs.md) · [Outputs in CI](guide/outputs-in-ci.md) · [KiCad files in git](guide/kicad-files-in-git.md) | 45 min |
-| 10 | Do | [Lab 05: Fab outputs in CI](labs/lab-05-fab-outputs-in-ci-overview.md). Add a workflow to your board repository that fails on ERC or DRC errors and builds the fabrication files and review images, then break it on purpose and fix it. | 1 h 15 min |
+| 10 | Do | [Lab 05: Fab outputs in CI](labs/lab-05-fab-outputs-in-ci-overview.md). Add a workflow to your board repository that fails on ERC or DRC errors and builds the fabrication files, review images and KiBot's interactive BOM, then break it on purpose and fix it. | 1 h 40 min |
 | 11 | Read | [Reviewing and ordering a board](guide/reviewing-and-ordering-a-board.md) | 30 min |
 | 12 | Do | [Lab 06: Review a seeded board](labs/lab-06-review-a-seeded-board-overview.md). Find the faults planted in a board we ship, using the course checklist, then record a fabricator's quote and DFM report for your Lab 03 board. | 1 h 15 min |
 | 13 | Read | [Boards for chips](guide/boards-for-chips.md) | 30 min |
