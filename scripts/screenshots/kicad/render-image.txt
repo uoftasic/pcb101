@@ -1,0 +1,1 @@
+kicad/kicad:10.0.5-full@sha256:32495bae547afb6a0cfd3decc686a8c5acc0ef616d5c56c1b4861a770bfe9464

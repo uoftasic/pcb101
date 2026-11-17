@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Figures from kicad-cli in the pinned image: 3D renders, and SVG plots of a board, a
-# schematic, a footprint or a symbol. Use these wherever a figure only has to show the
-# design; use shot.sh when the student has to find something in the editor.
+# Figures from kicad-cli: 3D renders, and SVG plots of a board, a schematic, a footprint or a
+# symbol. Use these wherever a figure only has to show the design; use shot.sh when the
+# student has to find something in the editor.
 #
 #   render.sh 3d  BOARD.kicad_pcb OUT.png [top|bottom|iso]     3D render, basic quality
 #   render.sh pcb BOARD.kicad_pcb OUT.svg LAYERS                 board area only, e.g. F.Cu,Edge.Cuts
@@ -17,17 +17,26 @@
 # plot the background its editor has, for example --bg '#ffffff' for a symbol or --bg
 # '#001023' for a footprint. COLOR is #rrggbb.
 #
+# The plots run in the pinned image (labs/common/kicad-image.txt). The 3D renders run in the
+# render image, which has KiCad's 3D models of parts as well: IC103_RENDER_IMAGE if it's
+# set, otherwise the image named by digest in render-image.txt next to this script
+# (kicad/kicad:10.0.5-full, the same kicad-cli build as the pinned image plus the models).
+#
 # Paths are relative to your current folder, and outputs have to be inside the repo (the
 # container sees only the repo). A library path may also be one inside the image, such as
 # /usr/share/kicad/footprints/Package_DFN_QFN.pretty. Any further arguments go to kicad-cli
 # as they are.
 #
-# What we measured in kicad/kicad:10.0.8 on the SKY130 breakout: two runs give byte-identical
-# SVGs (once the date in <title> is removed, which this script does) and byte-identical top
-# renders, so those figures can be regenerated and compared. The iso view differs
-# between runs in about 4,000 of its 1.5 million pixels. A render asked for at 1600x1000
-# comes out 1568x984. The image has no 3D models of parts, so renders show the bare board,
-# pads, silkscreen and holes, which is also what a render in CI shows.
+# What we measured on the SKY130 breakout, with the plots in kicad/kicad:10.0.5 and the renders
+# in kicad/kicad:10.0.5-full: two runs give byte-identical SVGs (once the date in <title> is
+# removed, which this script does), so plots can be regenerated and compared. Two renders of
+# the same view weren't always identical: of the 1,542,912 pixels, 1 differed between two top
+# views, 54 between two bottom views and 4,025 between two iso views. Two top views of the DIP
+# dock were byte-identical. A render asked for at 1600x1000 comes out 1568x984. The render
+# image draws each part's 3D model where its footprint names one the image has; the pinned
+# image has no 3D models (/usr/share/kicad/3dmodels doesn't exist), so a render made in it,
+# as in a CI job that uses it, shows the bare board, pads, silkscreen and holes, and only the
+# parts whose models are embedded in the board file (the breakout's two DF12 connectors).
 set -euo pipefail
 
 # kicad-cli writes the time of the run into each SVG's <title>; drop it so that the same
@@ -58,6 +67,7 @@ trap 'rm -f "$stamp"' EXIT
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 kicad="$here/../../../labs/common/kicad.sh"
+render_image="${IC103_RENDER_IMAGE:-$(head -n 1 "$here/render-image.txt" | tr -d '[:space:]')}"
 
 usage() { sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//'; exit 2; }
 bg=""
@@ -79,7 +89,7 @@ case "$mode" in
             iso)        side=(--side top --rotate '-45,0,45') ;;
             *)          usage ;;
         esac
-        "$kicad" kicad-cli pcb render --quality basic --background opaque \
+        IC103_IMAGE="$render_image" "$kicad" kicad-cli pcb render --quality basic --background opaque \
             --width 1600 --height 1000 "${side[@]}" "$@" -o "$out" "$board"
         ;;
     pcb)

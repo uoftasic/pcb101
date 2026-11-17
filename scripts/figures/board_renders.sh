@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 # 3D renders of Tiny Tapeout's boards for the guide pages, and of the course's own boards
-# for the lab pages, from kicad-cli in the pinned image (scripts/screenshots/kicad/render.sh).
+# for the lab pages, from kicad-cli in the render image (scripts/screenshots/kicad/render.sh),
+# which has KiCad's 3D models of parts. Set IC103_RENDER_IMAGE to render in another image;
+# by default it's the one named by digest in scripts/screenshots/kicad/render-image.txt.
 # Fetch the boards first:
 #   python3 labs/common/fetch_boards.py breakout-pcb tinytapeout-kicad-libs
 #   scripts/figures/board_renders.sh
 #
 # Writes into docs/assets/img/:
-#   dip-dock-3d-top.png           the DIP dock (breakout-pcb 91a2bf1, Apache-2.0), top, as a
-#                                 render in CI shows it: the image has no 3D models of parts
+#   dip-dock-3d-top.png           the DIP dock (breakout-pcb 91a2bf1, Apache-2.0), top
 #   sky-breakout-3d-bottom.png    the SKY130 QFN breakout rev 3.2, bottom: the two DF12
 #                                 connectors and the unfitted supply header J2
 #   pmod-connectors-top.png       Lab 03's board with only its three Pmod connectors placed
@@ -16,15 +17,18 @@
 #   capstone-brief-d-top.png      the capstone's Brief D reference board, top
 #   capstone-brief-a-top.png      the capstone's Brief A reference board, top
 #
-# The two Lab 03 figures are the middle 1060 x 580 pixels of render.sh's 1568 x 984 render,
-# cut out by ImageMagick in ic103/kicad-shot (scripts/screenshots/kicad/build.sh builds it),
-# because the 64 x 32 mm board fills only the middle of the full render. The intermediate
-# files go in Lab 03's results/figures/ (gitignored).
+# The two Lab 03 figures are 1060 x 672 pixels cut out of render.sh's 1568 x 984 render,
+# 254 pixels from its left edge and 110 from its top, by ImageMagick in ic103/kicad-shot
+# (scripts/screenshots/kicad/build.sh builds it), because the 64 x 32 mm board fills only
+# the middle of the full render. The cut-out takes in the Pmod connectors' pins, which stick
+# out past the board's top edge. The intermediate files go in Lab 03's results/figures/
+# (gitignored).
 #
-# In kicad/kicad:10.0.8, two runs of the DIP dock's top view gave byte-identical PNGs; two
-# runs of the breakout's bottom view didn't (161,264 and 161,266 bytes), so compare that
-# one by eye. When we ran this script on November 16, 2026, `cmp` found the four figures of
-# the course's boards byte-identical to the ones in the repo.
+# In kicad/kicad:10.0.5-full, two runs of the DIP dock's top view gave byte-identical PNGs;
+# two runs of the breakout's bottom view didn't (both 161,207 bytes, with 58 of their
+# 1,542,912 pixels different), so compare that one by eye. When we ran this script twice on
+# November 16, 2026, `cmp` found the renders of the course's four boards byte-identical
+# between the two runs.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -55,7 +59,7 @@ docker image inspect "$shot_image" >/dev/null 2>&1 || scripts/screenshots/kicad/
 for f in pmod-connectors-top pmod-simproc-lab03-top; do
     docker run --rm ${IC103_DOCKER_ARGS:-} --user "$(id -u):$(id -g)" -e HOME=/tmp/h \
         -v "$root":/w -w /w --entrypoint convert "$shot_image" \
-        "$T/$f.png" -crop 1060x580+254+202 +repage -strip "$I/$f.png"
+        "$T/$f.png" -crop 1060x672+254+110 +repage -strip "$I/$f.png"
 done
 
 ls -l "$I/dip-dock-3d-top.png" "$I/sky-breakout-3d-bottom.png" "$I"/pmod-connectors-top.png \
