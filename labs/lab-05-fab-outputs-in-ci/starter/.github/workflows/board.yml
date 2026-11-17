@@ -1,6 +1,7 @@
 # Checks the board and builds its fabrication files and review images on every push and pull
-# request. Every step runs ci/build.sh in the KiCad image named in ci/kicad-image.txt, by
-# digest, so CI runs the same KiCad as the IC103 checks on your own machine.
+# request. Every step runs a stage of ci/build.sh in an image named by its digest: the KiCad
+# image in ci/kicad-image.txt, and for KiBot's outputs the KiBot image in ci/kibot-image.txt.
+# So CI runs the same KiCad and KiBot as the IC103 checks on your own machine.
 name: Board
 
 on:
@@ -34,6 +35,15 @@ jobs:
 
       - name: Review images
         run: docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp/home -v "$PWD:/work" -w /work "$IMAGE" bash ci/build.sh images
+
+      # KiBot has its own image, pulled here, so a run whose board check failed never downloads
+      # it. It runs the same way as the steps above, rather than through KiBot's own GitHub
+      # Action, which builds its image from a tag that moves with every KiBot release.
+      - name: KiBot outputs
+        run: |
+          kibot_image="$(head -n 1 ci/kibot-image.txt)"
+          docker pull "$kibot_image"
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp/home -v "$PWD:/work" -w /work "$kibot_image" bash ci/build.sh kibot
 
       # Runs even when a check failed, so a red run still has its ERC and DRC reports.
       - name: Upload the outputs

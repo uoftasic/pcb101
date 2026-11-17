@@ -1,0 +1,17 @@
+# KiBot's outputs for this board, the ones kicad-cli doesn't make. `bash ci/build.sh kibot`
+# runs KiBot on this file in the image named in ci/kibot-image.txt, and KiBot writes what it
+# makes into out/kibot/. KiBot lists what you can ask for:
+#
+#   kibot --help-list-outputs        every output type
+#   kibot --help-output ibom         the options of one type
+#   kibot --help-filters             the filters, which decide which parts count as fitted
+kibot:
+  version: 1
+
+# TODO (Lab 05, Part 5): a filter that treats the parts marked "Do not populate" in KiCad as
+# not fitted.
+
+outputs:
+  # TODO (Lab 05, Part 5): an interactive HTML BOM (type ibom) that leaves out the parts your
+  # filter marks as not fitted.
+  # TODO: a design report (type report), with its default template.

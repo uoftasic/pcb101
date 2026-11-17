@@ -1,0 +1,29 @@
+# KiBot's outputs for this board, the ones kicad-cli doesn't make. `bash ci/build.sh kibot`
+# runs KiBot on this file in the image named in ci/kibot-image.txt, and KiBot writes what it
+# makes into out/kibot/. KiBot lists what you can ask for:
+#
+#   kibot --help-list-outputs        every output type
+#   kibot --help-output ibom         the options of one type
+#   kibot --help-filters             the filters, which decide which parts count as fitted
+kibot:
+  version: 1
+
+filters:
+  # Without a filter, the ibom lists a part marked "Do not populate" with all the others.
+  - name: dnp
+    comment: Parts marked Do not populate in KiCad
+    type: generic
+    exclude_kicad_dnp: true
+
+outputs:
+  # For placing the parts by hand, and for finding a part or a test point on the board.
+  - name: ibom
+    comment: Interactive HTML BOM
+    type: ibom
+    options:
+      dnf_filter: dnp
+
+  # The board's size, stack-up, track widths and holes, as a fab's order form asks for them.
+  - name: report
+    comment: Design report
+    type: report

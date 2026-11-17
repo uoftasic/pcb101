@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Everything this board's CI does, in one script. It runs inside the pinned KiCad image named
-# in ci/kicad-image.txt: .github/workflows/board.yml runs one stage per step, and the IC103
-# Lab 05 check runs all of them on your own machine the same way.
+# Everything this board's CI does, in one script. The check, fab and images stages run inside
+# the pinned KiCad image named in ci/kicad-image.txt, and the kibot stage inside the pinned
+# KiBot image named in ci/kibot-image.txt: .github/workflows/board.yml runs one stage per step,
+# and the IC103 Lab 05 check runs them on your own machine the same way.
 #
 #   bash ci/build.sh check     ERC, DRC and schematic parity; fails if the board check fails
 #   bash ci/build.sh fab       Gerbers and drill file (out/fab), BOM and position file (out/assembly)
 #   bash ci/build.sh images    renders, copper plots and the schematic (out/review)
-#   bash ci/build.sh all       all three, in that order
+#   bash ci/build.sh kibot     KiBot's outputs, from ci/board.kibot.yaml (out/kibot)
+#   bash ci/build.sh all       check, fab and images, in that order; kibot needs its own image
 #
 # Run it from the repository's root folder, which holds exactly one .kicad_pro.
 set -euo pipefail
@@ -19,7 +21,8 @@ fi
 name="${pros[0]%.kicad_pro}"
 
 # KiCad's default library tables, so the warnings match whoever runs this. A container that
-# runs as your uid, or as GitHub's runner, starts with an empty home folder and none.
+# runs as your uid, or as GitHub's runner, starts with an empty home folder and none. Both
+# images have the defaults in /usr/share/kicad/template/.
 cfg="${HOME:-/tmp/home}/.config/kicad/10.0"
 mkdir -p "$cfg"
 for t in fp-lib-table sym-lib-table; do
@@ -59,10 +62,17 @@ images() {
     kicad-cli sch export pdf -o "out/review/$name-schematic.pdf" "$name.kicad_sch"
 }
 
+kibot_outputs() {
+    echo "== KiBot outputs"
+    # The outputs listed in ci/board.kibot.yaml, written into out/kibot/.
+    kibot -c ci/board.kibot.yaml -b "$name.kicad_pcb" -e "$name.kicad_sch" -d out/kibot
+}
+
 case "${1:-all}" in
     check)  check ;;
     fab)    fab ;;
     images) images ;;
+    kibot)  kibot_outputs ;;
     all)    check; fab; images ;;
-    *)      echo "usage: bash ci/build.sh check|fab|images|all" >&2; exit 2 ;;
+    *)      echo "usage: bash ci/build.sh check|fab|images|kibot|all" >&2; exit 2 ;;
 esac
