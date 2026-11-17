@@ -12,7 +12,7 @@ Other KiCad projects already work this way. wafer.space's chip-on-board reposito
 
 ## Checks that fail the run
 
-A CI step fails when its command exits with a status other than 0, so the whole job comes down to choosing commands whose exit status means what you want. By default `kicad-cli` exits 0 even when it finds problems: on the DIP dock, ERC found 2 violations and DRC 165, and both exited 0. With `--exit-code-violations` it exits 5 when anything is reported, and the `--severity-...` options decide what counts. Here are both checks on Tiny Tapeout's DIP dock (`breakout-pcb` at 91a2bf1), in the course's pinned image. We've shortened the paths and left out the line that says where each report was saved:
+A CI step fails when its command exits with a status other than 0, so the whole job comes down to choosing commands whose exit status means what you want. By default `kicad-cli` exits 0 even when it finds problems: on the DIP dock, ERC found 42 violations and DRC 156, and both exited 0. With `--exit-code-violations` it exits 5 when anything is reported, and the `--severity-...` options decide what counts. Here are both checks on Tiny Tapeout's DIP dock (`breakout-pcb` at 91a2bf1), in the course's pinned image. We've shortened the paths, and left out the line that says where each report was saved and the font message that each DRC run printed, which [Fonts and 3D models](#fonts-and-3d-models) explains:
 
 ```text
 $ kicad-cli sch erc --severity-error --exit-code-violations -o erc.rpt dip-dock.kicad_sch
@@ -28,7 +28,7 @@ exit status 0
 ERC fails, on two `power_pin_not_driven` errors, and DRC passes. Run with `--severity-all` instead, the same DRC reports:
 
 ```text
-Found 165 violations
+Found 162 violations
 Found 0 unconnected items
 Found 3 schematic parity issues
 exit status 5
@@ -36,12 +36,12 @@ exit status 5
 
 The three parity issues were there in the first run too. KiCad reports schematic parity problems as warnings, so `--severity-error` filters them out, and in every project the course checked, that included a footprint that is in the schematic and missing from the board. On the DIP dock the three are about a logo (one footprint, `PSYLOGO01`, placed twice and not in the schematic), which is harmless. On your board the same filter would let a missing connector through with a green run.
 
-That is why the labs don't use the plain `kicad-cli` flags as their "done when". They run [`labs/common/check_board.py`](https://github.com/uoftasic/ic103/blob/main/labs/common/check_board.py), which runs ERC and DRC with every severity, reads the JSON reports, and fails on any error, any unconnected item, and any parity item at all. On the DIP dock it took 18 s and ended like this:
+That is why the labs don't use the plain `kicad-cli` flags as their "done when". They run [`labs/common/check_board.py`](https://github.com/uoftasic/ic103/blob/main/labs/common/check_board.py), which runs ERC and DRC with every severity, reads the JSON reports, and fails on any error, any unconnected item, and any parity item at all. On the DIP dock it took 28 s with the container limited to one CPU, and ended like this:
 
 ```text
                 errors  warnings  excluded
-  ERC                2        44         0
-  DRC                0       159         6
+  ERC                2        40         0
+  DRC                0       156         6
   unconnected        0         0         0
   parity             0         3         0
 ...
@@ -49,7 +49,7 @@ FAIL  erc.error: 2 (want 0)
 FAIL  parity.warning: 3 (want 0)
 ```
 
-It exits 1 on a FAIL, so a workflow step that runs it fails the run. The 159 DRC warnings don't fail it: they are `lib_footprint_issues` and `lib_footprint_mismatch`, comparisons between the board and the libraries installed where the check runs, which is the subject of the next two sections.
+It exits 1 on a FAIL, so a workflow step that runs it fails the run. The 156 DRC warnings don't fail it: they are `lib_footprint_issues` and `lib_footprint_mismatch`, comparisons between the board and the libraries installed where the check runs, which is the subject of the next two sections.
 
 ## Pinning the image
 

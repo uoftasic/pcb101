@@ -7,25 +7,26 @@ python3 labs/common/fetch_boards.py
 labs/common/kicad.sh python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
 ```
 
-The first command fetches the boards (84 MB, about 7 s). The second checks Tiny Tapeout's SKY130 breakout. In our runs it took 45 to 58 s with the container limited to one CPU, and 23 s with two. It ends like this:
+The first command fetches the boards (84 MB, about 7 s). The second checks Tiny Tapeout's SKY130 breakout. In our runs it took 23 to 44 s with the container limited to one CPU, and 19 s with two. It ends like this:
 
 ```text
                 errors  warnings  excluded
-  ERC               10       103         0
-  DRC                0       123         1
+  ERC               10        97         0
+  DRC                0       120         1
   unconnected        0         0         0
-  parity             0         0         0
+  parity             0        37         0
 ...
 FAIL  erc.error: 10 (want 0)
+FAIL  parity.warning: 37 (want 0)
 ```
 
-That FAIL is what should happen, because the breakout has 10 ERC errors in KiCad 10.0.8. The section on the board check below explains the rest of its output.
+Those FAILs are what should happen, because in KiCad 10.0.5 the breakout has 10 ERC errors and 37 parity warnings. The parity warnings are all `footprint_symbol_field_mismatch`, on the Datasheet field (`~` on the board, empty in the schematic); KiCad 10.0.8 didn't report them on the same files. The section on the board check below explains the rest of the output.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `kicad-image.txt` | the pinned image, `kicad/kicad:10.0.8@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34`; every other script reads it from here |
+| `kicad-image.txt` | the pinned image, `kicad/kicad:10.0.5@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de`; every other script reads it from here |
 | `kicad.sh` | runs any command in the pinned image, as your uid, with the repo mounted |
 | `image-entry.sh` | runs inside the image before the command, and gives your uid the image's default library tables |
 | `check_board.py` | the board check: ERC, DRC, unconnected items and schematic parity, with PASS or FAIL |
@@ -41,20 +42,20 @@ That FAIL is what should happen, because the breakout has 10 ERC errors in KiCad
 ## The pinned image: `kicad.sh`
 
 ```bash
-labs/common/kicad.sh kicad-cli version                       # 10.0.8
+labs/common/kicad.sh kicad-cli version                       # 10.0.5
 labs/common/kicad.sh kicad-cli pcb drc --format json -o drc.json board.kicad_pcb
 labs/common/kicad.sh python3 labs/common/check_board.py board.kicad_pro
 ```
 
-`kicad.sh` runs its arguments as a command in `kicad/kicad:10.0.8`, named by digest, so it's the same build on every machine, even if Docker Hub later moves the tag. It pulls the image the first time (812 MB to download, 2.6 GB on disk). Before each run it prints the digest Docker resolved, which is the record of exactly which KiCad ran:
+`kicad.sh` runs its arguments as a command in `kicad/kicad:10.0.5`, named by digest, so it's the same build on every machine, even if Docker Hub later moves the tag. It pulls the image the first time (808 MB to download, 2.6 GB on disk). Before each run it prints the digest Docker resolved, which is the record of exactly which KiCad ran:
 
 ```text
-ic103: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
+ic103: KiCad image kicad/kicad@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de
 ```
 
-The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `IC103_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `IC103_QUIET=1` to drop the digest line.
+The repo root is mounted at `/w`, and the command runs in the folder that matches your current one, so relative paths work the same inside and outside. The container runs as your uid, so any files it writes are yours, and it's removed when the command ends. Set `IC103_DOCKER_ARGS` to add `docker run` flags (we ran everything here with `--cpus 1 --memory 2g`), and `IC103_QUIET=1` to drop the digest line. `IC103_IMAGE` runs another image instead of the pinned one; the course's render script uses it to run 3D renders in `kicad/kicad:10.0.5-full`, which has KiCad's 3D models of parts.
 
-Running as your uid means starting with an empty home folder, and so with no KiCad library tables. Without them, ERC and DRC report every standard library as missing, and the SKY130 breakout's ERC warnings go from 103 to 236 and its DRC warnings from 123 to 130 (the errors stay 10 and 0). The image's own user, `kicad`, has the two tables in `/home/kicad/.config/kicad/10.0/`, but that folder is readable only by `kicad`. Its `fp-lib-table` and `sym-lib-table` are byte-for-byte the defaults KiCad ships in `/usr/share/kicad/template/` (we compared them with `cmp`), so `image-entry.sh` copies those. Every run then sees the same libraries as the image's default user, whoever runs it.
+Running as your uid means starting with an empty home folder, and so with no KiCad library tables. Without them, ERC and DRC report every standard library as missing, and the SKY130 breakout's ERC warnings go from 97 to 233 and its DRC warnings from 120 to 128 (the errors stay 10 and 0). The image's own user, `kicad`, has the two tables in `/home/kicad/.config/kicad/10.0/`, but that folder is readable only by `kicad`. Its `fp-lib-table` and `sym-lib-table` are byte-for-byte the defaults KiCad ships in `/usr/share/kicad/template/` (we compared them with `cmp`), so `image-entry.sh` copies those. Every run then sees the same libraries as the image's default user, whoever runs it.
 
 From Lab 03 on, your board lives in a repository of your own, outside the course clone. Run `kicad.sh` from there and it mounts the current folder at `/work` as well, and starts the command in it, while the course's scripts stay under `/w`. That's what each lab's `check.sh` does:
 
@@ -66,7 +67,7 @@ cd ~/simproc-pmod
 `kicad.sh` is a bash script, for Linux, macOS and WSL. Without bash, the plain `docker run` below does the same check. It runs as the image's own user, which already has the library tables, and on Linux it printed the same counts as `kicad.sh`. We haven't run it on Windows.
 
 ```bash
-docker run --rm -v "${PWD}:/w" -w /w kicad/kicad:10.0.8@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34 python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
+docker run --rm -v "${PWD}:/w" -w /w kicad/kicad:10.0.5@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
 ```
 
 ## The board check: `check_board.py`
@@ -105,14 +106,15 @@ A board that has errors on purpose, such as a board with planted faults for a re
   "erc.error": 10,
   "erc.error.power_pin_not_driven": 8,
   "erc.error.pin_to_pin": 2,
-  "erc.warning": 103,
+  "erc.warning": 97,
   "drc.error": 0,
-  "drc.warning": 123,
+  "drc.warning": 120,
   "drc.excluded": 1,
   "drc.excluded.courtyards_overlap": 1,
   "unconnected.error": 0,
   "parity.error": 0,
-  "parity.warning": 0
+  "parity.warning": 37,
+  "parity.warning.footprint_symbol_field_mismatch": 37
 }
 ```
 
@@ -122,15 +124,15 @@ Counts from `check_board.py` through `kicad.sh`, at the commits in `upstream.jso
 
 | Board | ERC errors | ERC warnings | DRC errors | DRC warnings | DRC excluded | Parity |
 |---|---|---|---|---|---|---|
-| `breakout-pcb/breakout-sky-qfn` | 10 | 103 | 0 | 123 | 1 | 0 |
-| `breakout-pcb/dip-dock` | 2 | 44 | 0 | 159 | 6 | 3 warnings |
-| `tt-demo-pcb` (`tinytapeout-demo`) | 8 | 103 | 0 | 277 | 8 | 5 warnings |
+| `breakout-pcb/breakout-sky-qfn` | 10 | 97 | 0 | 120 | 1 | 37 warnings |
+| `breakout-pcb/dip-dock` | 2 | 40 | 0 | 156 | 6 | 3 warnings |
+| `tt-demo-pcb` (`tinytapeout-demo`) | 8 | 84 | 0 | 274 | 8 | 143 warnings |
 
 None has unconnected items. By type:
 
-- SKY130 breakout. ERC errors: `power_pin_not_driven` 8, `pin_to_pin` 2. ERC warnings: `lib_symbol_mismatch` 69, `lib_symbol_issues` 22, `isolated_pin_label` 11, `multiple_net_names` 1. DRC warnings: `lib_footprint_issues` 76, `lib_footprint_mismatch` 47. Excluded: one `courtyards_overlap`.
-- DIP dock. ERC errors: `power_pin_not_driven` 2. Parity: `duplicate_footprints` 1 and `extra_footprint` 2, all for the logo footprint `PSYLOGO01`. DRC warnings: `lib_footprint_issues` 111, `lib_footprint_mismatch` 48. Excluded: six `courtyards_overlap`.
-- Demo board. ERC errors: `pin_not_connected` 4, `power_pin_not_driven` 3, `pin_to_pin` 1. Parity: `footprint_symbol_field_mismatch` 2 (a DigiKey part number on J2 and J3), `missing_footprint` 1 (J17), `extra_footprint` 2 (the logos `PSYLOGO` and `PSYLOGOB`). DRC warnings: `lib_footprint_issues` 166, `lib_footprint_mismatch` 111. Excluded: six `courtyards_overlap` and two `items_not_allowed`.
+- SKY130 breakout. ERC errors: `power_pin_not_driven` 8, `pin_to_pin` 2. ERC warnings: `lib_symbol_mismatch` 63, `lib_symbol_issues` 22, `isolated_pin_label` 11, `multiple_net_names` 1. DRC warnings: `lib_footprint_issues` 76, `lib_footprint_mismatch` 44. Excluded: one `courtyards_overlap`. Parity: `footprint_symbol_field_mismatch` 37, all on the Datasheet field.
+- DIP dock. ERC errors: `power_pin_not_driven` 2. Parity: `duplicate_footprints` 1 and `extra_footprint` 2, all for the logo footprint `PSYLOGO01`. DRC warnings: `lib_footprint_issues` 111, `lib_footprint_mismatch` 45. Excluded: six `courtyards_overlap`.
+- Demo board. ERC errors: `pin_not_connected` 4, `power_pin_not_driven` 3, `pin_to_pin` 1. Parity: `footprint_symbol_field_mismatch` 140, all on the Datasheet field, `missing_footprint` 1 (J17), `extra_footprint` 2 (the logos `PSYLOGO` and `PSYLOGOB`). KiCad 10.0.8 reported only 2 field mismatches here, for a DigiKey part number on J2 and J3. DRC warnings: `lib_footprint_issues` 166, `lib_footprint_mismatch` 108. Excluded: six `courtyards_overlap` and two `items_not_allowed`.
 
 So none of these three boards passes the check as it stands, which is one reason a lab's "You're done when" always runs it on the student's own board.
 
@@ -143,7 +145,7 @@ labs/common/kicad.sh python3 labs/common/selftest_check.py
 ```text
 ok   pic_programmer as shipped                    PASS  
 ok   pic_programmer, one footprint deleted        FAIL  parity.warning.missing_footprint = 1
-ok   pic_programmer, GND track across VCC         FAIL  drc.error = 2
+ok   pic_programmer, GND track across VCC         FAIL  drc.error = 3
 ok   SKY130 breakout against its expected counts  PASS  
 4 of 4 cases gave the expected verdict
 ```
