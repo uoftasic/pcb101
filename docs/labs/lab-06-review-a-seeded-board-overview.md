@@ -1,16 +1,16 @@
 # Lab 06: Review a seeded board
 
-In this lab you review a board you didn't draw. It's a SimProc Pmod like yours, with its bring-up plan, and we planted eight faults in it: some that the course's checks find and more that they don't. You'll run the checks you already have, then go through the board line by line against the course checklist and write each fault you find in `REVIEW.md`. Then you get a fabricator's quote for your own board, without ordering it, and record the price, the build time and the fabricator's own check of your files in `QUOTE.md`.
+In this lab you review a board you didn't draw. It's a SimProc Pmod like yours, with its bring-up plan, and we planted eight faults in it. The checks you already have look for fewer than half of them. You'll run those checks first, then go through the course checklist one line at a time against the board and its plan, and write each fault you find in `REVIEW.md`. Then you get a fabricator's quote for your own board, without ordering it, and record the price, the build time and the fabricator's own check of your files in `QUOTE.md`.
 
 The lab's files are in [`labs/lab-06-review-a-seeded-board/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-06-review-a-seeded-board) in the course repo.
 
 ## Before you start
 
-- Finish [Lab 05](lab-05-fab-outputs-in-ci-overview.md). Part 3 uploads the Gerbers your workflow built.
+- Finish [Lab 05](lab-05-fab-outputs-in-ci-overview.md). Part 3 of this lab uploads the Gerbers that your Lab 05 workflow built.
 - Read [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md), row 11 of the [course path](../index.md#course-path). Its ten-line checklist is the one you review against, and `REVIEW.md` asks for the number of the line each fault breaks.
 - Don't open `labs/lab-06-review-a-seeded-board/solutions/` until you've finished. It lists the faults.
 
-The lab takes about 1 hour 15 minutes: roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those are our estimates, but we timed the checks themselves on a copy of the seeded board, with one CPU: the board check took 19 s and Lab 04's check 20 s, and the Lab 06 check, which only reads your two files and your board, took under a second.
+The lab takes about 1 hour 15 minutes, roughly 10 minutes for Part 1, 40 for Part 2 and 25 for Part 3. Those times are our estimates. We did time the checks themselves, with the container limited to one CPU. On a copy of the seeded board, the board check took 19 s and Lab 04's check took 20 s. The Lab 06 check took under a second, because it only reads your two files and your board.
 
 ## Part 1: What the checks say
 
@@ -69,7 +69,7 @@ What do the checks you already have find on this board?
    <details>
    <summary>Answer</summary>
 
-   It tells you very little. The board check compares the board with its own schematic and with the rules saved in the board, so a fault that is in the schematic, or in the rules, passes it. The bring-up plan check only looks for a filled-in plan with an expected value at every step; it can't tell whether the steps are safe. The rest is the review's job, and [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) starts with two of Tiny Tapeout's own faults that passed their makers' checks.
+   It tells you very little. The board check compares the board with its own schematic and with the rules saved in the board, so a fault that is in the schematic, or in the rules, passes it. The bring-up plan check only looks for a filled-in plan with an expected value at every step; it can't tell whether the steps are safe. The rest is for a person to find in a review. [Reviewing and ordering a board](../guide/reviewing-and-ordering-a-board.md) starts with two of Tiny Tapeout's own mistakes that ended up on manufactured boards, and ERC, DRC and parity don't look for either kind.
 
    </details>
 
@@ -83,7 +83,7 @@ Which faults does a person find that the checks don't?
 
    *The seeded board as it opens in KiCad 10.0.5's PCB Editor. It has the same parts as your Lab 04 board, in much the same places.*
 
-2. Go through the checklist one line at a time, and for each line look at every part and every line of the plan it applies to. Where to look in KiCad:
+2. Go through the checklist one line at a time. For each line, look at every part on the board and every step of the plan that the line applies to. Here is where to look in KiCad:
 
    - For a footprint (line 1), select the part on the board. The status bar along the bottom names its footprint in full, and the Properties panel has it as Library Link; the name gives the package and its pitch. Compare it with what will plug in or be soldered there.
 
@@ -92,14 +92,14 @@ Which faults does a person find that the checks don't?
      *J4 selected on Lab 04's reference board (Ctrl+F, then J4), in KiCad 10.0.5. The status bar reads `Footprint: Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical`; Footprint Properties (E) gives the same name as its Library link.*
 
    - For connections (line 3), click a net in the Schematic Editor or a track in the PCB Editor to highlight it, follow it from the Pmod connector to every part it reaches, and compare with the pin list and with the silkscreen's labels.
-   - For values (line 5), read every resistor's value and ask what current it lets through.
-   - For a part with more than two pins (line 6, and line 1 again), compare which pin goes where with the symbol's pin names and with the datasheet, which the symbol's Datasheet field links to.
-   - For the plan (lines 7 and 8), read `BRINGUP.md` step by step against the board: the order things are plugged in and switched off, and whether every point it measures exists.
-   - For the fabricator's rules (line 9), open File > Board Setup and look under Design Rules > Constraints, and compare what you find with the fabricator's numbers on the checklist page. Your own board, from Lab 03's template, has JLCPCB's:
+   - For I/O voltages (line 5), read every resistor's value and ask what current it lets through.
+   - For ESD (line 6), and for any part with more than two pins (line 1 again), compare which pin goes where with the symbol's pin names and with the part's datasheet. The symbol's Datasheet field links to the datasheet when it's filled in, and on some symbols, such as SW1's, it's empty.
+   - For the plan (lines 7 and 8), read `BRINGUP.md` step by step against the board. Check the order in which things are plugged in and switched off, and whether every point it measures is on the board.
+   - For the fabricator's rules (line 9), open File > Board Setup, look under Design Rules > Constraints, and compare the numbers there with the fabricator's numbers on the checklist page. On your own board they're JLCPCB's, because Lab 03's template set them:
 
      ![Board Setup's Constraints page, showing the Silk rules](../assets/img/kicad-board-setup-constraints.png)
 
-     *Board Setup > Design Rules > Constraints on Lab 04's reference board, scrolled to the Silk rules: a minimum text height of 1 mm and a minimum text thickness of 0.15 mm, JLCPCB's published limits.*
+     *Board Setup > Design Rules > Constraints on Lab 04's reference board, scrolled to the Silk rules. The minimum text height is 1 mm and the minimum text thickness is 0.15 mm, which are JLCPCB's published limits.*
 
 3. For each fault you find, add a row to `REVIEW.md`: under Where, the reference designator of the part (or the file, such as `BRINGUP.md` or `pmod.kicad_pro`); under Line, the number of the checklist line it breaks; then what's wrong and what to change. Write it for the designer, who wasn't there when you found it.
 
@@ -110,7 +110,7 @@ Which faults does a person find that the checks don't?
    ~/ic103/labs/lab-06-review-a-seeded-board/check.sh
    ```
 
-   It prints a line for each row of your table and says whether that row finds a planted fault. A row finds one when its Where names the right part or file and its Line is the line that fault breaks; each row can find one fault. Our reference review's lines look like this:
+   It prints a line for each row of your table and says whether that row finds a planted fault. A row finds one when its Where names the right part or file and its Line is the line that the fault breaks, and each row can find at most one fault. The first two rows of our reference review look like this:
 
    ```text
      REVIEW.md
@@ -118,7 +118,7 @@ Which faults does a person find that the checks don't?
        row 2   SW1                          line 3   finds a planted fault
    ```
 
-   You should see at least five rows that find a planted fault, and `ok    faults    5 of 8 planted faults found (5 needed)` or better. Until you've filled in `QUOTE.md` the last line still says FAIL. The check holds only hashes of the answers, so it says whether a row finds a fault and not which one; if a row you're sure of doesn't find one, check that its Where names the part's reference designator or the file the fault is in, as the template asks, and read the checklist line again.
+   You should see at least five rows that find a planted fault, and `ok    faults    5 of 8 planted faults found (5 needed)` or better. Until you've filled in `QUOTE.md`, the last line still says FAIL. The check holds only hashes of the answers, so it tells you whether a row finds a fault but not which fault it finds. If a row you're sure of doesn't find one, check that its Where names the part's reference designator or the file the fault is in, as the template asks, and read the checklist line again.
 
 ## Part 3: Get a quote for your own board
 
@@ -151,7 +151,7 @@ What would your board cost to make, how long would it take, and what does the fa
      ok    board     2 layers and 64 x 32 mm, as your board has
    ```
 
-   The check compares Layers and Board size with your board's file, so a quote for some other board, or one the fabricator misread, fails here.
+   The check compares Layers and Board size with your board's `.kicad_pcb`, so a quote for some other board fails the `board` row, and so does a quote in which the fabricator misread your files.
 
 ## Finishing
 
@@ -164,7 +164,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   It checks that each `uio` line has a switch to the 3.3 V supply and a pull-down to GND, and not which switch. On the seeded board `uio[6]` goes to switch 8 (`pins 8-9`) and `uio[7]` to switch 7 (`pins 7-10`), the reverse of the other six and of the silkscreen, so anyone who sets the switches by the legend gets a different bit period. Tiny Tapeout's TT07 breakout had the same kind of fault, two lines crossed and so mislabelled.
+   It checks that each `uio` line has a switch to the 3.3 V supply and a pull-down to GND, but not which switch it is. On the seeded board `uio[6]` goes to switch 8 (`pins 8-9`) and `uio[7]` to switch 7 (`pins 7-10`), the reverse of the other six and of the silkscreen. Anyone who sets the switches by the legend gets the wrong bit period whenever those two bits differ. Tiny Tapeout's TT07 breakout had the same kind of fault, two lines crossed and so mislabelled.
 
    </details>
 
@@ -173,11 +173,11 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Two: R1's 0 Ω (the `ui[0]` row fails with "its value '0' isn't a resistance the check can read", and a series resistor of 0 Ω doesn't limit the current at all) and D1's common pin on +3V3 (both ESD rows fail, because neither dongle line has a part to GND). With J3 put back, those three rows are the only ones that fail. Counting J3 itself, the checks find three of the eight faults, and the other five need a person to find them.
+   Two of them, R1 and D1. R1's 0 Ω fails the `ui[0]` row with "its value '0' isn't a resistance the check can read", and a series resistor of 0 Ω doesn't limit the current at all. D1's common pin on +3V3 fails both ESD rows, because neither dongle line then has an ESD part to GND. With J3 put back, those three rows are the only ones that fail. Counting J3 itself, the checks find three of the eight faults, and the other five need a person to find them.
 
    </details>
 
-3. The seeded board's DRC is clean, and yet its "SimProc Pmod" legend is 0.8 mm high. Why didn't DRC warn about it, when your own board's DRC would?
+3. The seeded board's "SimProc Pmod" legend is 0.8 mm high, and none of the board's 32 DRC warnings is about it. Why didn't DRC warn about it, when your own board's DRC would?
 
    <details>
    <summary>Answer</summary>
