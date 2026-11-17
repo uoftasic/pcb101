@@ -17,7 +17,9 @@
 #   IC103_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
 #   IC103_QUIET=1       don't print the image line on stderr
 #   IC103_IMAGE         run this image (name@digest) instead of the pinned one; the course's
-#                       render script uses it for 3D renders, which need KiCad's 3D models
+#                       render script uses it for 3D renders, which need KiCad's 3D models,
+#                       and kibot.sh for the KiBot image
+#   IC103_IMAGE_LABEL   the word in the image line on stderr (default KiCad; kibot.sh sets KiBot)
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -52,7 +54,7 @@ fi
 if [ "${IC103_QUIET:-0}" != "1" ]; then
     digest="$(docker image inspect --format '{{range .RepoDigests}}{{println .}}{{end}}' "$image" \
               | grep -m1 "${image#*@}" || true)"
-    echo "ic103: KiCad image ${digest:-$image}" >&2
+    echo "ic103: ${IC103_IMAGE_LABEL:-KiCad} image ${digest:-$image}" >&2
 fi
 
 name="ic103-kicad-$$-${RANDOM}"
