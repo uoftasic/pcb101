@@ -3,7 +3,7 @@
 
     labs/common/kicad.sh python3 labs/common/selftest_check.py
 
-1. KiCad's own pic_programmer demo, which is clean in 10.0.8: must PASS.
+1. KiCad's own pic_programmer demo, which is clean in 10.0.5: must PASS.
 2. The same board with one footprint deleted: must FAIL on a missing_footprint parity item.
 3. The same board with a GND track laid across a VCC track: must FAIL on a DRC error.
 4. Tiny Tapeout's SKY130 breakout against selftest/sky-breakout-expect.json: must PASS,

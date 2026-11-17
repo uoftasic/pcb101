@@ -6,10 +6,10 @@
 # container as *your* uid instead, so that the files it writes into the repo belong to
 # you, and that uid starts with an empty HOME and no library tables. Without them, ERC
 # and DRC report every standard library as missing and the warning counts change (on the
-# SKY130 breakout, ERC warnings go from 103 to 236 and DRC warnings from 123 to 130).
+# SKY130 breakout, ERC warnings go from 97 to 233 and DRC warnings from 120 to 128).
 # /home/kicad is readable only by `kicad`, but its two tables are byte-for-byte the
 # defaults KiCad ships in /usr/share/kicad/template/ (checked with cmp in
-# kicad/kicad:10.0.8), so we copy those. Every run then sees the same configuration as the
+# kicad/kicad:10.0.5), so we copy those. Every run then sees the same configuration as the
 # image's default user, whoever runs it.
 set -euo pipefail
 

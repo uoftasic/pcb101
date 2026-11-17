@@ -5,7 +5,7 @@
 # rather than as a job `container:`. That way CI uses the same user setup and the same
 # library tables (the image's defaults) as every expected count in the course. Run as root
 # with no library tables, the same board gives different warning counts: the SKY130
-# breakout's ERC warnings go from 103 to 236 and its DRC warnings from 123 to 130
+# breakout's ERC warnings go from 97 to 233 and its DRC warnings from 120 to 128
 # (labs/common/README.md).
 #
 # The weekly run catches breakage that comes from outside this repo: a pinned Tiny Tapeout

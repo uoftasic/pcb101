@@ -17,7 +17,7 @@ CFG="$HOME/.config/kicad/10.0"
 
 # --- KiCad settings, written before KiCad starts ------------------------------------------
 # KiCad 10 opens a modal "KiCad Setup" wizard before any editor when one of three things is
-# missing (common/startwizard/ in the 10.0.8 source):
+# missing (common/startwizard/ in the 10.0.5 source):
 #   1. kicad_common.json in the settings folder (SETTINGS_MANAGER::SettingsDirectoryValid);
 #   2. a readable global sym-lib-table, fp-lib-table *and* design-block-lib-table
 #      (LIBRARY_MANAGER::GlobalTablesValid);

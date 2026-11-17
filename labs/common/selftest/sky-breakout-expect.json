@@ -1,14 +1,15 @@
 {
-  "comment": "Tiny Tapeout's SKY130 QFN breakout (breakout-pcb 91a2bf1) as the pinned image checks it, with tinytapeout-kicad-libs 0e99691 beside it. Counts from check_board.py in kicad/kicad:10.0.8 on Nov 16, 2026.",
+  "comment": "Tiny Tapeout's SKY130 QFN breakout (breakout-pcb 91a2bf1) as the pinned image checks it, with tinytapeout-kicad-libs 0e99691 beside it. Counts from check_board.py in kicad/kicad:10.0.5 on Nov 16, 2026. The 37 parity warnings are footprint_symbol_field_mismatch items on the Datasheet field ('~' on the board, empty in the schematic), which 10.0.8 didn't report on the same files.",
   "erc.error": 10,
   "erc.error.power_pin_not_driven": 8,
   "erc.error.pin_to_pin": 2,
-  "erc.warning": 103,
+  "erc.warning": 97,
   "drc.error": 0,
-  "drc.warning": 123,
+  "drc.warning": 120,
   "drc.excluded": 1,
   "drc.excluded.courtyards_overlap": 1,
   "unconnected.error": 0,
   "parity.error": 0,
-  "parity.warning": 0
+  "parity.warning": 37,
+  "parity.warning.footprint_symbol_field_mismatch": 37
 }
