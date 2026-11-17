@@ -1,6 +1,6 @@
 # IC103 — PCB Design with KiCad
 
-Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip.
+Design the boards a chip sits on. The labs cover schematics, footprints from datasheets, layout, protection, fab outputs in CI and board review, and the capstone is a bring-up board for a team chip.
 
 Part of the UofT ASIC Team education materials (`uoftasic`), in the IC track after IC101 and IC102.
 Course site: <https://uoftasic.com/ic103/> · Education hub: <https://edu.uoftasic.com/>
@@ -26,7 +26,7 @@ The second command ends with `FAIL  erc.error: 10 (want 0)` and `FAIL  parity.wa
 | `labs/lab-02-a-footprint-from-a-datasheet/` | the RHL0024A drawing data, an empty footprint and symbol library, and the check that compares them with the student's own pad numbers | [Lab 02](https://uoftasic.com/ic103/labs/lab-02-a-footprint-from-a-datasheet-overview.html) |
 | `labs/lab-03-a-pmod-for-one-projects-pins/` | the board template a student copies into their own repository, and the reference SimProc Pmod | [Lab 03](https://uoftasic.com/ic103/labs/lab-03-a-pmod-for-one-projects-pins-overview.html) |
 | `labs/lab-04-protect-and-plan/` | the `BRINGUP.md` template, and the reference board with its protection and plan | [Lab 04](https://uoftasic.com/ic103/labs/lab-04-protect-and-plan-overview.html) |
-| `labs/lab-05-fab-outputs-in-ci/` | the starter workflow, build script and KiBot configuration, and the check that runs the build and KiBot in a student's repository and checks what they made and what git tracks | [Lab 05](https://uoftasic.com/ic103/labs/lab-05-fab-outputs-in-ci-overview.html) |
+| `labs/lab-05-fab-outputs-in-ci/` | the starter workflow, build script and KiBot configuration, and the check that runs the build and KiBot in a student's repository, then looks at what they made and what git tracks | [Lab 05](https://uoftasic.com/ic103/labs/lab-05-fab-outputs-in-ci-overview.html) |
 | `labs/lab-06-review-a-seeded-board/` | the seeded board, the `REVIEW.md` and `QUOTE.md` templates, and their check | [Lab 06](https://uoftasic.com/ic103/labs/lab-06-review-a-seeded-board-overview.html) |
 | `labs/capstone-a-board-for-a-team-chip/` | the `DESIGN.md` template, the check for both briefs, and a reference board for each | [Capstone](https://uoftasic.com/ic103/labs/capstone-a-board-for-a-team-chip-overview.html) |
 | `labs/common/` | the pinned-KiCad and KiBot wrappers, the board checker, the Pmod and bring-up plan checks, and the script that fetches Tiny Tapeout's boards | used by every lab |
