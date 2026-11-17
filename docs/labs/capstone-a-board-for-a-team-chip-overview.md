@@ -113,7 +113,7 @@ Does your board do what your requirements say?
 
    ![The Brief D reference board from the top](../assets/img/capstone-brief-d-top.png)
 
-   *Our Brief D board, rendered by `kicad-cli` 10.0.8 without 3D models: Lab 04's SimProc Pmod with TP3 to the right of R1 and TP4 to the right of the track from R2 down to J4.*
+   *Our Brief D board, rendered by `kicad-cli` 10.0.5 with the parts' 3D models: Lab 04's SimProc Pmod with TP3 to the right of R1 and TP4 to the right of the track from R2 down to J4.*
 
    ![The Brief A reference board from the top](../assets/img/capstone-brief-a-top.png)
 

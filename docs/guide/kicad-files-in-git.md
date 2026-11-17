@@ -6,7 +6,7 @@ KiCad's design files are plain text, so git can store them, show their history a
 
 ## What's in a project folder
 
-We copied Tiny Tapeout's DIP dock to a scratch folder, opened its board in KiCad 10.0.8's PCB Editor, saved it without changing anything, and closed the editor, listing the folder after each step. Opening the board created two lock files, `~dip-dock.kicad_pcb.lck` and `~dip-dock.kicad_pro.lck`, which tell another copy of KiCad that the files are in use. Saving created a folder named `.history`. Closing the editor removed the lock files. And every `kicad-cli` run on the project, even a check, had already written a `dip-dock.kicad_prl` next to it.
+We copied Tiny Tapeout's DIP dock to a scratch folder, opened its board in KiCad 10.0.5's PCB Editor, saved it without changing anything, and closed the editor, listing the folder after each step. Opening the board created two lock files, `~dip-dock.kicad_pcb.lck` and `~dip-dock.kicad_pro.lck`, which tell another copy of KiCad that the files are in use. Saving created a folder named `.history`. Closing the editor removed the lock files. And every `kicad-cli` run on the project, even a check, had already written a `dip-dock.kicad_prl` next to it.
 
 The table lists each kind of file and whether it belongs in git.
 
@@ -100,7 +100,7 @@ A reviewer can compare pictures instead. Here is that "minor" commit as two `kic
 
 ![Renders of Tiny Tapeout's demo board before and after commit 293a3e2, and the changed pixels in red: a track near the analog header and a few small spots elsewhere](../assets/img/tt-demo-293a3e2-review.png)
 
-*Tiny Tapeout's demo board (`tt-demo-pcb`, Apache-2.0) before and after commit 293a3e2, rendered from the top by `kicad-cli pcb render` in `kicad/kicad:10.0.8`. 998 of the 1,542,912 pixels in a render changed, about 0.1 %. The red marks are thickened so that they show at this size: a track near the analog header, a few spots along the row of small parts below it and near the RP2350, and two on the left edge. Made by [`scripts/figures/review_diff.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/review_diff.py).*
+*Tiny Tapeout's demo board (`tt-demo-pcb`, Apache-2.0) before and after commit 293a3e2, rendered from the top, with the parts' 3D models, by `kicad-cli pcb render` in `kicad/kicad:10.0.5-full`. 934 of the 1,542,912 pixels in a render changed, about 0.1 %. The red marks are thickened so that they show at this size: a track near the analog header and a spot at its right-hand end, a few spots along the row of small parts below it and around the RP2350, two on the left edge and one on the right. Made by [`scripts/figures/review_diff.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/review_diff.py).*
 
 That's the reason Lab 05's workflow makes renders and layer plots on every push: the reviewer of a pull request compares the images from the two commits, and opens the board in KiCad only where a picture raises a question. A top render shows only the top, so a change on an inner or bottom layer needs the layer plots too.
 

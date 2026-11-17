@@ -5,7 +5,7 @@
   - Horowitz and Hill, The Art of Electronics, 3rd ed., Appendix C, p. 1104 (printed):
     size codes in units of 0.010 in, "0603" = 0.06 x 0.03 in (1.5 x 0.75 mm), "We favor
     that size, or the larger 0805 package, for general prototyping", "a major pain".
-  - KiCad footprint libraries in kicad/kicad:10.0.8 (/usr/share/kicad/footprints), read
+  - KiCad footprint libraries in kicad/kicad:10.0.5 (/usr/share/kicad/footprints), read
     Nov 16, 2026: Resistor_SMD (R_0402, R_0603, R_0805, R_1206 and their _HandSolder
     variants, descriptions and pad sizes), Diode_SMD/D_SOD-882, Package_TO_SOT_SMD/SOT-23-5,
     Package_SO/SOIC-8_3.9x4.9mm_P1.27mm, Package_DFN_QFN/QFN-64-1EP_9x9mm_P0.5mm_EP7.65x7.65mm.
@@ -29,7 +29,7 @@ Horowitz and Hill favour 0603, "or the larger 0805 package, for general prototyp
 
 ![KiCad footprints for common small parts, drawn to one scale](../assets/img/ic103-footprint-sizes.svg)
 
-*Footprints from KiCad 10.0.8's own libraries, drawn to one scale on a 1 mm grid by [`scripts/figures/footprint_sizes.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/footprint_sizes.py): copper pads in gold, and the part's body as the fabrication layer draws it. Top row, resistors: 0402, 0603, 0805 and 1206, and the hand-soldering versions of 0603 and 0805. Bottom row: SOD-882, a two-pin diode package; SOT-23-5; SOIC-8; and the 9 × 9 mm QFN-64 that Tiny Tapeout's SKY130 chip comes in.*
+*Footprints from KiCad 10.0.5's own libraries, drawn to one scale on a 1 mm grid by [`scripts/figures/footprint_sizes.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/footprint_sizes.py): copper pads in gold, and the part's body as the fabrication layer draws it. Top row, resistors: 0402, 0603, 0805 and 1206, and the hand-soldering versions of 0603 and 0805. Bottom row: SOD-882, a two-pin diode package; SOT-23-5; SOIC-8; and the 9 × 9 mm QFN-64 that Tiny Tapeout's SKY130 chip comes in.*
 
 ## KiCad's hand-soldering footprints
 

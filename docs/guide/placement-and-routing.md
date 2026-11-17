@@ -29,7 +29,7 @@ The two boards a Pmod plugs into, the demo board and the DIP dock, put their soc
 
 ![The DIP dock from above](../assets/img/ic103-dip-dock-top.png)
 
-*Tiny Tapeout's DIP dock (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), rendered from above by `kicad-cli` 10.0.8. The board is 85 × 85 mm with two copper layers. The three Pmod sockets along the bottom edge are labelled INPUT, BIDIR and OUTPUT on the silkscreen and are 22.86 mm apart. The image the course uses has no 3D models of parts, so the render shows pads and silkscreen rather than parts.*
+*Tiny Tapeout's DIP dock (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), rendered from above by `kicad-cli` 10.0.5, with the parts' 3D models. The board is 85 × 85 mm with two copper layers. The three Pmod sockets along the bottom edge are labelled INPUT, BIDIR and OUTPUT on the silkscreen and are 22.86 mm apart.*
 
 After the connectors come the parts their signals go to, in the order that keeps each signal's path short, and then the small parts that serve those: decoupling capacitors next to the pins they decouple, and the series resistors and ESD parts that [Protecting the chip's I/O](protecting-the-chips-io.md) and [Supplies, back-powering and ESD](supplies-back-powering-and-esd.md) add. It's worth taking time over, because a placement that leaves no short path for a signal can't be fixed by routing.
 

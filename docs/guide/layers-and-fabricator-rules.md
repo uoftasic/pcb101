@@ -28,7 +28,7 @@ The board files and plots of the copper show how Tiny Tapeout uses its layers. O
 ![B.Cu, the DIP dock's bottom copper](../assets/img/tt-dip-dock-bcu.png){fig-alt="The bottom copper layer of the DIP dock: mostly filled with ground copper, cut by tracks and by the round pads of through-hole parts."}
 :::
 
-*The two copper layers of the DIP dock, plotted by `kicad-cli` 10.0.8 with the board outline. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh), as is the next plot.*
+*The two copper layers of the DIP dock, plotted by `kicad-cli` 10.0.5 with the board outline. Made by [`scripts/figures/kicad_figures.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/kicad_figures.sh), as is the next plot.*
 
 On the 4-layer SKY130 breakout most of the tracks are on the outer layers (590 segments on F.Cu and 404 on B.Cu), with a few on the inner ones (104 on In1.Cu and 41 on In2.Cu). A ground zone fills all four layers around the tracks, and the first inner layer, the one 0.19 mm under the chip, is almost solid ground:
 
