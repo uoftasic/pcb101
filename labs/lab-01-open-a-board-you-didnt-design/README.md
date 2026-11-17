@@ -14,7 +14,7 @@ labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/check
 ```
 
 It ends with `PASS` or `FAIL`. Most of its run time is ERC and DRC on the breakout: in our
-runs it took 51 s with the container limited to one CPU, and 26 s with two. On the shipped
+runs it took 35 s with the container limited to one CPU, and 12 s with two. On the shipped
 `breakout-notes.md`, which is all TODO, it prints `FAIL  5 of 5 rows disagree with the board`.
 
 ## Files
@@ -28,5 +28,5 @@ runs it took 51 s with the container limited to one CPU, and 26 s with two. On t
 | `results/` | local outputs; never committed |
 
 `labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/selftest.py`
-runs the self-test, which ends with `5 of 5 cases gave the expected verdict`. In our runs
-it took 23 to 54 s with the container limited to one CPU.
+runs the self-test, which ends with `5 of 5 cases gave the expected verdict`. In our run
+it took 37 s with the container limited to one CPU.

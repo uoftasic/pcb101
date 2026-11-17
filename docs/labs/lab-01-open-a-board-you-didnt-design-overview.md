@@ -13,7 +13,7 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
 
 ## Part 1: Install KiCad and get the boards
 
-1. Install KiCad 10.0 on your own computer, as [Getting started](../guide/getting-started.md) describes for Windows, macOS and Linux. Start KiCad and open Help → About KiCad. You should see a version that starts with `10.0`. Any 10.0 release opens the course's files, but the course's checks always run 10.0.8.
+1. Install KiCad 10.0.5 on your own computer, as [Getting started](../guide/getting-started.md) describes for Windows, macOS and Linux. If you can only get a later 10.0 release, or you already have one, use that; Getting started says what differs. Start KiCad and open Help → About KiCad. You should see a version that starts with `10.0`. Any 10.0 release opens the course's files, and whichever you have, the course's checks always run 10.0.5.
 
 2. Clone the course and go into it:
 
@@ -46,16 +46,16 @@ Package: [`labs/lab-01-open-a-board-you-didnt-design/`](https://github.com/uofta
    labs/common/kicad.sh kicad-cli version
    ```
 
-   The first time, it pulls `kicad/kicad:10.0.8`, an 812 MB download. After that you should see:
+   The first time, it pulls `kicad/kicad:10.0.5`, an 808 MB download. After that you should see:
 
    ```text
-   ic103: KiCad image kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34
-   10.0.8
+   ic103: KiCad image kicad/kicad@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de
+   10.0.5
    ```
 
    The first line is the digest that Docker resolved, which records exactly which build of KiCad ran. `kicad.sh` is a bash script, so it runs on Linux, macOS and WSL. If you don't have bash, [`labs/common/README.md`](https://github.com/uoftasic/ic103/tree/main/labs/common) has a plain `docker run` command that runs Part 4's board check without `kicad.sh`; we have run it on Linux but not on Windows.
 
-Check: KiCad's About box says 10.0, `kicad-cli version` prints `10.0.8`, and `labs/common/upstream/breakout-pcb/breakout-sky-qfn/` exists.
+Check: KiCad's About box says 10.0, `kicad-cli version` prints `10.0.5`, and `labs/common/upstream/breakout-pcb/breakout-sky-qfn/` exists.
 
 ## Part 2: Fitted and unfitted parts
 
@@ -67,13 +67,13 @@ Which of the parts drawn on this board does the factory actually solder on?
 
 3. Find the block labelled "Core Voltage Selection" at the top left of the sheet and zoom in on it (the mouse wheel zooms around the cursor):
 
-   ![The Core Voltage Selection block of the breakout's schematic in KiCad 10.0.8. R1, R7, R3 and the whole of U2 are drawn with a red cross.](../assets/img/kicad-schematic-sky-breakout-core-voltage.png)
+   ![The Core Voltage Selection block of the breakout's schematic in KiCad 10.0.5. R1, R7, R3 and the whole of U2 are drawn with a red cross.](../assets/img/kicad-schematic-sky-breakout-core-voltage.png)
 
    KiCad draws a part marked DNP (do not populate) with a red cross. Its footprint is still on the board, so the copper is there, but nothing is soldered to it. This block has four of them: R1, R7, R3 and the second regulator, U2.
 
 4. Look over the rest of the sheet for crossed-out parts, and list every one under "## Not fitted" in your notes. The "Presence Detection", "EEPROM ID" and "MUX and Supply Headers" blocks have some, and so does the corner beside the title block:
 
-   ![The whole of the breakout's schematic in KiCad 10.0.8's Schematic Editor. Core Voltage Selection is at the top left, MUX and Supply Headers at the top right, Presence Detection and EEPROM ID side by side under the left-hand connector, and the title block at the bottom right.](../assets/img/kicad-schematic-editor-sky-breakout.png)
+   ![The whole of the breakout's schematic in KiCad 10.0.5's Schematic Editor. Core Voltage Selection is at the top left, MUX and Supply Headers at the top right, Presence Detection and EEPROM ID side by side under the left-hand connector, and the title block at the bottom right.](../assets/img/kicad-schematic-editor-sky-breakout.png)
 
    With the whole sheet in view, as in the screenshot, the red crosses are small, so zoom in on each block to read the references of the parts under them. You can confirm any one by opening its properties (double-click it) and looking for the "Do not populate" box.
 
@@ -83,7 +83,7 @@ Which of the parts drawn on this board does the factory actually solder on?
 
    It opens on a view Tiny Tapeout saved in the project, "populatedlcsc", which leaves out the DNP parts and groups the rest the way a factory's parts list does: C1–C5, C8 and five more 1 µF capacitors on one row, U1 on its own row, and so on. None of the parts you listed in step 4 is in it.
 
-6. Compare that table with what the factory was actually given. Tiny Tapeout's production BOM for this revision is `labs/common/upstream/pcb-files/ETR/breakout-skyqfn-v3p2/bom/breakout-sky-qfn_bom_jlc.csv`; open it in a text editor or a spreadsheet. You should see 12 lines after the header, listing 25 capacitors, J1 and J3, 9 resistors, U1 and U4, and no U2, U3 or J2. The `v3p2` in that path is rev 3.2, the revision in the board file's title block, which is dated 2025-10-04. The schematic's title block says rev 3.1 and is dated 2025-12-02. Both files come from the same commit, though, and the board check in Part 4 reports no schematic parity items between them.
+6. Compare that table with what the factory was actually given. Tiny Tapeout's production BOM for this revision is `labs/common/upstream/pcb-files/ETR/breakout-skyqfn-v3p2/bom/breakout-sky-qfn_bom_jlc.csv`; open it in a text editor or a spreadsheet. You should see 12 lines after the header, listing 25 capacitors, J1 and J3, 9 resistors, U1 and U4, and no U2, U3 or J2. The `v3p2` in that path is rev 3.2, the revision in the board file's title block, which is dated 2025-10-04. The schematic's title block says rev 3.1 and is dated 2025-12-02. Both files come from the same commit, though, and the only schematic parity items the board check in Part 4 reports between them are about an empty Datasheet field, which Part 4 explains.
 
 7. FID1, FID2 and FID3 are marked DNP too, and TP1 to TP4 are in neither the BOM nor your list. Why?
 
@@ -142,9 +142,9 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
 
 2. Run ERC in your own KiCad: Inspect → Electrical Rules Checker, or its toolbar button, then Run ERC. Tick "Errors" to list them:
 
-   ![KiCad 10.0.8's Electrical Rules Checker on the breakout after Run ERC, with "Errors" ticked: Violations (10), Errors 10, Warnings 103, and the first errors, "Input Power pin not driven by any Output Power pins".](../assets/img/kicad-erc-sky-breakout-errors.png)
+   ![KiCad 10.0.5's Electrical Rules Checker on the breakout after Run ERC, with "Errors" ticked: Violations (10), Errors 10, Warnings 97, and the first errors, "Input Power pin not driven by any Output Power pins".](../assets/img/kicad-erc-sky-breakout-errors.png)
 
-   This screenshot was taken with the image's default library tables, the same setup as the course's check. Your KiCad should also report 10 errors, but its warning count can differ from 103, because many warnings compare the design with whichever libraries your KiCad has set up ([Getting started](../guide/getting-started.md#your-kicad-and-the-courses-checks) explains this).
+   This screenshot was taken with the image's default library tables, the same setup as the course's check. Your KiCad should also report 10 errors, but its warning count can differ from 97, because many warnings compare the design with whichever libraries your KiCad has set up ([Getting started](../guide/getting-started.md#your-kicad-and-the-courses-checks) explains this).
 
 3. Run the course's board check on the breakout. It runs ERC and DRC, with schematic parity, in the pinned image and counts the results:
 
@@ -152,14 +152,14 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
    labs/common/kicad.sh python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
    ```
 
-   In our runs it took 45 and 49 s with the container limited to one CPU, and 23 s with two. Below the header lines you should see:
+   In our runs it took 23 to 44 s with the container limited to one CPU, and 19 s with two. Below the header lines you should see:
 
    ```text
                    errors  warnings  excluded
-     ERC               10       103         0
-     DRC                0       123         1
+     ERC               10        97         0
+     DRC                0       120         1
      unconnected        0         0         0
-     parity             0         0         0
+     parity             0        37         0
 
      ERC errors (10):
        power_pin_not_driven     Input Power pin not driven by any Output Power pins  [Symbol #PWR01 Pin 1 [Power input, Line]]
@@ -173,14 +173,21 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
        pin_to_pin               Pins of type Power output and Power output are connected  [Symbol #FLG01 Pin 1 [pwr, Power output, Line]; Symbol U1 Pin 5 [VOUT, Power output, Line]]
        pin_to_pin               Pins of type Power output and Power output are connected  [Symbol #FLG02 Pin 1 [pwr, Power output, Line]; Symbol U2 Pin 5 [VOUT, Power output, Line]]
 
-     ERC warnings by type: lib_symbol_mismatch 69, lib_symbol_issues 22, isolated_pin_label 11, multiple_net_names 1
-     DRC warnings by type: lib_footprint_issues 76, lib_footprint_mismatch 47
+     parity items (37):
+       footprint_symbol_field_mismatch Field 'Datasheet' differs (PCB: '~', Schematic: '')  [Footprint C1]
+       footprint_symbol_field_mismatch Field 'Datasheet' differs (PCB: '~', Schematic: '')  [Footprint C2]
+   ...
+       ... and 17 more (--show 37 lists them all)
+
+     ERC warnings by type: lib_symbol_mismatch 63, lib_symbol_issues 22, isolated_pin_label 11, multiple_net_names 1
+     DRC warnings by type: lib_footprint_issues 76, lib_footprint_mismatch 44
      DRC excluded by type: courtyards_overlap 1
 
    FAIL  erc.error: 10 (want 0)
+   FAIL  parity.warning: 37 (want 0)
    ```
 
-   That FAIL is what should happen here: by default the check allows no ERC errors, and this board has ten.
+   We've left out 18 of the parity lines, which are the same apart from the footprint they name (C3 to C20). Both FAILs are what should happen here. By default the check allows no ERC errors, and this board has ten. It allows no parity items either, and in KiCad 10.0.5 this board has 37, every one a `footprint_symbol_field_mismatch` on the Datasheet field: the board's copy of the footprint has `~` there, and the schematic has nothing. KiCad 10.0.8 doesn't report these 37 on the same two files ([Getting started](../guide/getting-started.md#which-version-to-install) lists what else differs between the two releases), so they come from the way 10.0.5 compares the two files, and not from a part that is missing or wired differently.
 
 4. Eight of the errors are `power_pin_not_driven`. The six `#PWR` symbols are the power symbols for VCCD, GND, +5V, +3V3, VDD_IO and VDDA, and the last two are the regulators' VIN pins. Why does ERC think nothing drives them?
 
@@ -226,7 +233,7 @@ What do KiCad's checks find on a board that Tiny Tapeout has built and sold, and
    labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/check_notes.py
    ```
 
-   It works out its own answers from the board file, and runs `check_board.py` for the counts, so it takes a few seconds longer than the board check: 51 s with one CPU in our run, and 26 s with two. On the notes as shipped, every row is TODO, and it ends:
+   It works out its own answers from the board file, and runs `check_board.py` for the counts, so it takes about as long as the board check: 35 s with one CPU in our run, and 12 s with two. On the notes as shipped, every row is TODO, and it ends:
 
    ```text
      MISMATCH  Checks        ERC error all: the count is TODO
@@ -246,13 +253,14 @@ Check: `check_notes.py` prints an `ok` row for Not fitted, VCCD, VDD_IO, VDDA an
 
 | Check | Expected | |
 |---|---|---|
-| `kicad-cli version` in the image | `10.0.8` | exact |
+| `kicad-cli version` in the image | `10.0.5` | exact |
 | Parts marked DNP | 9, plus 3 fiducials | exact |
 | Rails at the chip | VCCD 1.8 V; VDD_IO and VDDA 3.3 V | exact |
 | ERC errors | 10: 8 `power_pin_not_driven`, 2 `pin_to_pin` | exact |
 | DRC errors, excluded | 0, and 1 excluded `courtyards_overlap` | exact |
-| ERC and DRC warnings | 103 and 123 in the pinned image; yours may differ | setup-dependent |
-| `check_notes.py` run time | 51 s with one CPU, 26 s with two | ballpark |
+| ERC and DRC warnings | 97 and 120 in the pinned image; yours may differ | setup-dependent |
+| Parity items | 37 warnings, all `footprint_symbol_field_mismatch` on the Datasheet field, in the pinned image; none in KiCad 10.0.8 | release-dependent |
+| `check_notes.py` run time | 35 s with one CPU, 12 s with two | ballpark |
 
 ## Finishing
 
