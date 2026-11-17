@@ -5,7 +5,7 @@ Design the boards a chip sits on: schematics, footprints from datasheets, layout
 Part of the UofT ASIC Team education materials (`uoftasic`), in the IC track after IC101 and IC102.
 Course site: <https://uoftasic.com/ic103/> · Education hub: <https://edu.uoftasic.com/>
 
-Students draw in KiCad 10.0 installed on their own computers ([Getting started](https://uoftasic.com/ic103/guide/getting-started.html) says what to install). The labs' checks run in the official image `kicad/kicad:10.0.8`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt), and every ERC, DRC and parity count that a lab page shows comes from `kicad-cli` there. A few checks don't use KiCad at all. The bring-up plan check (`labs/common/check_bringup.py`) is one of them, and it needs only Python. Unlike the analog and digital courses, IC103 doesn't use the workbench that students set up in IC101.
+Students draw in KiCad 10.0 installed on their own computers, 10.0.5 if they can get it ([Getting started](https://uoftasic.com/ic103/guide/getting-started.html) says what to install). The labs' checks run in the official image `kicad/kicad:10.0.5`, pinned by digest in [`labs/common/kicad-image.txt`](labs/common/kicad-image.txt), and every ERC, DRC and parity count that a lab page shows comes from `kicad-cli` there. The site's 3D renders come from the same `kicad-cli` in `kicad/kicad:10.0.5-full`, which adds KiCad's 3D models of parts ([`scripts/screenshots/kicad/render-image.txt`](scripts/screenshots/kicad/render-image.txt)). A few checks don't use KiCad at all. The bring-up plan check (`labs/common/check_bringup.py`) is one of them, and it needs only Python. Unlike the analog and digital courses, IC103 doesn't use the workbench that students set up in IC101.
 
 ## Quick start
 
@@ -16,7 +16,7 @@ python3 labs/common/fetch_boards.py          # Tiny Tapeout's boards, at pinned 
 labs/common/kicad.sh python3 labs/common/check_board.py labs/common/upstream/breakout-pcb/breakout-sky-qfn
 ```
 
-The second command ends with `FAIL  erc.error: 10 (want 0)`, because Tiny Tapeout's SKY130 breakout has 10 ERC errors in KiCad 10.0.8. [`labs/common/README.md`](labs/common/README.md) explains the output, the checker's rules, and how a lab uses them.
+The second command ends with `FAIL  erc.error: 10 (want 0)` and `FAIL  parity.warning: 37 (want 0)`, because in KiCad 10.0.5 Tiny Tapeout's SKY130 breakout has 10 ERC errors and 37 schematic parity warnings. [`labs/common/README.md`](labs/common/README.md) explains the output, the checker's rules, and how a lab uses them.
 
 ## Lab packages
 

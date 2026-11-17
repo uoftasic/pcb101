@@ -9,7 +9,7 @@ The facts about KiCad's downloads on this page come from kicad.org, read on Nove
 ## Requirements
 
 - **A computer that runs KiCad 10.** KiCad's [system requirements](https://www.kicad.org/help/system-requirements/) ask for a 64-bit processor, 1 GB of RAM (">2G RAM recommended"), up to 10 GB of disk space, and a graphics card with OpenGL 2.1 or greater that supports hardware shaders. A screen of 1280 × 1024 works, but KiCad recommends 1920 × 1080 or more, because at lower resolutions some toolbar buttons are hidden and you have to reach those commands through the menus.
-- **Docker**, which you set up in [IC101](https://uoftasic.com/ic101/). The checks pull the KiCad image the first time they run, which is a download of 812 MB and takes 2.6 GB on disk once it's unpacked.
+- **Docker**, which you set up in [IC101](https://uoftasic.com/ic101/). The checks pull the KiCad image the first time they run, which is a download of 808 MB and takes 2.6 GB on disk once it's unpacked.
 - **git and a GitHub account**, from IC101 and IC102. From Lab 03 on you keep your board in a repository of your own on GitHub, and in Lab 05 GitHub Actions checks it on every push.
 
 ## KiCad and the workbench
@@ -20,7 +20,7 @@ So the course splits the work in two. You draw in a native KiCad, which is the s
 
 ## Which version to install
 
-Install KiCad 10.0, the newest 10.0 release you can get. On November 16, 2026, that was 10.0.8 on every platform's download page. KiCad 10.0.0 came out on March 20, 2026.
+Install KiCad 10.0.5. Every count, message and screenshot in the course was recorded with KiCad 10.0.5, which is also the version the course's checks run, so with 10.0.5 on your own computer the windows and numbers you see match the pages as closely as they can. It isn't the newest release. On November 16, 2026, every platform's download page offered 10.0.8 (KiCad 10.0.0 came out on March 20, 2026), and kicad.org keeps the older releases on a separate page, which the section for your platform below points to. If you install KiCad through a Linux distribution's packages, or you already have a later 10.0 release, you can do the course with that; the end of this section says what to expect.
 
 The major version matters because a KiCad file doesn't open in an older major version than the one that saved it. KiCad's [Linux packages page](https://www.kicad.org/download/linux-distros/) puts it this way: every year a new major release "comes out, bringing new features and bug fixes, but also usually bringing file format changes that prevent downgrading. In other words, once you update to 9.x and start modifying a project, you will no longer be able to open that project in any 8.x version." The same is true one step later. When we gave a board saved by KiCad 10 to `kicad-cli` 9.0.9, it printed `Failed to load board` and exited with status 3. Everything you make in this course is saved in the 10.0 format, so KiCad 9 can't open your work.
 
@@ -32,7 +32,13 @@ Going the other way works. KiCad 10 opens boards saved by KiCad 9, and Tiny Tape
 
 The conversion happens only if you save. Once you have saved the board, it's a 10.0 file and KiCad 9 can't open it any more, which is harmless for a copy you fetched for a lab but worth knowing before you open someone else's project.
 
-Within the 10.0 series, the patch releases (10.0.1, 10.0.2 and so on) share a file format. The three we checked in KiCad's source, 10.0.0, 10.0.5 and 10.0.8, all write boards as version 20260206 and schematics as version 20260306, so a 10.0 release opens files from any other, and KiCad encourages everyone to keep up with the latest bugfix release. Every count and message on the lab pages, though, comes from one particular build, `kicad/kicad:10.0.8`. We haven't compared outputs across patch releases, so in some other build a message or a count may not match the page, and that's why the checks always run in the pinned image, whatever you have installed.
+Within the 10.0 series, the patch releases (10.0.1, 10.0.2 and so on) share a file format. The three we checked in KiCad's source, 10.0.0, 10.0.5 and 10.0.8, all write boards as version 20260206 and schematics as version 20260306, so a 10.0 release opens files from any other, and KiCad encourages everyone to keep up with the latest bugfix release. What can change from one patch release to the next is what ERC and DRC report. On November 16, 2026 we ran the course's checks in both 10.0.5 and 10.0.8, in KiCad's Docker images, and compared the counts:
+
+- On the course's own reference boards, for Labs 03 and 04 and the capstone, every count was the same.
+- On Tiny Tapeout's SKY130 breakout, a board saved by KiCad 9 that you open in Lab 01, the errors were the same, 10 from ERC and none from DRC. The warnings weren't: 10.0.5 reported 97 ERC and 120 DRC warnings where 10.0.8 reported 103 and 123. 10.0.5 also reported 37 schematic parity warnings that 10.0.8 didn't, every one of them about a part's Datasheet field, which is `~` on the board and empty in the schematic.
+- On a copy of one of KiCad's demo boards with a GND track laid across a VCC track, both found the tracks crossing and a solder mask bridge, and 10.0.5 also reported the GND track as shorting to a pad of a third net, so it counted three DRC errors where 10.0.8 counted two.
+
+So if your own KiCad is a later 10.0 release, expect the same results on boards like the ones you'll draw, different warning counts on older boards such as Tiny Tapeout's, and now and then a different number of errors on a board with something wrong with it. The course's checks always run 10.0.5 in the pinned image, whatever you have installed, and their results are the ones the labs go by.
 
 ## Installing on Windows
 
@@ -41,13 +47,15 @@ KiCad's [Windows page](https://www.kicad.org/download/windows/) says "KiCad supp
 - `kicad-10.0.8-x86_64.exe`, for the Intel and AMD processors that most Windows laptops have;
 - `kicad-10.0.8-arm64.exe`, for a Windows computer with an ARM processor.
 
+Those are the current release. For 10.0.5, the same page says "Previous releases should be available for download on: https://downloads.kicad.org/kicad/windows/explore/stable", and that list had `kicad-10.0.5-x86_64.exe` and `kicad-10.0.5-arm64.exe`.
+
 Each installer is code-signed, and Windows checks the signature when you run it. The page says a valid signature names KiCad Services Corporation as the signer, and links a guide to checking that yourself.
 
 If you're still on Windows 10, read KiCad's [system requirements](https://www.kicad.org/help/system-requirements/) as well. Its table gives Windows 10 a support date of 14 October 2025, and KiCad's policy is that once an operating system's maker stops releasing updates for it, KiCad isn't tested on it any more, and a bug has to be reproduced on a supported system before the KiCad team will look at it. KiCad may well keep working on Windows 10, but Windows 11 is the supported choice.
 
 ## Installing on macOS
 
-KiCad's [macOS page](https://www.kicad.org/download/macos/) has one download for all Macs, a disk image named `kicad-unified-universal-10.0.8.dmg`, and says "The current stable release of KiCad is supported on macOS 12 and newer."
+KiCad's [macOS page](https://www.kicad.org/download/macos/) has one download for all Macs, a disk image named `kicad-unified-universal-10.0.8.dmg`, and says "The current stable release of KiCad is supported on macOS 12 and newer." For 10.0.5 it says "Previous releases are available for download on: https://downloads.kicad.org/kicad/macos/explore/stable", and the disk image there is `kicad-unified-universal-10.0.5.dmg`.
 
 The [system requirements](https://www.kicad.org/help/system-requirements/) page is stricter. It says KiCad supports the macOS versions that Apple currently supports, which it takes to be the three most recent major releases, and its table gives approximate end-of-support dates of 1 November 2025 for macOS 13, 1 November 2026 for macOS 14 and 1 November 2027 for macOS 15. The two pages don't agree. By the system requirements page's own dates, only macOS 15 was still supported on November 16, 2026, and its table lists no newer macOS at all, so it looks out of date. If your Mac runs a recent macOS, both pages cover you. On an older one, KiCad still offers you the download, but a bug you hit there may have to be reproduced on a supported version before the KiCad team looks at it.
 
@@ -58,6 +66,8 @@ KiCad publishes its own Linux build on its [Linux page](https://www.kicad.org/do
 - Full, `kicad-10.0.8-x86_64.AppImage.tar`, which includes the 3D packages (the 3D models of parts that the 3D viewer draws);
 - Lite, `kicad-10.0.8-x86_64-lite.AppImage.tar`, without them.
 
+For 10.0.5, the page says "Previous releases are available for download on: https://downloads.kicad.org/kicad/linux/explore/stable", where the same two are `kicad-10.0.5-x86_64.AppImage.tar` and `kicad-10.0.5-x86_64-lite.AppImage.tar`.
+
 You can also install KiCad through your distribution. The [Linux packages page](https://www.kicad.org/download/linux-distros/) lists what KiCad supports:
 
 - Ubuntu: KiCad runs its own PPA for each release series, and for 10.0 it's `ppa:kicad/kicad-10.0-releases`. KiCad recommends it over Ubuntu's own package, because "the latter is usually outdated". The system requirements give Ubuntu 24.04 LTS support until April 2029, and list Ubuntu 22.04's support as ending in May 2025.
@@ -67,17 +77,19 @@ You can also install KiCad through your distribution. The [Linux packages page](
 
 Arch Linux, FreeBSD, Gentoo, openSUSE and Linux Mint are listed too, as platforms the KiCad team doesn't officially support.
 
+The page heads the PPA's commands "10.0.8 Stable Release", and it doesn't say how to get an older 10.0 release from any of these. The nearest it comes is for Ubuntu: "Older stable releases of KiCad are available in other similarly-named PPAs", and `sudo apt install kicad=<version>`, which it gives for going back from the testing PPA to a stable release. So if you install from your distribution, you'll most likely have a later 10.0 release than the course's, and the end of [Which version to install](#which-version-to-install) says what that changes.
+
 Whichever way you install it, run KiCad in an X11 session if you can. The same page says "The KiCad team does not support running KiCad on Wayland due to the much higher incidence of related bugs and problems", and that bug reports about freezes, crashes, window size and position, focus and similar problems "will not be investigated unless they can be reproduced on an X11 system".
 
 ## Your KiCad and the course's checks
 
-Every lab checks your work the same way. A script in [`labs/common/`](https://github.com/uoftasic/ic103/tree/main/labs/common) runs `kicad-cli` in `kicad/kicad:10.0.8`, named by its digest (`sha256:3f4a01786dfb…`, in full in `labs/common/kicad-image.txt`) so that it's the same build on every machine. It runs ERC on your schematic and DRC on your board, compares the board with the schematic, and prints the counts, followed by PASS or FAIL. Each lab shows you the command.
+Every lab checks your work the same way. A script in [`labs/common/`](https://github.com/uoftasic/ic103/tree/main/labs/common) runs `kicad-cli` in `kicad/kicad:10.0.5`, named by its digest (`sha256:182c8005cb77…`, in full in `labs/common/kicad-image.txt`) so that it's the same build on every machine. It runs ERC on your schematic and DRC on your board, compares the board with the schematic, and prints the counts, followed by PASS or FAIL. Each lab shows you the command.
 
 Your own KiCad can run the same ERC and DRC from its menus, and you'll do both in Lab 01. The errors it finds should be the same as the checker's. The warnings may not be, because many of KiCad's warnings compare the parts in your design with the libraries KiCad knows about, and which libraries those are depends on how KiCad was set up on that machine. Here is the same board, Tiny Tapeout's SKY130 breakout, checked in two setups:
 
 | | ERC errors | ERC warnings | DRC errors | DRC warnings |
 |---|---|---|---|---|
-| The course's checker | 10 | 103 | 0 | 123 |
+| The course's checker | 10 | 97 | 0 | 120 |
 | The same image with no library tables at all, and without Tiny Tapeout's own library beside the board | 10 | 236 | 0 | 130 |
 
 The error counts are the same in both setups and the warning counts aren't, so the labs give warning counts only for the checker's setup, and ask you about kinds of warning rather than numbers when you look at a board in your own KiCad. If your KiCad shows a different number of errors from the lab page, though, something is different, and it's worth finding out what.

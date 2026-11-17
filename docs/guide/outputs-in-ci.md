@@ -55,11 +55,11 @@ It exits 1 on a FAIL, so a workflow step that runs it fails the run. The 159 DRC
 
 A Docker image name such as `kicad/kicad:10.0` is a tag, and a tag is a pointer that the publisher moves. On Docker Hub, `kicad/kicad:10.0` and `kicad/kicad:10.0.8` were both last updated on October 30, 2026, and both are 812 MB, because `10.0` currently points at 10.0.8. KiCad posted 10.0.5 on July 22, 10.0.6 on August 29, 10.0.7 on October 7 and 10.0.8 on October 30, so a workflow that names `10.0` gets a new KiCad every few weeks without anyone committing anything. That is fine for pictures. For checks, it means a DRC count can change on a Monday morning for reasons that have nothing to do with your board.
 
-A digest names one exact image, and Docker won't substitute another. The course's checks name `kicad/kicad:10.0.8@sha256:3f4a01786dfb…` (in full in [`labs/common/kicad-image.txt`](https://github.com/uoftasic/ic103/blob/main/labs/common/kicad-image.txt)), and `labs/common/kicad.sh` prints the digest it ran before every check, so a log always records which KiCad produced it. We haven't compared outputs across 10.0 patch releases, so when the course moves to a newer one, it will be a commit of its own that regenerates every count on every page.
+A digest names one exact image, and Docker won't substitute another. The course's checks name `kicad/kicad:10.0.5@sha256:182c8005cb77…` (in full in [`labs/common/kicad-image.txt`](https://github.com/uoftasic/ic103/blob/main/labs/common/kicad-image.txt)), and `labs/common/kicad.sh` prints the digest it ran before every check, so a log always records which KiCad produced it. The course has changed its pin once: it was on 10.0.8 until November 16, 2026, when we moved it to 10.0.5 so that the checks, KiBot and the course's 3D renders all run the same KiCad (see [KiBot](#kibot) below). Moving the pin meant running every check again and copying the new counts onto every page, and before we did, we ran the checks in both releases. The course's own boards gave the same counts in both, but Tiny Tapeout's boards gave different warning counts, and one broken board a different number of DRC errors; [Getting started](getting-started.md#which-version-to-install) lists the differences. A move to a newer release will take the same work.
 
 ## The user and the library tables
 
-Pinning the image isn't quite enough, because KiCad's warnings also depend on who runs it. Many warnings compare the parts in your design with the libraries KiCad knows about, and that list lives in the user's settings folder. A container that runs as root, or as your own uid with an empty home folder, has no library tables at all, and then every standard library looks missing. [Getting started](getting-started.md#your-kicad-and-the-courses-checks) shows the effect on the SKY130 breakout: 103 ERC warnings and 123 DRC warnings in the course's setup, 236 and 130 with no tables, and the same 10 ERC errors and 0 DRC errors in both.
+Pinning the image isn't quite enough, because KiCad's warnings also depend on who runs it. Many warnings compare the parts in your design with the libraries KiCad knows about, and that list lives in the user's settings folder. A container that runs as root, or as your own uid with an empty home folder, has no library tables at all, and then every standard library looks missing. [Getting started](getting-started.md#your-kicad-and-the-courses-checks) shows the effect on the SKY130 breakout: 97 ERC warnings and 120 DRC warnings in the course's setup, 236 and 130 with no tables (and without Tiny Tapeout's own library beside the board), and the same 10 ERC errors and 0 DRC errors in both.
 
 So `kicad.sh` runs the image as your uid and copies KiCad's default library tables into place first, and the course's `labs.yml` calls `kicad.sh` instead of running its steps in a job `container:`, so that CI sees the same tables as the counts on the lab pages. wafer.space's workflow runs its container with `--user root`. That's fine for renders and plots, but if it ran ERC and DRC, its warning counts wouldn't match ours.
 
@@ -75,20 +75,20 @@ Font 'FreeMono' not found; substituting 'DejaVu Sans Mono Bold'.
 
 so CI's silkscreen for those labels isn't drawn in the font the designer chose. Text in KiCad's own default font doesn't depend on the fonts installed on a machine, which makes it the safe choice for a board whose outputs come from CI.
 
-The second is 3D models. The image doesn't include KiCad's 3D models of parts (they're in the `kicad/kicad:10.0.8-full` image, 1,448 MB against 812 MB), so a render made in CI shows the bare board:
+The second is 3D models. The image doesn't include KiCad's 3D models of parts (`/usr/share/kicad/3dmodels` doesn't exist in it), so a render made in CI with this image shows the bare board, apart from any part whose model is saved inside the board file. The models are in `kicad/kicad:10.0.5-full`, a 1,444 MB download against 808 MB, which runs the same `kicad-cli` (we compared the two binaries' checksums) with the models added. The course's own figures are rendered in that image, named by its digest in [`scripts/screenshots/kicad/render-image.txt`](https://github.com/uoftasic/ic103/blob/main/scripts/screenshots/kicad/render-image.txt):
 
-![A kicad-cli render of the top of the DIP dock, with pads, silkscreen and holes but no parts](../assets/img/dip-dock-3d-top.png)
+![A kicad-cli render of the top of the DIP dock, with its parts](../assets/img/dip-dock-3d-top.png)
 
-*The top of Tiny Tapeout's DIP dock as `kicad-cli pcb render` draws it in `kicad/kicad:10.0.8`: copper under the green mask, gold pads, silkscreen and holes, and no parts, because the image has no 3D models. Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/board_renders.sh).*
+*The top of Tiny Tapeout's DIP dock as `kicad-cli pcb render` draws it in `kicad/kicad:10.0.5-full`: copper under the green mask, gold pads, silkscreen and holes, and a 3D model for each part whose footprint names one the image has, such as the DIP switch, the push buttons and the 7-segment display. Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/board_renders.sh).*
 
-For a reviewer that is often better than a render with parts, since the pads and the silkscreen are what they're checking.
+For a reviewer, a render without the parts is often better, since the pads and the silkscreen are what they're checking, and that's what the plain image gives you.
 
 ## Outputs that repeat from run to run
 
 It helps to know which outputs come out the same on every run, because then CI can tell you whether a commit changed them:
 
 - SVG plots of layers were identical from run to run once the date that `kicad-cli` writes into each file's `<title>` was removed.
-- A top-view render of the DIP dock came out byte-identical in two runs. A bottom view of the SKY130 breakout didn't: the two PNGs were 161,264 and 161,266 bytes.
+- A top-view render of the DIP dock came out byte-identical in two runs. A bottom view of the SKY130 breakout didn't: the two PNGs were 161,218 and 161,207 bytes, and 54 of their 1,542,912 pixels differed.
 - Gerbers, the job file and the drill file carry the date of the export, as [Fabrication outputs](fabrication-outputs.md#dates-in-the-files) shows, so they're never identical as they stand.
 
 The images are for people to look at. When a workflow needs to decide whether the board changed, compare the Gerbers with their date lines removed.
@@ -103,8 +103,8 @@ Instead of listing every export in the workflow, you can save the list in the pr
 
 [KiBot](https://github.com/INTI-CMNB/KiBot), licensed under the AGPL-3.0, is a tool that drives KiCad from a YAML file and produces outputs that `kicad-cli` doesn't, such as an interactive HTML BOM. Lab 05 suggests it for that BOM in its Going further section, but we haven't run KiBot in this course ourselves. Its newest release on November 16, 2026 was 1.9.1, dated 2026-07-28, and its changelog says its KiCad 10 3D rendering goes "through the kicad-cli interface" and "has various limitations". Two things about it matter for a pinned course:
 
-- Its KiCad 10 images lag KiCad. The newest KiCad version in any `ghcr.io/inti-cmnb/kicad10_auto_full` tag was 10.0.5, three releases behind the 10.0.8 the checks use, so a workflow with KiBot runs two different KiCads.
-- Its GitHub Action for KiCad 10, `v2_k10`, builds `FROM ghcr.io/inti-cmnb/kicad10_auto_full:latest`, a moving tag. If you use KiBot, name a fixed image tag, such as `1.9.1-2_k10.0.5_d13.2_b4.2.4LTS`, as you would for KiCad.
+- Its KiCad 10 images lag KiCad. The newest KiCad version in any `ghcr.io/inti-cmnb/kicad10_auto_full` tag was 10.0.5, three releases behind KiCad's own 10.0.8, and that's why the course's checks are pinned to 10.0.5 as well: with the checks on 10.0.8, a workflow with KiBot would run two different KiCads. Even on the same version, KiBot's image isn't the same build as `kicad/kicad:10.0.5`. In `1.9.1-2_k10.0.5_d13.2_b4.2.4LTS`, `kicad-cli version` prints `10.0.5`, but the KiCad in it is KiCad's Ubuntu package, `10.0.5-testing-188+202607221313~667fa36054~ubuntu25.10.1`, with the 10.0.4 symbol and footprint libraries and no 3D models. We ran the course's board check in it on the SKY130 breakout and on Lab 04's reference board, and it gave the same counts as `kicad/kicad:10.0.5` on both.
+- Its GitHub Action for KiCad 10, `v2_k10`, builds `FROM ghcr.io/inti-cmnb/kicad10_auto_full:latest`, a moving tag. On November 16, 2026, `latest`, `1.9.1` and `1.9.1-2_k10.0.5_d13.2_b4.2.4LTS` all named the same image, `sha256:96e75f885b15…`. If you use KiBot, name the fixed tag and that digest, as you would for KiCad.
 
 
 ## Check yourself
@@ -141,7 +141,7 @@ Instead of listing every export in the workflow, you can save the list in the pr
    <details>
    <summary>Answer</summary>
 
-   No. The `kicad/kicad:10.0.8` image has no 3D models of parts, so every render made in it shows the bare board. The `-full` image has them.
+   No. The `kicad/kicad:10.0.5` image has no 3D models of parts, so every render made in it shows the bare board. The `-full` image has them, and it's what the course's own figures are rendered in.
 
    </details>
 
