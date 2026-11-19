@@ -71,18 +71,46 @@ def schematic(s):
     s.text("J4: header for a 3.3 V USB-UART dongle.\nPin 2 goes to the dongle's TXD, pin 3 to its RXD.\n"
            "Leave the dongle's VCC unconnected.", (205.74, 60.96))
 
-    s.place("R1", "Device:R", 215.9, 81.28, 90, value="0", footprint=mr.R_FP)
+    s.place("R1", "Device:R", 205.74, 86.36, 90, value="1k", footprint=mr.R_FP)
     s.attach("R1", "1", "L:UART_RX")
-    s.attach("R1", "2", "L:DONGLE_TXD")
-    s.place("R2", "Device:R", 215.9, 93.98, 90, value="1k", footprint=mr.R_FP)
-    s.attach("R2", "1", "L:UART_TX")
+    s.place("U1", mr.BUF, 233.68, 86.36, 180, value="74LVC2G17", footprint=mr.SOT6_FP, unit=1,
+            ref_at=(233.68, 76.2, None), value_at=(233.68, 78.74, None))
+    s.wire(s.points[("R1", "2")][:2], s.points[("U1", "6")][:2])
+    s.label("RX_BUF", (210.82, 86.36), 0)
+    s.place("R4", "Device:R", 264.16, 82.55, 0, value="100k", footprint=mr.R_FP,
+            ref_at=(266.7, 81.28, "left"), value_at=(266.7, 83.82, "left"))
+    s.attach("R4", "1", "P:+3V3")
+    s.wire(s.points[("U1", "1")][:2], s.points[("R4", "2")][:2])
+    s.label("DONGLE_TXD", (250.19, 86.36), 0)
+    s.place("U1", mr.BUF, 231.14, 99.06, 180, value="74LVC2G17", footprint=mr.SOT6_FP, unit=2,
+            ref_at=(231.14, 109.22, None), value_at=(231.14, 111.76, None))
+    s.attach("U1", "4", "L:UART_TX")
+    s.place("R2", "Device:R", 261.62, 99.06, 90, value="1k", footprint=mr.R_FP)
+    s.wire(s.points[("U1", "3")][:2], s.points[("R2", "1")][:2])
+    s.label("TX_BUF", (247.65, 99.06), 0)
     s.attach("R2", "2", "L:DONGLE_RXD")
-    s.text("R1, R2: series resistors on the UART lines.", (198.12, 101.6))
+    s.place("U1", mr.BUF, 264.16, 127.0, 0, value="74LVC2G17", footprint=mr.SOT6_FP, unit=3,
+            ref_at=(256.54, 125.73, "right"), value_at=(256.54, 128.27, "right"))
+    s.attach("U1", "5", "P:+3V3")
+    s.attach("U1", "2", "P:GND")
+    s.place("C1", "Device:C", 279.4, 127.0, 0, value="100n", footprint=mr.C_FP,
+            ref_at=(276.86, 125.73, "right"), value_at=(276.86, 128.27, "right"))
+    s.attach("C1", "1", "P:+3V3")
+    s.attach("C1", "2", "P:GND")
+    s.text("U1: two Schmitt-trigger buffers on the kit's +3V3.\n"
+           "With the kit off, each pin of U1 passes at most\n"
+           "10 uA (Ioff), so the dongle can't power the chip.\n"
+           "R1: at most 3.3 V / 1k = 3.3 mA if something\n"
+           "drives ui[0] the other way.\n"
+           "R2: at most (3.3 - 0.6) V / 1k = 2.7 mA into an\n"
+           "unpowered dongle.\n"
+           "R4 holds U1's input high with no dongle in J4.\n"
+           "C1 decouples U1.", (185.42, 121.92))
     s.place("D1", "Power_Protection:SP0502BAHT", 266.7, 50.8, 0, value="SP0502BAHT",
             ref_at=(271.78, 49.53, "left"), value_at=(271.78, 52.07, "left"))
     s.attach("D1", "1", "L:DONGLE_TXD")
     s.attach("D1", "2", "L:DONGLE_RXD")
-    s.attach("D1", "3", "P:+3V3")
+    s.attach("D1", "3", "P:GND")
     s.text("D1: ESD protection on the\npins a cable plugs into.", (256.54, 63.5))
     s.place("R3", "Device:R", 215.9, 147.32, 90, value="10", footprint=mr.R_FP)
     s.attach("R3", "1", "P:+3V3")
@@ -105,7 +133,8 @@ def schematic(s):
     s.text("Power enters through the Pmod connectors,\nso PWR_FLAG tells ERC where it comes from.", (45.72, 177.8))
 
 
-PLACE = dict(mr.PLACE4, **{"J3": (J3_X, PMOD_Y, 90), "R2": (J3_X + 12.7, 61.5, 270)})
+C1_AT = (154.5, 63.0)                          # below J3, under its pins 4 and 3
+PLACE = dict(mr.PLACE4, **{"J3": (J3_X, PMOD_Y, 90), "C1": (C1_AT[0], C1_AT[1], 270)})
 
 
 def routes(lab, swapped=False):
@@ -133,15 +162,29 @@ def routes(lab, swapped=False):
     r.append(("F.Cu", P, [(x2, 63.0), (121.5, 63.0)]))
     r.append(("F.Cu", P, [(x2, 67.4), (x2, 70.0), (x2, 74.62)] + sw_low))
     r.append(("F.Cu", P, [(x2, 70.0), (121.5, 70.0)]))
-    # The UART: R1 to D1 pin 1 and J4 pin 2; R2 around the bottom to J4 pin 3 and D1 pin 2.
-    xr = x3 + 12.7
+    # ui[0], and R4's 3.3 V from J1, as on Lab 04's board; J4's pins are 2.00 mm apart.
     r.append(("F.Cu", S, [(114.70, PMOD_Y), (114.70, 60.5)]))
-    r.append(("F.Cu", S, [(114.70, 62.5), (114.70, 68.54), (112.9625, 68.54), (110.0, HDR_Y[1])]))
-    r.append(("F.Cu", S, [(xr, PMOD_Y), (xr, 60.5)]))
-    r.append(("F.Cu", S, [(xr, 62.5), (xr, 79.0), (110.0, 79.0), (110.0, HDR_Y[2])]))
+    r.append(("F.Cu", S, [(114.70, 62.5), (119.0, 62.5), (119.0, 63.65)]))
+    r.append(("F.Cu", S, [(116.725, 63.65), (113.6, 63.65), (113.6, 67.9025), (112.9625, 68.54),
+                          (110.0, HDR_Y[1])]))
+    r.append(("F.Cu", S, [(112.4, 62.6), (112.4, 63.65), (113.6, 63.65)]))
+    r.append(("F.Cu", P, [(102.0, PMOD_Y), (102.0, 58.6), (104.0, 60.6), (112.4, 60.6)]))
+    # U1's VCC (pin 5) straight to TP1's +3V3 branch, and its GND (pin 2) to a via.
+    r.append(("F.Cu", P, [(121.5, 63.0), (119.9, 64.6), (119.0, 64.6)]))
+    r.append(("F.Cu", P, [(116.725, 64.6), (115.5, 64.6)]))
+    # C1 from J3's pin 6, its other pad to a via.
+    c1a, c1b = (C1_AT[0], C1_AT[1] - 1.0375), (C1_AT[0], C1_AT[1] + 1.0375)
+    r.append(("F.Cu", P, [(x3, PMOD_Y), (x3, 58.6), (x3 + 1.4, 60.0), (c1a[0], 60.0), c1a]))
+    r.append(("F.Cu", P, [c1b, (c1b[0], c1b[1] + 1.3)]))
+    # uo[0]: J3 pin 1 around the bottom and up the right of R2 to U1's pin 4; pin 3 down to R2,
+    # then R2 to a via, and along the bottom layer to J4's pin 3.
+    xt = x3 + 12.7
+    r.append(("F.Cu", S, [(xt, PMOD_Y), (xt, 79.0), (120.1, 79.0), (120.1, 66.2), (119.0, 65.55)]))
+    r.append(("F.Cu", S, [(116.725, 65.55), (118.05, 66.875), (119.0, 67.6)]))
+    r.append(("F.Cu", S, [(119.0, 69.6), (119.0, 71.08)]))
+    r.append(("B.Cu", S, [(119.0, 71.08), (111.08, 71.08), (110.0, HDR_Y[2])]))
     r.append(("F.Cu", S, [(110.0, HDR_Y[2]), (112.9625, 70.44)]))
-    # D1 pin 3 to TP1, on +3V3.
-    r.append(("F.Cu", S, [(114.8375, 69.49), (116.0, 69.49), (119.5, 66.0), (121.5, 64.0), (121.5, 63.0)]))
+    r.append(("F.Cu", S, [(114.8375, 69.49), (116.0, 69.49)]))
     return r
 
 
@@ -168,10 +211,8 @@ def main():
     comps, pad_net = mr.netlist(sch, work)
 
     mr.routes = routes
-    # Lab 04's GND via at (116, 69.49) is where D1's pin 3 now meets its track to TP1. The
-    # top layer's pour between J1 and J2 needs a via to reach the rest of GND (without one,
-    # J1's pad 11 connects only to an island of it), so it moves up into that pour.
-    mr.VIAS = {"04": [(118.0, 58.0)]}
+    # Lab 04's vias, less the one beside C1's old place, and one for C1's GND pad.
+    mr.VIAS = {"04": [v for v in mr.VIAS["04"] if v != (122.6, 67.675)] + [(C1_AT[0], C1_AT[1] + 2.3375)]}
     mr.SILK = SILK
     pcb = os.path.join(out, mr.NAME + ".kicad_pcb")
     mr.build_board(pcb, comps, pad_net, PLACE, "04", True, True)

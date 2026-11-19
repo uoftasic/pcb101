@@ -20,7 +20,10 @@ then, for Brief D (a bring-up Pmod for a digital project):
   pmod      Lab 04's check (labs/common/check_pmod.py --protect --bringup BRINGUP.md), with
             your project's pin list if you give one with --pins
   test points  a test point on every signal pin of the board's external connector, on
-            either side of its series resistor
+            its net or anywhere along its line to the Pmod pin: past a series resistor, and
+            through a buffer from labs/common/check_pmod.py's list (Lab 04's U1), in either
+            direction, but never onto GND or the Pmod's 3.3 V (so a pull-up's far side
+            doesn't count)
 
 or, for Brief A (a source board for one analog pin):
 
@@ -48,7 +51,7 @@ LAB = os.path.dirname(HERE)
 LABS = os.path.dirname(LAB)
 COMMON = os.path.join(LABS, "common")
 sys.path.insert(0, COMMON)
-from check_pmod import Netlist, parse_value  # noqa: E402
+from check_pmod import BUFFERS, Netlist, buffer_type, parse_value  # noqa: E402
 
 UNIT = (r"(?:[kKMmµu]?(?:Ω|ohms?)|[kKM]?R\b|[mµun]?V\b|[mµun]?A\b|[kKMG]?Hz\b|baud\b|bit/s\b|"
         r"[mµunp]?F\b|[mµunp]s\b|s\b|%|mm\b|mil\b|LSB\b|°C\b)")
@@ -186,6 +189,28 @@ def neighbours(nl, net):
     return out
 
 
+def line_nets(nl, net, rails, depth=4):
+    """The nets along a signal's line from `net`: through two-pin resistors and through either
+    side of a buffer channel, up to `depth` steps, never into one of `rails`."""
+    seen, edge = [net], [net]
+    for _ in range(depth):
+        nxt = []
+        for n in edge:
+            steps = [m for _, m in neighbours(nl, n)]
+            for ref, p in nl.parts.items():
+                t = buffer_type(p)
+                for a, y, _ in BUFFERS[t][0] if t else []:
+                    for u, w in ((a, y), (y, a)):
+                        if p["pins"].get(u) == n and p["pins"].get(w):
+                            steps.append(p["pins"][w])
+            for m in steps:
+                if m not in rails and m not in seen:
+                    seen.append(m)
+                    nxt.append(m)
+        edge = nxt
+    return seen
+
+
 def check_brief_d(repo, pro, pins, rows):
     cmd = [sys.executable, os.path.join(COMMON, "check_pmod.py"), repo, "--protect", "--no-board-check",
            "--bringup", "BRINGUP.md"] + (["--pins", pins] if pins else [])
@@ -202,12 +227,14 @@ def check_brief_d(repo, pro, pins, rows):
     if not ext:
         rows.append((False, "test points", "no external connector (a J part other than the Pmods, with a GND pin)"))
         return
+    rails = {"GND"} | {nl.net(r, p) for r, pp in nl.parts.items() if pp["part"] == "PMOD_PERIPH_2x6"
+                       for p in ("6", "12")}
     bad, good = [], []
     for ref in sorted(ext):
         for pin, net in sorted(nl.parts[ref]["pins"].items()):
             if net == "GND":
                 continue
-            cands = [net] + [n for _, n in neighbours(nl, net)]
+            cands = line_nets(nl, net, rails)
             hit = [(n, t) for n in cands for t in tps.get(n, [])]
             if hit:
                 good.append(f"{ref} pin {pin}: {hit[0][1]}")
@@ -215,8 +242,8 @@ def check_brief_d(repo, pro, pins, rows):
                 bad.append(f"{ref} pin {pin} ({net})")
     rows.append((not bad and bool(good), "test points",
                  ", ".join(good) if not bad else "no test point on " + either(bad)
-                 + (", or on the other side of its series resistor" if len(bad) == 1
-                    else ", or on the other side of their series resistors")))
+                 + (", or along its line to the Pmod pin" if len(bad) == 1
+                    else ", or along their lines to the Pmod pins")))
 
 
 def check_brief_a(repo, pro, rows):

@@ -12,7 +12,8 @@ STAGE is one of:
   placed      every footprint placed, nothing routed
   routed      Lab 03's reference board, routed and filled
   swapped     the routed board with the dongle header's TXD and RXD swapped in the schematic
-  protected   Lab 04's reference board: series resistors, ESD, a current-sense point
+  protected   Lab 04's reference board: a buffer and a resistor on each UART line, ESD, a
+              current-sense point
 
 It runs inside the course's pinned KiCad image, because it needs kicad-cli (to upgrade the
 schematic to KiCad 10's format and to export its netlist) and KiCad's pcbnew Python module
@@ -127,6 +128,7 @@ class Sym:
         node = parse(raw)
         self.props = {p[1]: p[2] for p in children(node, "property")}
         self.pins = {}          # number -> (x, y, angle) in symbol coordinates (y up)
+        self.unit = {}          # number -> the unit the pin belongs to; 0 for every unit
         for sub in children(node, "symbol"):
             m = re.match(re.escape(name) + r"_(\d+)_(\d+)$", sub[1])
             if m and m.group(2) not in ("0", "1"):
@@ -135,6 +137,7 @@ class Sym:
                 at = child(p, "at")
                 num = child(p, "number")[1]
                 self.pins[num] = (float(at[1]), float(at[2]), float(at[3]) if len(at) > 3 else 0.0)
+                self.unit[num] = int(m.group(1)) if m else 0
 
 
 # --------------------------------------------------------------------------------------
@@ -171,9 +174,11 @@ class Sheet:
         return self.syms[lib_id]
 
     def place(self, ref, lib_id, x, y, angle=0, value=None, footprint=None, fields=None, hide_value=False,
-              ref_at=None, value_at=None):
-        """Place a symbol. The reference goes above its pins and the value below them, unless
-        ref_at or value_at give (x, y, justify) for them."""
+              ref_at=None, value_at=None, unit=1):
+        """Place a symbol, or one unit of a symbol that has several (U1's two buffers and its
+        power pins are units 1, 2 and 3, each placed with the same reference). The reference
+        goes above the unit's pins and the value below them, unless ref_at or value_at give
+        (x, y, justify) for them."""
         s = self.sym(lib_id)
         props = dict(s.props)
         props["Reference"] = ref
@@ -187,13 +192,15 @@ class Sheet:
             props.update(fields)
         pts = []
         for num, (px, py, pa) in s.pins.items():
+            if s.unit[num] not in (0, unit):
+                continue
             rx, ry = rot(px, py, angle)
             self.points[(ref, num)] = (round(x + rx, 4), round(y - ry, 4), int((pa + 180 + angle) % 360))
             pts.append(self.points[(ref, num)][1])
         ref_at = ref_at or (x, min(pts) - 2.54, None)
         value_at = value_at or (x, max(pts) + 2.54, None)
-        tag = ref
-        out = [f'\t(symbol\n\t\t(lib_id "{lib_id}")\n\t\t(at {fmt(x)} {fmt(y)} {angle})\n\t\t(unit 1)\n'
+        tag = ref if unit == 1 else f"{ref}/{unit}"
+        out = [f'\t(symbol\n\t\t(lib_id "{lib_id}")\n\t\t(at {fmt(x)} {fmt(y)} {angle})\n\t\t(unit {unit})\n'
                f'\t\t(exclude_from_sim no)\n\t\t(in_bom yes)\n\t\t(on_board yes)\n\t\t(dnp no)\n'
                f'\t\t(uuid "{uid("sym", tag)}")\n']
         power = ref.startswith("#")
@@ -213,10 +220,10 @@ class Sheet:
                        f'\t\t\t\t(font\n\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n'
                        + (f"\t\t\t\t(justify {just})\n" if just else "")
                        + ("\t\t\t\t(hide yes)\n" if hide else "") + "\t\t\t)\n\t\t)\n")
-        for num in s.pins:
+        for num in s.pins:          # every pin of the symbol, in each unit, as KiCad writes them
             out.append(f'\t\t(pin "{num}"\n\t\t\t(uuid "{uid("pin", tag, num)}")\n\t\t)\n')
         out.append(f'\t\t(instances\n\t\t\t(project "{NAME}"\n\t\t\t\t(path "/{self.root}"\n'
-                   f'\t\t\t\t\t(reference "{ref}")\n\t\t\t\t\t(unit 1)\n\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)\n')
+                   f'\t\t\t\t\t(reference "{ref}")\n\t\t\t\t\t(unit {unit})\n\t\t\t\t)\n\t\t\t)\n\t\t)\n\t)\n')
         self.instances.append("".join(out))
         return s
 
@@ -311,6 +318,12 @@ class Sheet:
 PMOD = "TinyTapeout_PMOD:PMOD_PERIPH_2x6"
 PMOD_FP = "TinyTapeout_PMOD:PinHeader_2x06_P2.54mm_PMODPeriph2B"
 R_FP = "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+C_FP = "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+# TI's SN74LVC2G17: units 1 and 2 are the buffers (1A pin 1 to 1Y pin 6, 2A pin 3 to 2Y pin 4),
+# unit 3 holds GND (pin 2) and VCC (pin 5), as in the DBV package's pinout. KiCad's symbol
+# has no footprint, so the schematic gives the DBV package's, SOT-23-6.
+BUF = "74xGxx:74LVC2G17"
+SOT6_FP = "Package_TO_SOT_SMD:SOT-23-6"
 
 
 def pmod_pins(io):
@@ -367,14 +380,44 @@ def schematic(sheet, lab, flags=True, swap=False):
            "Leave the dongle's VCC unconnected.", (205.74, 60.96))
 
     if protect:
-        s.place("R1", "Device:R", 215.9, 81.28, 90, value="1k", footprint=R_FP)
+        # Each UART line goes through one buffer of U1 and then a resistor. ui[0] runs from
+        # the dongle header on the right of the sheet to the input socket on the left, so its
+        # buffer (unit 1) points left; uo[0]'s (unit 2) points right.
+        s.place("R1", "Device:R", 205.74, 86.36, 90, value="1k", footprint=R_FP)
         s.attach("R1", "1", "L:UART_RX")
-        s.attach("R1", "2", "L:DONGLE_TXD")
-        s.place("R2", "Device:R", 215.9, 93.98, 90, value="1k", footprint=R_FP)
-        s.attach("R2", "1", "L:UART_TX")
+        s.place("U1", BUF, 233.68, 86.36, 180, value="74LVC2G17", footprint=SOT6_FP, unit=1,
+                ref_at=(233.68, 76.2, None), value_at=(233.68, 78.74, None))
+        s.wire(s.points[("R1", "2")][:2], s.points[("U1", "6")][:2])
+        s.label("RX_BUF", (210.82, 86.36), 0)
+        s.place("R4", "Device:R", 264.16, 82.55, 0, value="100k", footprint=R_FP,
+                ref_at=(266.7, 81.28, "left"), value_at=(266.7, 83.82, "left"))
+        s.attach("R4", "1", "P:+3V3")
+        s.wire(s.points[("U1", "1")][:2], s.points[("R4", "2")][:2])
+        s.label("DONGLE_TXD", (250.19, 86.36), 0)
+        s.place("U1", BUF, 233.68, 99.06, 0, value="74LVC2G17", footprint=SOT6_FP, unit=2,
+                ref_at=(233.68, 109.22, None), value_at=(233.68, 111.76, None))
+        s.attach("U1", "3", "L:UART_TX")
+        s.place("R2", "Device:R", 261.62, 99.06, 90, value="1k", footprint=R_FP)
+        s.wire(s.points[("U1", "4")][:2], s.points[("R2", "1")][:2])
+        s.label("TX_BUF", (247.65, 99.06), 0)
         s.attach("R2", "2", "L:DONGLE_RXD")
-        s.text("R1, R2: series resistors. With the kit off and the dongle on,\n"
-               "R1 limits the current into ui_in[0] to (3.3 - 0.6) V / 1k = 2.7 mA.", (198.12, 101.6))
+        s.place("U1", BUF, 264.16, 127.0, 0, value="74LVC2G17", footprint=SOT6_FP, unit=3,
+                ref_at=(256.54, 125.73, "right"), value_at=(256.54, 128.27, "right"))
+        s.attach("U1", "5", "P:+3V3")
+        s.attach("U1", "2", "P:GND")
+        s.place("C1", "Device:C", 279.4, 127.0, 0, value="100n", footprint=C_FP,
+                ref_at=(276.86, 125.73, "right"), value_at=(276.86, 128.27, "right"))
+        s.attach("C1", "1", "P:+3V3")
+        s.attach("C1", "2", "P:GND")
+        s.text("U1: two Schmitt-trigger buffers on the kit's +3V3.\n"
+               "With the kit off, each pin of U1 passes at most\n"
+               "10 uA (Ioff), so the dongle can't power the chip.\n"
+               "R1: at most 3.3 V / 1k = 3.3 mA if something\n"
+               "drives ui[0] the other way.\n"
+               "R2: at most (3.3 - 0.6) V / 1k = 2.7 mA into an\n"
+               "unpowered dongle.\n"
+               "R4 holds U1's input high with no dongle in J4.\n"
+               "C1 decouples U1, next to its VCC pin.", (185.42, 121.92))
         s.place("D1", "Power_Protection:SP0502BAHT", 266.7, 50.8, 0, value="SP0502BAHT",
                 ref_at=(271.78, 49.53, "left"), value_at=(271.78, 52.07, "left"))
         s.attach("D1", "1", "L:DONGLE_TXD")
@@ -447,8 +490,14 @@ PLACE3 = {
     "RN1": (126.13, 62.5, 0),
     "SW1": (146.45, 67.0, 270),
 }
+# Lab 04 puts the protection between J1 and the dongle header J4: D1 at the header, U1 to its
+# upper right, R1 between U1 and J1's pin 1 (ui[0]), R2 under U1's 2Y pin, C1 beside U1's VCC
+# pin, and R4 above J4. U1 at 0 degrees has pins 1 to 3 down its left side (1A, GND, 2A) and
+# 6 to 4 down its right (1Y, VCC, 2Y).
 PLACE4 = dict(PLACE3, **{
-    "R1": (114.70, 61.5, 270), "R2": (160.42, 61.5, 270), "R3": (124.86, 66.4, 270),
+    "R1": (114.70, 61.5, 270), "R2": (119.0, 68.6, 270), "R3": (124.86, 66.4, 270),
+    "R4": (112.4, 61.6, 270),
+    "U1": (117.8625, 64.6, 0), "C1": (121.0, 66.6375, 270),
     "D1": (113.9, 69.49, 0),
     "TP1": (121.5, 63.0, 0), "TP2": (121.5, 70.0, 0),
 })
@@ -486,16 +535,44 @@ def routes(lab, swapped=False):
         r.append(("F.Cu", PWR, [(124.86, 63.0), (121.5, 63.0)]))
         r.append(("F.Cu", PWR, [(124.86, 67.4), (124.86, 70.0), (124.86, 74.62)] + sw_low))
         r.append(("F.Cu", PWR, [(124.86, 70.0), (121.5, 70.0)]))
+        # ui[0]: J1 pin 1 to R1, R1 to U1's 1Y (pin 6) over the top of U1, and U1's 1A (pin 1)
+        # out to D1 pin 1 and J4 pin 2, with R4's lower pad joining it.
         r.append(("F.Cu", SIG, [(114.70, PMOD_Y), (114.70, 60.5)]))
-        r.append(("F.Cu", SIG, [(114.70, 62.5), (114.70, 68.54), (112.9625, 68.54), (110.0, 68.54)]))
-        r.append(("F.Cu", SIG, [(160.42, PMOD_Y), (160.42, 60.5)]))
-        r.append(("F.Cu", SIG, [(160.42, 62.5), (160.42, 79.0), (110.0, 79.0), (110.0, 71.08)]))
+        r.append(("F.Cu", SIG, [(114.70, 62.5), (119.0, 62.5), (119.0, 63.65)]))
+        r.append(("F.Cu", SIG, [(116.725, 63.65), (113.6, 63.65), (113.6, 67.9025), (112.9625, 68.54),
+                                (110.0, 68.54)]))
+        r.append(("F.Cu", SIG, [(112.4, 62.6), (112.4, 63.65), (113.6, 63.65)]))
+        # R4's 3.3 V comes from J1's pin 6, on the far side of the ui[0] line from U1's.
+        r.append(("F.Cu", PWR, [(102.0, PMOD_Y), (102.0, 58.6), (104.0, 60.6), (112.4, 60.6)]))
+        # U1's supply: TP1's +3V3 branch down to C1's pad, then on to VCC (pin 5); GND (pin 2)
+        # and C1's other pad each go to a via into the bottom layer's ground.
+        r.append(("F.Cu", PWR, [(121.5, 63.0), (121.0, 63.5), (121.0, 65.6), (120.0, 64.6), (119.0, 64.6)]))
+        r.append(("F.Cu", PWR, [(116.725, 64.6), (115.5, 64.6)]))
+        r.append(("F.Cu", PWR, [(121.0, 67.675), (122.6, 67.675)]))
+        # uo[0]: J3 pin 1 around the bottom of the board to U1's 2A (pin 3); 2Y (pin 4) down to
+        # R2, then R2 to a via, and along the bottom layer under D1 to J4's pin 3, which is a
+        # through-hole pad. That is the one place two lines cross: 2Y is beside VCC, and 2A
+        # sits between 2Y and the pins whose lines go to J4.
+        r.append(("F.Cu", SIG, [(160.42, PMOD_Y), (160.42, 79.0), (117.2, 79.0), (117.2, 66.0), (116.725, 65.55)]))
+        r.append(("F.Cu", SIG, [(119.0, 65.55), (119.0, 67.6)]))
+        r.append(("F.Cu", SIG, [(119.0, 69.6), (119.0, 71.08)]))
+        r.append(("B.Cu", SIG, [(119.0, 71.08), (110.0, 71.08)]))
         r.append(("F.Cu", SIG, [(110.0, 71.08), (112.32, 71.08), (112.9625, 70.44)]))
         r.append(("F.Cu", SIG, [(114.8375, 69.49), (116.0, 69.49)]))
     return r
 
 
-VIAS = {"03": [], "04": [(116.0, 69.49)]}
+# Vias take the net of a track that ends on them (GND if none does). Two of Lab 04's carry
+# pieces of the top layer's ground pour that its tracks cut off from the rest: (106, 58.4)
+# the piece under J1, closed off by R4's +3V3 track, and (118, 58) the piece between J1 and
+# J2, closed off by the ring of J1 pin 1, R1, U1, C1, TP1 and J2's +3V3. Without them, J1's
+# pads 5 and 11 reach only islands of the pour, and DRC reports a starved_thermal error on each.
+VIAS = {"03": [], "04": [(116.0, 69.49), (115.5, 64.6), (122.6, 67.675), (119.0, 71.08), (106.0, 58.4),
+                         (118.0, 58.0)]}
+
+# Reference designators moved off their library positions, where they would print over a
+# neighbour's pads: R4's onto the left of it, R2's onto the left of it, TP2's under it.
+REF_AT = {"03": {}, "04": {"R4": (110.6, 61.6), "R2": (117.3, 68.6), "TP2": (121.5, 71.75)}}
 
 SILK = [
     ("INPUT", 108.35, 59.7), ("BIDIR", 131.21, 59.7), ("OUTPUT", 154.07, 59.7),
@@ -585,6 +662,8 @@ def build_board(pcb_path, comps, pad_net, place, lab, route, zones, swapped=Fals
         fp.SetOrientationDegrees(angle)
         if ref in ("J1", "J2", "J3"):
             fp.SetLocked(True)
+        if ref in REF_AT.get(lab, {}):
+            fp.Reference().SetPosition(pt(*REF_AT[lab][ref]))
         for p in fp.Pads():
             n = pad_net.get((ref, p.GetNumber()))
             if n:
@@ -624,7 +703,13 @@ def build_board(pcb_path, comps, pad_net, place, lab, route, zones, swapped=Fals
             v.SetPosition(pt(x, y))
             v.SetWidth(mm(0.6))
             v.SetDrill(mm(0.3))
-            v.SetNet(net("GND"))
+            ni = net("GND")
+            for t in board.GetTracks():
+                if t.Type() == pcbnew.PCB_TRACE_T and any(
+                        (round(pcbnew.ToMM(q.x), 3), round(pcbnew.ToMM(q.y), 3)) == (round(x, 3), round(y, 3))
+                        for q in (t.GetStart(), t.GetEnd())):
+                    ni = t.GetNet()
+            v.SetNet(ni)
             board.Add(v)
 
     if zones:

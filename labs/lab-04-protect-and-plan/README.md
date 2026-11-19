@@ -3,7 +3,7 @@
 Writeup: [`docs/labs/lab-04-protect-and-plan-overview.md`](../../docs/labs/lab-04-protect-and-plan-overview.md)
 · live: <https://uoftasic.com/pcb101/labs/lab-04-protect-and-plan-overview.html>
 
-You add series resistors, an ESD array and a current-sense point to the board you drew in Lab 03, in your own board repository, and write its bring-up plan from the template here. Check it with:
+You add a buffer and a resistor on each UART line, an ESD array and a current-sense point to the board you drew in Lab 03, in your own board repository, and write its bring-up plan from the template here. Check it with:
 
 ```bash
 cd ~/simproc-pmod                                        # your board repository
@@ -22,12 +22,10 @@ cp ~/pcb101/labs/lab-04-protect-and-plan/BRINGUP.md .     # once
 
 | Row | Passes when |
 |---|---|
-| `ui[0]`, `uo[0]` | the Pmod pin reaches its header pin through exactly one series resistor, which lets no more than 20 mA into a pin of an unpowered chip: (3.3 V − 0.6 V) / R, so R of at least 135 Ω |
+| `ui[0]`, `uo[0]` | the line runs through a buffer and then one resistor, the way it flows: on `ui[0]` the header pin is on the buffer's input (A) and its output (Y) reaches the Pmod pin through the resistor; on `uo[0]` the Pmod pin is on the input and the output reaches the header pin through the resistor. The buffer is a 74LVC1G or 74LVC2G 17, 34 or 125, or a 74AUP1G17, 74AUP1G34 or 74AUP1G125 (single supply, with Ioff; a 125's OE on GND), its VCC on the sockets' 3.3 V and its GND on GND, with a capacitor from that 3.3 V to GND whose pad is within 3 mm of its VCC pad. The resistor is 330 Ω to 15 kΩ on `ui[0]` and 1 kΩ to 5.1 kΩ on `uo[0]`, and the buffer's input on `ui[0]` has a resistor to 3.3 V or GND. A line with no buffer fails, and so does a buffer turned round |
 | ESD J4.2, J4.3 | the header pin's net has a part whose reference starts with D, or from KiCad's `Power_Protection` library, with another pin on `GND` |
 | sense | a two-pin resistor from the sockets' 3.3 V to a net of the board's own that feeds something, with a test point (reference TP…) on each side |
 | bring-up plan | the five sections of the template filled in, no TODO left, a current limit with its unit, at least 2 checks under Before power and 4 steps under Steps, each with `Expect:` and a value with a unit (or a byte in hex or binary) |
-
-A buffer in place of a series resistor fails the `ui[0]` and `uo[0]` rows, because the check looks for a resistor.
 
 ## Files
 

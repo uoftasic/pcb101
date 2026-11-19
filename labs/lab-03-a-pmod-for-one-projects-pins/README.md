@@ -31,7 +31,7 @@ docker run --rm -v "${PWD}:/work" -v "<path to pcb101>:/w" -w /work kicad/kicad:
 | sockets | left to right, with the pins pointing away from you: input (`ui`), bidir (`uio`), output (`uo`) |
 | power | pins 6 and 12 of every connector on one net, pins 5 and 11 on `GND` |
 | dongle | a connector other than the Pmods with pin 1 on `GND` and pins 2 and 3 |
-| `ui[0]`, `uo[0]` | the Pmod pin reaches the header's pin 2 (`ui[0]`) or pin 3 (`uo[0]`), on the same net or through one series resistor |
+| `ui[0]`, `uo[0]` | the Pmod pin reaches the header's pin 2 (`ui[0]`) or pin 3 (`uo[0]`), on the same net, through one series resistor, or through a buffer the right way round (Lab 04's protection) |
 | `uio[n]` | a switch from the line to the 3.3 V supply, and a resistor from the line to `GND` |
 
 A resistor is a two-pin part whose reference starts with R, one element of a bussed network (`R_Network*`, pin 1 common) or one of an isolated array (`R_Pack*`). A switch is a part whose reference starts with SW; for `SW_DIP_xNN`, pin *k* pairs with pin 2NN + 1 − *k*.

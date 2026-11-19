@@ -14,9 +14,9 @@ Lab 04's reference board with two test points, written by [`../src/make_brief_d.
 | Part | Footprint | Net | Where (mm) |
 |---|---|---|---|
 | TP3 | `TestPoint:TestPoint_Pad_D1.5mm` | `UART_RX` (`ui[0]`, between J1 and R1) | (117.3, 60.0), on a track from (114.70, 59.0) |
-| TP4 | same | `DONGLE_RXD` (`uo[0]`, between R2 and J4) | (162.3, 66.0), on a track from (160.42, 66.0) |
+| TP4 | same | `DONGLE_RXD` (`uo[0]`, between R2 and J4) | (119.0, 73.2), on a track from the via under R2 at (119.0, 71.08) |
 
-Both sit outside the Pmod connectors' courtyards, which reach down to Y 58.2 mm; at Y 58.5 they overlapped them and DRC reported two `courtyards_overlap` errors. `BRINGUP.md` is Lab 04's, with steps 5 and 6 read at TP4 and TP3.
+TP3 sits below the Pmod connectors' courtyards, which reach down to Y 58.2 mm. TP4's reference is moved under it, clear of TP2's. `BRINGUP.md` is Lab 04's, with steps 6 and 7 read at TP4 and TP3. The third `silk_overlap` is R1's reference against TP3's circle.
 
 ## Brief A
 

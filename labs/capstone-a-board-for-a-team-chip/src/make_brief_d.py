@@ -7,7 +7,8 @@ each UART line.
 It uses Lab 03's generator (labs/lab-03-a-pmod-for-one-projects-pins/src/make_reference.py)
 for everything: Lab 04's schematic with two test points added, TP3 on UART_RX (ui[0], between
 J1 and R1) and TP4 on DONGLE_RXD (uo[0], between R2 and the dongle header J4), and Lab 04's
-board with TP3 beside R1 and TP4 beside the track from R2 to J4, each on a short track.
+board with TP3 beside R1 and TP4 under the via that takes DONGLE_RXD from R2 to the bottom
+layer, each on a short track.
 Files other than the KiCad project in OUT (DESIGN.md, BRINGUP.md, ci/, .github/) are left
 alone. It runs inside the course's pinned KiCad image.
 """
@@ -22,7 +23,8 @@ sys.path.insert(0, os.path.join(REPO, "labs", "lab-03-a-pmod-for-one-projects-pi
 import make_reference as mr  # noqa: E402
 
 TP3 = (117.3, 60.0)       # on UART_RX, right of R1, below J1's courtyard
-TP4 = (162.3, 66.0)       # on DONGLE_RXD, right of R2's track down to J4
+TP4 = (119.0, 73.2)       # on DONGLE_RXD, under R2 and the via beneath it, left of TP2
+RXD_VIA = (119.0, 71.08)  # Lab 04's via from R2 down to the bottom layer's track to J4
 
 
 def schematic(s):
@@ -45,12 +47,12 @@ def routes(lab, swapped=False):
         if pts == [(114.70, mr.PMOD_Y), (114.70, 60.5)]:
             r.append((layer, width, [(114.70, mr.PMOD_Y), (114.70, 59.0), (114.70, 60.5)]))
             r.append((layer, width, [(114.70, 59.0), (TP3[0], 59.0), TP3]))
-        elif pts[:2] == [(160.42, 62.5), (160.42, 79.0)]:
-            r.append((layer, width, [(160.42, 62.5), (160.42, TP4[1])] + pts[1:]))
-            r.append((layer, width, [(160.42, TP4[1]), TP4]))
+        elif layer == "F.Cu" and pts == [(119.0, 69.6), RXD_VIA]:
+            r.append((layer, width, pts))
+            r.append((layer, width, [RXD_VIA, TP4]))
         else:
             r.append((layer, width, pts))
-    if len(r) != len(_routes(lab, swapped)) + 2:
+    if len(r) != len(_routes(lab, swapped)) + 2 or RXD_VIA not in mr.VIAS[lab]:
         raise SystemExit("make_brief_d: Lab 04's UART tracks have moved; update this script")
     return r
 
@@ -72,6 +74,8 @@ def main():
     mr.run(["kicad-cli", "sch", "upgrade", "--force", sch])
     comps, pad_net = mr.netlist(sch, work)
     mr.routes = routes
+    # TP4's reference under it, clear of the via above it and of TP2's reference.
+    mr.REF_AT["04"]["TP4"] = (TP4[0], TP4[1] + 1.75)
     place = dict(mr.PLACE4, TP3=(TP3[0], TP3[1], 0), TP4=(TP4[0], TP4[1], 0))
     mr.build_board(os.path.join(out, mr.NAME + ".kicad_pcb"), comps, pad_net, place, "04", True, True)
     for f in (mr.NAME + ".kicad_prl",):

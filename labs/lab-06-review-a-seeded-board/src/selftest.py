@@ -9,9 +9,10 @@ The seeded board (board/), as shipped:
   - Lab 04's check (check_pmod.py --protect) must FAIL on the connectors and pins rows only:
     the connectors row fails because J3 is 0.5 mm out, and the pins row fails with "not
     checked until the connectors pass" (the power row is checked anyway, and passes);
-  - with J3 put back at 22.86 mm, Lab 04's check must FAIL on the ui[0], ESD J4.2 and ESD J4.3
-    rows only: three of the eight faults are ones it looks for, and it doesn't look for the
-    other five.
+  - with J3 put back at 22.86 mm, Lab 04's check must FAIL on the ui[0] and uo[0] rows only:
+    ui[0] because no capacitor is within 3 mm of U1's VCC pin, uo[0] because U1's second
+    buffer is turned round. With J3's spacing, those are the three of the eight faults it
+    looks for, and it doesn't look for the other five.
 
 The Lab 06 check, on a board repository like a student's after Lab 05 (Lab 04's reference
 board with Lab 05's reference files, in results/selftest/repo):
@@ -86,7 +87,8 @@ def main():
            f"exit {rc}, failing rows {', '.join(sorted(fails))}", out)
     edit(os.path.join(board, "pmod.kicad_pcb"), "(at 148.22 56.35 90)", "(at 147.72 56.35 90)")
     rc, fails, out = pmod_fails(board, "--no-board-check")
-    report("seeded board, J3 put back: Lab 04 check", rc == 1 and fails == {"ui[0]", "ESD J4.2", "ESD J4.3"},
+    report("seeded board, J3 put back: Lab 04 check",
+           rc == 1 and fails == {"ui[0]", "uo[0]"} and "no decoupling" in out and "turned round" in out,
            f"exit {rc}, failing rows {', '.join(sorted(fails))}", out)
 
     # A board repository as a student's stands after Lab 05.
