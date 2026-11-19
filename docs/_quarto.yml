@@ -42,7 +42,10 @@ website:
         href: https://github.com/uoftasic/pcb101
         aria-label: GitHub
   sidebar:
-    style: docked
+    # From 992px up, floating sets the sidebar 1.5em in from the left edge
+    # of the window, as "On this page" is from the right. Docked puts the
+    # sidebar against the left edge.
+    style: floating
     contents:
       - text: "Home"
         href: index.md
@@ -128,6 +131,15 @@ answers-in-pdf: end
 
 format:
   html:
+    # sidebar-width and margin-width are the widths of the sidebar and of
+    # "On this page". The text column gets most of the width those two
+    # leave, so it grows with the window. Quarto caps it at body-width minus
+    # 3em, and body-width is set far wider than any screen. To set a
+    # narrower cap, lower body-width.
+    grid:
+      sidebar-width: 200px
+      margin-width: 200px
+      body-width: 10000px
     theme:
       light: [cosmo, _light.scss]
       dark: [darkly, _dark.scss]
