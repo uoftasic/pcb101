@@ -51,6 +51,7 @@ jobs:
         run: labs/common/kicad.sh python3 labs/common/selftest_check.py
 
       - name: Check every lab's reference solution
+        if: success() || failure()
         run: |
           set -o pipefail
           labs/common/kicad.sh python3 labs/common/check_solutions.py | tee check.log
@@ -65,6 +66,7 @@ jobs:
       # checker instead: each src/selftest.py runs the lab's check on the shipped starter
       # (must FAIL), on solutions/ (must PASS) and on known-bad variants.
       - name: Run each lab's checker on its starter, solution and known-bad variants
+        if: success() || failure()
         run: |
           for t in labs/*/src/selftest.py; do
             case "$t" in labs/lab-05-*) continue ;; esac   # the next step
@@ -75,6 +77,7 @@ jobs:
       # Lab 05's check runs KiBot in its own image as well as KiCad, so its self-test starts
       # containers of both images itself and runs on the runner rather than in the image.
       - name: Run Lab 05's checker, which also runs KiBot
+        if: success() || failure()
         run: python3 labs/lab-05-fab-outputs-in-ci/src/selftest.py
 
       - name: Keep the reports
