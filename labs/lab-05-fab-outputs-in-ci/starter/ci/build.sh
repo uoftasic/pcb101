@@ -2,7 +2,7 @@
 # Everything this board's CI does, in one script. The check, fab and images stages run inside
 # the pinned KiCad image named in ci/kicad-image.txt, and the kibot stage inside the pinned
 # KiBot image named in ci/kibot-image.txt: .github/workflows/board.yml runs one stage per step,
-# and the IC103 Lab 05 check runs them on your own machine the same way.
+# and the PCB101 Lab 05 check runs them on your own machine the same way.
 #
 #   bash ci/build.sh check     ERC, DRC and schematic parity; fails if the board check fails
 #   bash ci/build.sh fab       Gerbers and drill file (out/fab), BOM and position file (out/assembly)

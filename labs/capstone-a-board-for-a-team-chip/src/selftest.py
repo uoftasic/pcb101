@@ -27,7 +27,7 @@ LAB = os.path.dirname(HERE)
 LABS = os.path.dirname(LAB)
 OUT = os.path.join(LAB, "results", "selftest")
 CHECK = os.path.join(HERE, "check_capstone.py")
-GIT = ["git", "-c", "user.name=IC103 selftest", "-c", "user.email=selftest@example.com",
+GIT = ["git", "-c", "user.name=PCB101 selftest", "-c", "user.email=selftest@example.com",
        "-c", "init.defaultBranch=main", "-c", "commit.gpgsign=false"]
 
 

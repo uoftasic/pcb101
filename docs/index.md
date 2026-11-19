@@ -1,8 +1,8 @@
-# IC103 — PCB Design with KiCad
+# PCB101 — PCB Design with KiCad
 
 In this course you design the boards a chip sits on, in KiCad. You start by reading the boards that Tiny Tapeout makes for its chips, including the breakout that the team's SKY130 chips arrive on. Next you draw a footprint from a datasheet's package drawing, for a chip package that KiCad's library doesn't have. Then you draw a board of your own, a small Pmod for one project's pins. In the next two labs you add protection to it, write its bring-up plan, and set up GitHub Actions to build its fabrication files on every push. After that you review a Pmod like yours that we planted faults in, and get a fabricator's quote for your own board without ordering it. In the capstone you take a board for one of the team's chips to the point where it could be ordered.
 
-IC103 is part of the UofT ASIC Team education materials, published at <https://uoftasic.com/ic103/>. Unlike the analog and digital courses, it doesn't run in the workbench that you set up in IC101. You install KiCad 10.0 on your own computer, and the course's checks run in KiCad's own Docker image. [Getting started](guide/getting-started.md) explains why, and what to install on Windows, macOS and Linux.
+PCB101 is part of the UofT ASIC Team education materials, published at <https://uoftasic.com/pcb101/>. Unlike the analog and digital courses, it doesn't run in the workbench that you set up in IC101. You install KiCad 10.0 on your own computer, and the course's checks run in KiCad's own Docker image. [Getting started](guide/getting-started.md) explains why, and what to install on Windows, macOS and Linux.
 
 ## Who this course is for
 
@@ -12,7 +12,7 @@ You don't need to have designed a board before. You do need the circuits you lea
 
 | | |
 |---|---|
-| Track | IC |
+| Track | Core: for both the analog and the digital track, after IC101 and IC102 |
 | Prerequisites | [IC101](https://uoftasic.com/ic101/), then IC102 (either version), and circuits from class. [AD103](https://uoftasic.com/ad103/) helps with the analog capstone brief and [DD102](https://uoftasic.com/dd102/) with the digital one. |
 | Tools | KiCad 10.0 on your own computer; Docker, which you set up in IC101, for the checks; Python 3, for the script that fetches Tiny Tapeout's boards; git and a GitHub account. |
 | Checks | `kicad/kicad:10.0.5`, pinned by digest. Every count and message that a lab page quotes from KiCad or from one of the course's checks comes from a run in that image. The exceptions are KiBot's output in Lab 05, which comes from KiBot's own image (with KiCad 10.0.5), also pinned by digest, and Lab 01's comparison with KiCad 10.0.8. |

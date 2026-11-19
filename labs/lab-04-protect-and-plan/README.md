@@ -1,14 +1,14 @@
 # Lab 04: Protect and plan
 
 Writeup: [`docs/labs/lab-04-protect-and-plan-overview.md`](../../docs/labs/lab-04-protect-and-plan-overview.md)
-· live: <https://uoftasic.com/ic103/labs/lab-04-protect-and-plan-overview.html>
+· live: <https://uoftasic.com/pcb101/labs/lab-04-protect-and-plan-overview.html>
 
 You add series resistors, an ESD array and a current-sense point to the board you drew in Lab 03, in your own board repository, and write its bring-up plan from the template here. Check it with:
 
 ```bash
 cd ~/simproc-pmod                                        # your board repository
-cp ~/ic103/labs/lab-04-protect-and-plan/BRINGUP.md .     # once
-~/ic103/labs/lab-04-protect-and-plan/check.sh
+cp ~/pcb101/labs/lab-04-protect-and-plan/BRINGUP.md .     # once
+~/pcb101/labs/lab-04-protect-and-plan/check.sh
 ```
 
 `check.sh [FOLDER] [ARGS]` runs [`labs/common/check_pmod.py`](../common/check_pmod.py) with `--protect --bringup BRINGUP.md` on the project in FOLDER (default: the current folder), in the course's pinned KiCad image. It prints everything Lab 03's check prints, then three more kinds of Pmod row and the bring-up plan check ([`labs/common/check_bringup.py`](../common/check_bringup.py)), and ends with one line, `PASS` or `FAIL`. Exit status 0 is PASS, 1 FAIL, 2 couldn't run. Without bash, add `--protect --bringup BRINGUP.md` to the `docker run` in [Lab 03's README](../lab-03-a-pmod-for-one-projects-pins/README.md).

@@ -2,7 +2,7 @@
 
 In this lab you make your Lab 03 board safe to plug into a Tiny Tapeout kit, and you write a plan for bringing it up with the kit. A kit has only one chip, so a mistake on your board that damages one of the chip's pins is expensive. On the board, you'll put a series resistor on each UART line, an ESD array on the dongle header and a current-sense point in the board's own supply. The plan is a file in your repository, `BRINGUP.md`. It says what drives each line that leaves the board and what happens when one side is powered and the other isn't, it lists the checks you make before anything is powered, and it gives the reading you expect at every step.
 
-The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-04-protect-and-plan) in the course repo.
+The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoftasic/pcb101/tree/main/labs/lab-04-protect-and-plan) in the course repo.
 
 ## Before you start
 
@@ -15,9 +15,9 @@ Copy the bring-up plan's template into your repository and run the Lab 04 check 
 
 ```bash
 cd ~/simproc-pmod
-cp ~/ic103/labs/lab-04-protect-and-plan/BRINGUP.md .
+cp ~/pcb101/labs/lab-04-protect-and-plan/BRINGUP.md .
 git add BRINGUP.md
-~/ic103/labs/lab-04-protect-and-plan/check.sh
+~/pcb101/labs/lab-04-protect-and-plan/check.sh
 ```
 
 The check runs everything that Lab 03's check runs, then the rows that Lab 04 adds, then the check of the bring-up plan. On our Lab 03 board the board check still passes, and five Pmod rows fail:
@@ -176,7 +176,7 @@ What do you check before power, and what should you read at each step?
 
 ## Finishing
 
-You're done when `~/ic103/labs/lab-04-protect-and-plan/check.sh`, run in your own repository, ends with `PASS  pmod.kicad_pro: board check PASS; 17 of 17 Pmod checks ok; bring-up plan PASS`, and the files it checked are committed and pushed to GitHub.
+You're done when `~/pcb101/labs/lab-04-protect-and-plan/check.sh`, run in your own repository, ends with `PASS  pmod.kicad_pro: board check PASS; 17 of 17 Pmod checks ok; bring-up plan PASS`, and the files it checked are committed and pushed to GitHub.
 
 Questions:
 

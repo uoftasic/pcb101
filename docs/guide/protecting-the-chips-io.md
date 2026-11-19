@@ -47,7 +47,7 @@ SkyWater's [user guide for its I/O cells](https://skywater-pdk.readthedocs.io/en
 
 Between ground and its supply voltage, a CMOS input draws almost no current. Horowitz and Hill (*The Art of Electronics*, 3rd ed., p. 795) put the leakage at about $10^{-5}$ µA. Outside that range the protection diodes conduct. An input more than a diode drop above the supply pushes current through the upper diode into the supply rail, and an input more than a diode drop below ground pulls current out through the lower one. Horowitz and Hill warn that "Momentary currents greater than 20–50 mA through these diodes will damage or destroy the part, in some cases causing what's known as 'SCR latchup'". In latch-up, the current through the input diodes turns on a pair of parasitic transistors, which short the supply to ground, and the chip stays shorted and gets hot until you turn the power off (p. 759). In a footnote on the same page they add that manufacturers often guarantee no latch-up as long as the input current stays below a maximum "input clamp current", 20 mA for example, which means that "you can use a series input resistor to prevent latchup even with input-voltage overdrive" (p. 759).
 
-![A series resistor in front of a chip input with its two clamp diodes](../assets/img/ic103-io-input-clamps.svg)
+![A series resistor in front of a chip input with its two clamp diodes](../assets/img/pcb101-io-input-clamps.svg)
 
 *A chip input, as it looks electrically from outside the chip. $D_1$ and $D_2$ are the pad's protection diodes, and $C_{in}$ is the capacitance of the pin, its trace and the connectors. When $V_{drive}$ rises more than a diode drop above $V_{DDIO}$, $D_1$ conducts, and $R_S$ is the only part on your board that limits the current.*
 

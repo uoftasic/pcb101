@@ -1,4 +1,4 @@
-# Quarto build of the IC103 docs (replacing Docsify's index.html,
+# Quarto build of the PCB101 docs (replacing Docsify's index.html,
 # _sidebar.md and _navbar.md).
 #
 #   quarto preview docs          # live site at http://localhost:4200
@@ -17,10 +17,10 @@ project:
     browser: false
 
 website:
-  title: "IC103 — PCB Design with KiCad"
+  title: "PCB101 — PCB Design with KiCad"
   description: "Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip."
-  site-url: https://uoftasic.com/ic103/
-  repo-url: https://github.com/uoftasic/ic103
+  site-url: https://uoftasic.com/pcb101/
+  repo-url: https://github.com/uoftasic/pcb101
   repo-subdir: docs
   repo-actions: [issue]
   search: true
@@ -34,12 +34,12 @@ website:
     right:
       - text: Course PDF
         icon: file-pdf
-        href: "ic103-course.pdf"
+        href: "pcb101-course.pdf"
       - icon: discord
         href: https://discord.gg/hrJnP5UsGz
         aria-label: Discord
       - icon: github
-        href: https://github.com/uoftasic/ic103
+        href: https://github.com/uoftasic/pcb101
         aria-label: GitHub
   sidebar:
     style: docked
@@ -115,9 +115,9 @@ website:
       - section: "Repo"
         contents:
           - text: "Lab packages"
-            href: https://github.com/uoftasic/ic103/tree/main/labs
+            href: https://github.com/uoftasic/pcb101/tree/main/labs
           - text: "Checks and boards (labs/common)"
-            href: https://github.com/uoftasic/ic103/tree/main/labs/common
+            href: https://github.com/uoftasic/pcb101/tree/main/labs/common
 
 filters:
   - _filters/course.lua
@@ -132,7 +132,7 @@ format:
       light: [cosmo, _light.scss]
       dark: [darkly, _dark.scss]
     css: _styles.css
-    # Keeps old Docsify links (.../ic103/#/labs/...) working.
+    # Keeps old Docsify links (.../pcb101/#/labs/...) working.
     include-in-header: _docsify-redirect.html
     toc: true
     toc-depth: 3

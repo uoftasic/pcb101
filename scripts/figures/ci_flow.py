@@ -1,7 +1,7 @@
 """Outputs in CI: what one CI run does with a board, from a push to the artifact.
 
     pip install -r scripts/figures/requirements.txt
-    python3 scripts/figures/ci_flow.py        # writes docs/assets/img/ic103-ci-flow.svg
+    python3 scripts/figures/ci_flow.py        # writes docs/assets/img/pcb101-ci-flow.svg
 
 The steps are the ones Lab 05's workflow runs: check out the commit, run ERC, DRC and
 schematic parity in the pinned image (labs/common/kicad-image.txt), stop on an error, and
@@ -56,4 +56,4 @@ text(d, (11.6 + 0.45, (dec.S[1] + outs.N[1]) / 2), "no", size=NOTE, halign="left
 art = box(d, 5.6, -7.0, "uploaded as an artifact\nof that run")
 d.add(elm.Arrow().at(outs.W).to(art.E))
 
-print(save(d, "ic103-ci-flow"))
+print(save(d, "pcb101-ci-flow"))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""IC103 capstone check: is your board for a team chip ready to order?
+"""PCB101 capstone check: is your board for a team chip ready to order?
 
     labs/common/kicad.sh python3 /w/labs/capstone-a-board-for-a-team-chip/src/check_capstone.py REPO --brief D|A [--pins FILE]
 
@@ -296,7 +296,7 @@ def main():
     else:
         check_brief_a(repo, pros[0], rows)
 
-    print(f"IC103 capstone check, Brief {brief}")
+    print(f"PCB101 capstone check, Brief {brief}")
     print(f"  repository  {repo}")
     print()
     for ok, what, detail in rows:

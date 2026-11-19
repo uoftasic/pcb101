@@ -4,8 +4,8 @@
     labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/check_footprint.py
     labs/common/kicad.sh python3 labs/lab-02-a-footprint-from-a-datasheet/src/check_footprint.py DIR
 
-DIR defaults to the lab folder and must hold pads.md, ic103.pretty/RHL0024A.kicad_mod and
-ic103.kicad_sym with the symbol SN74LVC8T245RHL. The check has four parts:
+DIR defaults to the lab folder and must hold pads.md, pcb101.pretty/RHL0024A.kicad_mod and
+pcb101.kicad_sym with the symbol SN74LVC8T245RHL. The check has four parts:
 
 1. pads.md: your Z, G, X, pad lengths and pad centres against the course's own arithmetic
    from the drawing (src/land_pattern.py), within 0.02 mm.
@@ -16,7 +16,7 @@ ic103.kicad_sym with the symbol SN74LVC8T245RHL. The check has four parts:
    also compares your pads with every footprint in KiCad's Package_DFN_QFN library and
    fails if they're the same as one of them.
 3. The symbol against Table 4-1 of the datasheet: pins 1 to 25, their names and types,
-   and the Footprint field ic103:RHL0024A. A KiCad 10 pin stack such as [11,12,13] counts
+   and the Footprint field pcb101:RHL0024A. A KiCad 10 pin stack such as [11,12,13] counts
    as each of its numbers. A hidden power-input pin fails, because KiCad joins it to a
    global net named after it.
 4. A one-part project with your symbol and footprint (written to results/fit/), through
@@ -378,13 +378,13 @@ def check_symbol(path, rows):
     for c in re.finditer(r'\(property\s+"Footprint"\s+"([^"]*)"', sym):
         fp_field = c.group(1)
         break
-    if fp_field != f"ic103:{FP_NAME}":
-        msgs.append(f"the Footprint field is '{fp_field or ''}'; set it to ic103:{FP_NAME}")
+    if fp_field != f"pcb101:{FP_NAME}":
+        msgs.append(f"the Footprint field is '{fp_field or ''}'; set it to pcb101:{FP_NAME}")
     if msgs:
         for i, m in enumerate(msgs):
             rows.append((False, label if i == 0 else "", m))
     else:
-        rows.append((True, label, f"25 pins with Table 4-1's names and types, footprint ic103:{FP_NAME}"))
+        rows.append((True, label, f"25 pins with Table 4-1's names and types, footprint pcb101:{FP_NAME}"))
     vals = {}
     for c in re.finditer(r'\(property\s+"(Value|Datasheet|Description)"\s+"((?:[^"\\]|\\.)*)"', sym):
         vals.setdefault(c.group(1), c.group(2))
@@ -405,17 +405,17 @@ def both(items):
 
 def main():
     ap = argparse.ArgumentParser(description="Check your Lab 02 pads, footprint and symbol.")
-    ap.add_argument("dir", nargs="?", default=LAB, help="folder with pads.md, ic103.pretty and ic103.kicad_sym")
+    ap.add_argument("dir", nargs="?", default=LAB, help="folder with pads.md, pcb101.pretty and pcb101.kicad_sym")
     ap.add_argument("--out", help="where to write the fit project (default: results/fit in the lab)")
     args = ap.parse_args()
     d = os.path.abspath(args.dir)
     pads_md = os.path.join(d, "pads.md")
-    fp_dir = os.path.join(d, "ic103.pretty")
+    fp_dir = os.path.join(d, "pcb101.pretty")
     fp_path = os.path.join(fp_dir, FP_NAME + ".kicad_mod")
-    sym_path = os.path.join(d, "ic103.kicad_sym")
+    sym_path = os.path.join(d, "pcb101.kicad_sym")
     out = os.path.abspath(args.out or os.path.join(LAB, "results", "fit"))
 
-    print("IC103 Lab 02 check")
+    print("PCB101 Lab 02 check")
     print(f"  folder    {shown(d)}")
     print()
     rows = []

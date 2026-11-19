@@ -1,7 +1,7 @@
 # Bring-up plan: source board for an0
 
 <!--
-  IC103 capstone, Brief A reference. Every expected value is worked out from the part values
+  PCB101 capstone, Brief A reference. Every expected value is worked out from the part values
   and the demo board figures in DESIGN.md. Nothing here has been measured.
 -->
 

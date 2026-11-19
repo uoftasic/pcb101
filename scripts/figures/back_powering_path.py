@@ -35,7 +35,7 @@ def main():
     d.add(elm.CurrentLabel(top=False, ofst=0.45, length=1.4).at(up).label("$I$"))
     d.add(elm.EncircleBox([pad, up, vio, dn, g], padx=0.75, pady=0.3).linestyle("--")
           .label("the chip, unpowered", loc="bottom", halign="left"))
-    print(save(d, "ic103-back-powering-path"))
+    print(save(d, "pcb101-back-powering-path"))
 
 
 if __name__ == "__main__":

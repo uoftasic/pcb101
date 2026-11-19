@@ -1,8 +1,8 @@
 # Getting started
 
-In IC103 you draw everything in **KiCad**, a free, open-source suite for schematics and printed circuit boards. It has a Schematic Editor, a PCB Editor, a Symbol Editor and a Footprint Editor, and a command-line program, `kicad-cli`, that runs the same checks and exports without opening a window. You'll use all five.
+In PCB101 you draw everything in **KiCad**, a free, open-source suite for schematics and printed circuit boards. It has a Schematic Editor, a PCB Editor, a Symbol Editor and a Footprint Editor, and a command-line program, `kicad-cli`, that runs the same checks and exports without opening a window. You'll use all five.
 
-IC101 and IC102 use the workbench, and so do the analog and digital courses. In IC103 you install KiCad on your own computer instead and do all your drawing there, while the course's checks run `kicad-cli` in KiCad's own Docker image. This page explains why it's done that way, which version of KiCad to install and where to get it on Windows, macOS and Linux, and how the numbers you see in your own KiCad relate to the ones on the lab pages. You won't install anything while you read it. You'll do the installing in [Lab 01](../labs/lab-01-open-a-board-you-didnt-design-overview.md), Part 1.
+IC101 and IC102 use the workbench, and so do the analog and digital courses. In PCB101 you install KiCad on your own computer instead and do all your drawing there, while the course's checks run `kicad-cli` in KiCad's own Docker image. This page explains why it's done that way, which version of KiCad to install and where to get it on Windows, macOS and Linux, and how the numbers you see in your own KiCad relate to the ones on the lab pages. You won't install anything while you read it. You'll do the installing in [Lab 01](../labs/lab-01-open-a-board-you-didnt-design-overview.md), Part 1.
 
 The facts about KiCad's downloads on this page come from kicad.org, read on November 16, 2026, and each section links the page it comes from. KiCad updates those pages with every release, so if a version number there has moved on since, believe kicad.org.
 
@@ -83,7 +83,7 @@ Whichever way you install it, run KiCad in an X11 session if you can. The same p
 
 ## Your KiCad and the course's checks
 
-Every lab's check runs through a script in [`labs/common/`](https://github.com/uoftasic/ic103/tree/main/labs/common) that starts `kicad/kicad:10.0.5`, named by its digest (`sha256:182c8005cb77…`, in full in `labs/common/kicad-image.txt`) so that it's the same build on every machine, and runs the check inside it. In every lab except Lab 06, the check includes the course's board check, which uses `kicad-cli` to run ERC on the schematic and DRC on the board, compares the board with the schematic, and prints the counts, followed by PASS or FAIL. Lab 01 runs it on Tiny Tapeout's breakout, Lab 02 on a small board with your footprint on it, and Labs 03 to 05 and the capstone on your own board. Lab 05's check also runs KiBot, in KiBot's own image. Lab 06's check reads your review of a seeded board and your fabricator's quote, and doesn't run ERC or DRC. Each lab shows you the command.
+Every lab's check runs through a script in [`labs/common/`](https://github.com/uoftasic/pcb101/tree/main/labs/common) that starts `kicad/kicad:10.0.5`, named by its digest (`sha256:182c8005cb77…`, in full in `labs/common/kicad-image.txt`) so that it's the same build on every machine, and runs the check inside it. In every lab except Lab 06, the check includes the course's board check, which uses `kicad-cli` to run ERC on the schematic and DRC on the board, compares the board with the schematic, and prints the counts, followed by PASS or FAIL. Lab 01 runs it on Tiny Tapeout's breakout, Lab 02 on a small board with your footprint on it, and Labs 03 to 05 and the capstone on your own board. Lab 05's check also runs KiBot, in KiBot's own image. Lab 06's check reads your review of a seeded board and your fabricator's quote, and doesn't run ERC or DRC. Each lab shows you the command.
 
 Your own KiCad can run the same ERC and DRC from its menus, and you'll do both in Lab 01. The errors it finds should be the same as the checker's, but the warning counts can differ, because many of KiCad's warnings compare the parts in your design with the libraries KiCad knows about, and which libraries those are depends on how KiCad was set up on that machine. Here is the same board, Tiny Tapeout's SKY130 breakout, checked in two setups:
 
@@ -107,7 +107,7 @@ Some steps ask you to write down what you expect before you run something, so th
 
 After its last part, every lab has a Finishing section that tells you how you'll know you're done, asks any questions you can answer from your own work, and says what to submit. Then comes a "Going further (optional)" section with extra reading and experiments. None of the required parts depends on it, and the lab's time estimate leaves it out.
 
-The files each lab uses are in the course's [GitHub repo](https://github.com/uoftasic/ic103) under `labs/`, apart from Tiny Tapeout's boards, which the repo doesn't store. A script fetches those from Tiny Tapeout's own repositories at fixed commits, so you always get the same version of each board, and Lab 01 has you run it.
+The files each lab uses are in the course's [GitHub repo](https://github.com/uoftasic/pcb101) under `labs/`, apart from Tiny Tapeout's boards, which the repo doesn't store. A script fetches those from Tiny Tapeout's own repositories at fixed commits, so you always get the same version of each board, and Lab 01 has you run it.
 
 ## Getting help
 

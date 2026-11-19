@@ -19,7 +19,7 @@
 
 This page answers: *which parts can you solder to a board yourself with an iron, and how do you choose footprints so that the board you order is one you can put together?*
 
-IC103 doesn't ask you to solder anything, and it doesn't require you to order your board either. If your team does order the board you draw in [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md), though, someone will have to assemble it, quite possibly you, and the footprints you choose in the lab decide how hard that job is.
+PCB101 doesn't ask you to solder anything, and it doesn't require you to order your board either. If your team does order the board you draw in [Lab 03](../labs/lab-03-a-pmod-for-one-projects-pins-overview.md), though, someone will have to assemble it, quite possibly you, and the footprints you choose in the lab decide how hard that job is.
 
 ## Sizes and their codes
 
@@ -27,9 +27,9 @@ Resistors, capacitors and other two-terminal surface-mount parts come in standar
 
 Horowitz and Hill favour 0603, "or the larger 0805 package, for general prototyping of surface-mount circuits". They say the smaller sizes, 0402 and below, "are a major pain – you basically have to work under a microscope (and don't sneeze)". We follow their advice in this course, so on a board you'll assemble yourself, use 0603 or 0805 for resistors and capacitors.
 
-![KiCad footprints for common small parts, drawn to one scale](../assets/img/ic103-footprint-sizes.svg)
+![KiCad footprints for common small parts, drawn to one scale](../assets/img/pcb101-footprint-sizes.svg)
 
-*Footprints from KiCad 10.0.5's own libraries, drawn to one scale on a 1 mm grid by [`scripts/figures/footprint_sizes.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/footprint_sizes.py). The copper pads are gold, and each part's body is drawn as the footprint's fabrication layer draws it. The top row is resistors, from left to right 0402, 0603 and its hand-soldering version, 0805 and its hand-soldering version, and 1206. The bottom row is SOD-882, a two-pin diode package; SOT-23-5; SOIC-8; and the 9 × 9 mm QFN-64 that Tiny Tapeout's SKY130 chip comes in.*
+*Footprints from KiCad 10.0.5's own libraries, drawn to one scale on a 1 mm grid by [`scripts/figures/footprint_sizes.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/footprint_sizes.py). The copper pads are gold, and each part's body is drawn as the footprint's fabrication layer draws it. The top row is resistors, from left to right 0402, 0603 and its hand-soldering version, 0805 and its hand-soldering version, and 1206. The bottom row is SOD-882, a two-pin diode package; SOT-23-5; SOIC-8; and the 9 × 9 mm QFN-64 that Tiny Tapeout's SKY130 chip comes in.*
 
 ## KiCad's hand-soldering footprints
 

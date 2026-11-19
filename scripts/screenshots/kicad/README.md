@@ -1,6 +1,6 @@
 # KiCad screenshots and figures
 
-Two tools make the course's KiCad images. `render.sh` runs `kicad-cli` for 3D renders and SVG plots, which is all a figure needs when it only has to show a design. `shot.sh` takes real screenshots of KiCad's editors, for the steps where a student has to find something in the GUI. Both are tools for whoever writes the course pages, and we have run them only on Linux. Both use KiCad 10.0.5. `shot.sh`, and the plots from `render.sh`, use the image pinned in [`labs/common/kicad-image.txt`](../../../labs/common/kicad-image.txt) (`kicad/kicad:10.0.5`, by digest). The 3D renders from `render.sh` use the image in [`render-image.txt`](render-image.txt) (`kicad/kicad:10.0.5-full`, by digest), which has the same `kicad-cli` and KiCad's 3D models of parts as well. Set `IC103_RENDER_IMAGE` to render in another image.
+Two tools make the course's KiCad images. `render.sh` runs `kicad-cli` for 3D renders and SVG plots, which is all a figure needs when it only has to show a design. `shot.sh` takes real screenshots of KiCad's editors, for the steps where a student has to find something in the GUI. Both are tools for whoever writes the course pages, and we have run them only on Linux. Both use KiCad 10.0.5. `shot.sh`, and the plots from `render.sh`, use the image pinned in [`labs/common/kicad-image.txt`](../../../labs/common/kicad-image.txt) (`kicad/kicad:10.0.5`, by digest). The 3D renders from `render.sh` use the image in [`render-image.txt`](render-image.txt) (`kicad/kicad:10.0.5-full`, by digest), which has the same `kicad-cli` and KiCad's 3D models of parts as well. Set `PCB101_RENDER_IMAGE` to render in another image.
 
 ## GUI screenshots
 
@@ -19,9 +19,9 @@ That writes three PNGs into `docs/assets/img/`, each 1600 × 1000. It took 118 s
 
 We ran it three times. The Footprint Editor capture was byte-identical every time, and so was the Schematic Editor's in the two runs that waited for the libraries. Two of the three PCB Editor captures were byte-identical, and the third differed in 252,097 pixels, including the count on the status-bar badge described below. So compare a changed screenshot by eye before you conclude that KiCad or the board changed.
 
-`shot.sh` builds the image `ic103/kicad-shot:10.0.5` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 35 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends, or after 10 minutes where GNU `timeout` is installed. Only the output folder is written.
+`shot.sh` builds the image `pcb101/kicad-shot:10.0.5` the first time (`build.sh`; the [`Dockerfile`](Dockerfile) adds Xvfb, openbox, xdotool and ImageMagick to the pinned KiCad image, about 35 MB). It then starts a container with the repo mounted read-only, runs [`rig.sh`](rig.sh) in it, and removes the container when the shot ends, or after 10 minutes where GNU `timeout` is installed. Only the output folder is written.
 
-Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background. We sampled `ps` every 2 s during the shot above, under a 2 GB limit, and `pcbnew` peaked at 2,252,672 KiB (2.1 GiB) resident; the run completed. We ran the shots with `IC103_DOCKER_ARGS="--cpus 1 --memory 2g"`.
+Give the container at least 2 GB of memory. When the PCB Editor opens, KiCad loads every footprint library in the background. We sampled `ps` every 2 s during the shot above, under a 2 GB limit, and `pcbnew` peaked at 2,252,672 KiB (2.1 GiB) resident; the run completed. We ran the shots with `PCB101_DOCKER_ARGS="--cpus 1 --memory 2g"`.
 
 ### The first-run wizard
 
@@ -89,8 +89,8 @@ $R sym $B/../tinytapeout-kicad-libs/symbols/TinyTapeout.kicad_sym Openframe_QFN_
 ```bash
 L=labs/lab-02-a-footprint-from-a-datasheet/solutions
 mkdir -p labs/common/results/figures
-$R --bg '#001023' fp  $L/ic103.pretty RHL0024A labs/common/results/figures
-$R --bg '#ffffff' sym $L/ic103.kicad_sym SN74LVC8T245RHL labs/common/results/figures
+$R --bg '#001023' fp  $L/pcb101.pretty RHL0024A labs/common/results/figures
+$R --bg '#ffffff' sym $L/pcb101.kicad_sym SN74LVC8T245RHL labs/common/results/figures
 ```
 
 The top-view render took 12 s in one run and 33 s in another, with the container limited to one CPU. The header of [`render.sh`](render.sh) lists the defaults it passes to `kicad-cli`. What we measured on the SKY130 breakout, with the plots in `kicad/kicad:10.0.5` and the renders in `kicad/kicad:10.0.5-full`:
@@ -107,6 +107,6 @@ The top-view render took 12 s in one run and 33 s in another, with the container
 | `shot.sh` | runs one shot file in the screenshot image (host side) |
 | `rig.sh` | runs inside the container: settings, Xvfb, openbox, and the functions shot files use |
 | `shots/` | shot files, one per set of screenshots |
-| `build.sh`, `Dockerfile` | build `ic103/kicad-shot:<version>` from the pinned KiCad image |
+| `build.sh`, `Dockerfile` | build `pcb101/kicad-shot:<version>` from the pinned KiCad image |
 | `openbox-rc.xml` | maximizes editor windows |
 | `render.sh` | `kicad-cli` renders and plots through `labs/common/kicad.sh` |

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 
 def main() -> None:
-    print("hello from uoftasic/ic103 (IC103 — PCB Design with KiCad)")
+    print("hello from uoftasic/pcb101 (PCB101 — PCB Design with KiCad)")
 
 
 if __name__ == "__main__":

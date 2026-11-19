@@ -2,7 +2,7 @@
 
 In this lab you give your board repository a GitHub Actions workflow. On every push it runs ERC, DRC and the schematic parity check on your board. Then it builds the Gerbers and the drill file that a fab needs, the BOM and the position file that an assembler needs, and renders, copper plots and a PDF of the schematic for whoever reviews the board. KiBot then makes an interactive BOM and a design report, and the workflow uploads all of these files as one artifact. You'll write the `.gitignore` that keeps KiCad's local files and the build's outputs out of git, and finish the commands in the build script that the workflow runs. Then you'll open the Gerbers in GerbView to see them as the fab will, and write KiBot's configuration. Last, you'll break the board on purpose and check that the workflow fails on it.
 
-The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-05-fab-outputs-in-ci) in the course repo.
+The lab's files are in [`labs/lab-05-fab-outputs-in-ci/`](https://github.com/uoftasic/pcb101/tree/main/labs/lab-05-fab-outputs-in-ci) in the course repo.
 
 ## Before you start
 
@@ -19,7 +19,7 @@ The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Par
 
    ```bash
    cd ~/simproc-pmod
-   cp -r ~/ic103/labs/lab-05-fab-outputs-in-ci/starter/. .
+   cp -r ~/pcb101/labs/lab-05-fab-outputs-in-ci/starter/. .
    git status
    ```
 
@@ -55,7 +55,7 @@ The lab takes about 1 hour 40 minutes: roughly 10 minutes for Part 1, 10 for Par
 4. `build.sh` has five TODOs, which you'll do in Part 3, and `ci/board.kibot.yaml` has three, which you'll do in Part 5. There's no `.gitignore` yet either. Before you run anything, write down which rows of the Lab 05 check you expect to fail. Then run it:
 
    ```bash
-   ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh
+   ~/pcb101/labs/lab-05-fab-outputs-in-ci/check.sh
    ```
 
    It first runs `bash ci/build.sh all` in the pinned KiCad image and prints that command's output, apart from the renders' progress lines. If the build passes, it runs `bash ci/build.sh kibot` in the KiBot image, as your workflow would. Either way, it then prints one row per check. On Lab 04's reference board with the starter copied in and committed, the rows were:
@@ -103,7 +103,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 1. Write the five commands that the TODOs in `ci/build.sh` ask for. Each `kicad-cli` command prints its own options with `--help`; for example, run
 
    ```bash
-   ~/ic103/labs/common/kicad.sh kicad-cli pcb export drill --help
+   ~/pcb101/labs/common/kicad.sh kicad-cli pcb export drill --help
    ```
 
    and the same for `sch export bom`, `pcb export pos`, `pcb render` and `pcb export svg`. Keep the file names that the comments give, because the check finds each file by its name. Things to decide as you go:
@@ -143,7 +143,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 
    </details>
 
-5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, which is named Board, for your commit. The run's page lists the job's steps, and once the run has finished, it also has the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run, even though KiBot has nothing to make yet. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/ic103/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py), with each container limited to one CPU. All seven steps succeeded in 35 s, and the artifact held 21 files. On GitHub the run also has to pull the two images (808 MB and 1,347 MB), which adds to that time, and we haven't timed a run there.
+5. Commit and push. On your repository's page on GitHub, the Actions tab shows a run of the workflow, which is named Board, for your commit. The run's page lists the job's steps, and once the run has finished, it also has the `board-outputs` artifact, which downloads as a zip of `out/`. You should see a green run, even though KiBot has nothing to make yet. We couldn't push from the machine we wrote the course on, so we ran the workflow's steps locally with [`src/run_workflow.py`](https://github.com/uoftasic/pcb101/blob/main/labs/lab-05-fab-outputs-in-ci/src/run_workflow.py), with each container limited to one CPU. All seven steps succeeded in 35 s, and the artifact held 21 files. On GitHub the run also has to pull the two images (808 MB and 1,347 MB), which adds to that time, and we haven't timed a run there.
 
 ## Part 4: Look at what the fab will get
 
@@ -192,8 +192,8 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
 2. See what KiBot can make by running its help in KiBot's image, through the course's `kibot.sh`:
 
    ```bash
-   ~/ic103/labs/common/kibot.sh kibot --help-list-outputs
-   ~/ic103/labs/common/kibot.sh kibot --help-output ibom
+   ~/pcb101/labs/common/kibot.sh kibot --help-list-outputs
+   ~/pcb101/labs/common/kibot.sh kibot --help-output ibom
    ```
 
    The first lists 56 types of output. Many of them are files that `kicad-cli` makes too, such as Gerbers, drill files and position files. Two that `kicad-cli` doesn't make are `ibom`, an interactive HTML BOM, and `report`, a design report written for whoever orders the board. `kicad-cli pcb export stats` writes a board statistics report that overlaps with KiBot's `report`. It gives each hole at its finished size, though, and it leaves out what KiBot adds for the fab, such as the drill sizes, a Eurocircuits board class and an estimate of the solder paste. The second command prints every option of the `ibom` output, and `kibot --help-output report` and `kibot --help-filters` do the same for the report and for KiBot's filters.
@@ -210,13 +210,13 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
 5. Run the KiBot stage in the pinned KiBot image:
 
    ```bash
-   ~/ic103/labs/common/kibot.sh bash ci/build.sh kibot
+   ~/pcb101/labs/common/kibot.sh bash ci/build.sh kibot
    ```
 
    You should see a line for each output, and the two files in `out/kibot/`. Ours took 2.3 s with one CPU:
 
    ```text
-   ic103: KiBot image ghcr.io/inti-cmnb/kicad10_auto_full@sha256:96e75f885b15617c6b38aef11db7856a93f4367cab7a0b6c2b30465557619330
+   pcb101: KiBot image ghcr.io/inti-cmnb/kicad10_auto_full@sha256:96e75f885b15617c6b38aef11db7856a93f4367cab7a0b6c2b30465557619330
    == KiBot outputs
    CI/CD environment detected
    WARNING:(W182) No instance for `/00000000-0000-0000-0000-000000000000` using the first (kibot - v6_sch.py:1458)
@@ -233,7 +233,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
 
    ![KiBot's interactive BOM for the SimProc Pmod, with the row for R1 and R2 selected and both resistors highlighted on the front of the board](../assets/img/kibot-ibom-simproc-pmod.png)
 
-   *KiBot's interactive BOM for our Lab 04 board, with the row of the two 1k resistors selected, so R1 and R2 are drawn in red on the front of the board (top right); the bottom is below it. The Sourced and Placed columns are checkboxes to tick as you buy and solder each row, and the page keeps the ticks in your browser's storage. Made by [`scripts/screenshots/browser/ibom.cjs`](https://github.com/uoftasic/ic103/blob/main/scripts/screenshots/browser/ibom.cjs).*
+   *KiBot's interactive BOM for our Lab 04 board, with the row of the two 1k resistors selected, so R1 and R2 are drawn in red on the front of the board (top right); the bottom is below it. The Sourced and Placed columns are checkboxes to tick as you buy and solder each row, and the page keeps the ticks in your browser's storage. Made by [`scripts/screenshots/browser/ibom.cjs`](https://github.com/uoftasic/pcb101/blob/main/scripts/screenshots/browser/ibom.cjs).*
 
    Our board has no DNP part, so the filter changes nothing on it. What would the BOM have shown for a DNP part without the filter?
 
@@ -314,14 +314,14 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 7. Find the hash of the commit with the planted error (`git log --oneline` lists it) and run the check with it:
 
    ```bash
-   ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
+   ~/pcb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
    It copies that commit's files into a temporary folder, runs `bash ci/build.sh check` there, and checks that the board check fails. You should see an eleventh row, `ok    planted    367a4f1, an earlier commit on this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 11 of 11 Lab 05 checks ok`.
 
 ## Finishing
 
-You're done when `~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh --planted <your planted commit>`, run in your own repository, ends with `PASS  pmod: 11 of 11 Lab 05 checks ok`, and your repository's Actions tab shows a red run on that commit and a green run, with its `board-outputs` artifact, on a later one.
+You're done when `~/pcb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <your planted commit>`, run in your own repository, ends with `PASS  pmod: 11 of 11 Lab 05 checks ok`, and your repository's Actions tab shows a red run on that commit and a green run, with its `board-outputs` artifact, on a later one.
 
 Questions:
 

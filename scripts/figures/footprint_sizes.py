@@ -43,7 +43,7 @@ def read_footprints():
     paths = [f"{LIB}/{lib}.pretty/{name}.kicad_mod" for row in ROWS for lib, name, _ in row]
     script = 'for f in "$@"; do echo "### $f"; cat "$f"; done'
     out = subprocess.run([os.path.join(REPO, "labs", "common", "kicad.sh"), "bash", "-c", script, "_"] + paths,
-                         check=True, capture_output=True, text=True, env={**os.environ, "IC103_QUIET": "1"}).stdout
+                         check=True, capture_output=True, text=True, env={**os.environ, "PCB101_QUIET": "1"}).stdout
     texts = {}
     for chunk in out.split("### ")[1:]:
         path, _, body = chunk.partition("\n")
@@ -117,7 +117,7 @@ def main():
     ax.set_ylim(20.5, -4)
     ax.set_aspect("equal")
     ax.axis("off")
-    print(save(fig, "ic103-footprint-sizes"))
+    print(save(fig, "pcb101-footprint-sizes"))
 
 
 if __name__ == "__main__":

@@ -1,15 +1,15 @@
 # Lab 05: Fab outputs in CI
 
 Writeup: [`docs/labs/lab-05-fab-outputs-in-ci-overview.md`](../../docs/labs/lab-05-fab-outputs-in-ci-overview.md)
-· live: <https://uoftasic.com/ic103/labs/lab-05-fab-outputs-in-ci-overview.html>
+· live: <https://uoftasic.com/pcb101/labs/lab-05-fab-outputs-in-ci-overview.html>
 
 You copy `starter/` into your board repository, finish its build script, write a `.gitignore` and KiBot's configuration, and push. From then on, GitHub Actions checks your board on every push and builds its fabrication files, review images and KiBot's outputs. Then you break the board on purpose and fix it. Check it with:
 
 ```bash
 cd ~/simproc-pmod                                                   # your board repository
-cp -r ~/ic103/labs/lab-05-fab-outputs-in-ci/starter/. .             # once
-~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh                      # Parts 1 to 5
-~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh --planted <commit>   # after Part 6
+cp -r ~/pcb101/labs/lab-05-fab-outputs-in-ci/starter/. .             # once
+~/pcb101/labs/lab-05-fab-outputs-in-ci/check.sh                      # Parts 1 to 5
+~/pcb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <commit>   # after Part 6
 ```
 
 `check.sh [--planted REV]` runs your `ci/build.sh` the way your workflow does, in three containers. First [`src/check_ci.py`](src/check_ci.py) `--stage build` runs `ci/build.sh all` (the check, fab and images stages, in one container instead of three) in the course's pinned KiCad image, through `labs/common/kicad.sh`. If that passes, `labs/common/kibot.sh` runs `ci/build.sh kibot` in the pinned KiBot image; if it fails, `check.sh` skips KiBot, as the workflow does. Then `check_ci.py --stage grade` prints one row per check and a last line, `PASS` or `FAIL`. Exit status 0 is PASS, 1 FAIL, 2 couldn't run.
@@ -54,4 +54,4 @@ python3 labs/lab-05-fab-outputs-in-ci/src/selftest.py                           
 python3 labs/lab-05-fab-outputs-in-ci/src/run_workflow.py labs/lab-05-fab-outputs-in-ci/results/selftest/reference
 ```
 
-The first command is the self-test, which needs Python, git and Docker on the host, because every case runs `check.sh` and so starts containers of both images. In our run, with `IC103_DOCKER_ARGS="--cpus 1 --memory 2g"`, it took 201 s for its 12 cases: the copies of `check_board.py`, `kicad-image.txt` and `kibot-image.txt` in `starter/` and `solutions/` (6), the starter, the reference with its planted commit named, the planted commit, the reference with a good commit named, the reference with J4 marked DNP, and the same with the ibom's `dnf_filter` taken out, which must fail the `ibom` row. The second command needs the first to have built `results/selftest/reference`, and Python with PyYAML and Docker on the host. It runs the workflow's own `docker run` lines, so to give those containers one CPU and 2 GB as well, we put a `docker` on the `PATH` that adds `--cpus 1 --memory 2g` to `docker run`. On that repository it ran all seven steps in 30 s and copied 23 files into the artifact; on `results/selftest/planted` the board check step exited 1, the three steps after it were skipped, and the upload step copied the three reports.
+The first command is the self-test, which needs Python, git and Docker on the host, because every case runs `check.sh` and so starts containers of both images. In our run, with `PCB101_DOCKER_ARGS="--cpus 1 --memory 2g"`, it took 201 s for its 12 cases: the copies of `check_board.py`, `kicad-image.txt` and `kibot-image.txt` in `starter/` and `solutions/` (6), the starter, the reference with its planted commit named, the planted commit, the reference with a good commit named, the reference with J4 marked DNP, and the same with the ibom's `dnf_filter` taken out, which must fail the `ibom` row. The second command needs the first to have built `results/selftest/reference`, and Python with PyYAML and Docker on the host. It runs the workflow's own `docker run` lines, so to give those containers one CPU and 2 GB as well, we put a `docker` on the `PATH` that adds `--cpus 1 --memory 2g` to `docker run`. On that repository it ran all seven steps in 30 s and copied 23 files into the artifact; on `results/selftest/planted` the board check step exited 1, the three steps after it were skipped, and the upload step copied the three reports.

@@ -8,8 +8,8 @@
 		(title "SimProc Pmod, protected")
 		(date "2026-11-16")
 		(rev "1")
-		(company "UofT ASIC Team, IC103")
-		(comment 1 "IC103 Lab 04 reference")
+		(company "UofT ASIC Team, PCB101")
+		(comment 1 "PCB101 Lab 04 reference")
 	)
 	(lib_symbols
 		(symbol "Connector:TestPoint"

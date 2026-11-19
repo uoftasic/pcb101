@@ -28,7 +28,7 @@ Place the parts whose positions someone else has already decided, and lock them,
 
 A Pmod plugs into either the demo board or the DIP dock, and the two boards put their sockets in the same places. In the demo board's file, the three I/O sockets J14, J15 and J16 sit at x = 92.70, 115.56 and 138.42 mm, all at y = 93 mm, and in the DIP dock's file its sockets J5, J6 and J7 are at exactly the same coordinates, so a Pmod drawn for one board fits the other.
 
-![The DIP dock from above](../assets/img/ic103-dip-dock-top.png)
+![The DIP dock from above](../assets/img/pcb101-dip-dock-top.png)
 
 *Tiny Tapeout's DIP dock (`TinyTapeout/breakout-pcb` at 91a2bf1, Apache-2.0), rendered from above by `kicad-cli` 10.0.5, with the parts' 3D models. The board is 85 × 85 mm with two copper layers. The three Pmod sockets along the bottom edge are labelled INPUT, BIDIR and OUTPUT on the silkscreen and are 22.86 mm apart.*
 
@@ -40,9 +40,9 @@ A CMOS chip draws its supply current in short pulses, one at every edge, and eac
 
 To see how this is done around a QFN, we measured the SKY130 breakout's board file, from the centre of each capacitor's pad to the centre of the nearest chip pad on the same rail. Nine of its twelve 100 nF capacitors are within 2.6 mm of the chip pin they serve, and two more, C21 and C22, are on the regulator outputs. The twelfth, C25, is on `VDD_IO` too, but the schematic draws it beside U3, the footprint for an EEPROM that isn't fitted, and on the board it's 1.9 mm from U3's supply pin and 18.5 mm from the chip. The 1 µF capacitors are further out. C2, C8 and C5 are 3.7 to 5.5 mm from the chip's pins, six more sit beside the 0 Ω links at the top of the board, and the last two, C18 and C19, are on the regulator outputs with C21 and C22. The two 10 µF capacitors sit at the regulator inputs.
 
-![The SKY130 breakout around the chip U4](../assets/img/ic103-sky-breakout-u4-decoupling.svg)
+![The SKY130 breakout around the chip U4](../assets/img/pcb101-sky-breakout-u4-decoupling.svg)
 
-*A 24 × 24 mm patch of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`TinyTapeout/breakout-pcb` at 91a2bf1), drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/sky_breakout_map.py). Pads are coloured by the supply they're on; tracks and copper pours are left out. The chip U4 is placed at 135°, so its rows of pads run diagonally, and the 0402 capacitors C9, C11, C13, C15, C16, C17, C20, C23 and C24 sit just off its edges, each by a pin of its own colour. C2, C5 and C8 are 1 µF.*
+*A 24 × 24 mm patch of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`TinyTapeout/breakout-pcb` at 91a2bf1), drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/sky_breakout_map.py). Pads are coloured by the supply they're on; tracks and copper pours are left out. The chip U4 is placed at 135°, so its rows of pads run diagonally, and the 0402 capacitors C9, C11, C13, C15, C16, C17, C20, C23 and C24 sit just off its edges, each by a pin of its own colour. C2, C5 and C8 are 1 µF.*
 
 ## Track widths, clearances and vias
 
@@ -76,7 +76,7 @@ A trace behaves like a plain wire only while its delay is short compared with th
 
 A signal in FR-4 travels at $v = c/\sqrt{\varepsilon_r}$. With $\varepsilon_r = 4.5$, the value in Hall and Heck's Example 3-1, that's 141 mm/ns, or about 7 ps per millimetre. A trace on an outer layer runs partly in air and is a little faster, so lengths worked out this way are on the safe side.
 
-![Trace length limits against rise time](../assets/img/ic103-trace-length-limits.svg)
+![Trace length limits against rise time](../assets/img/pcb101-trace-length-limits.svg)
 
 *The two rules turned into lengths of trace. For 2 ns edges, as in the 74LVC example above, a trace up to 28 mm long is a lumped element by the $t_r/10$ rule, and its reflections stay hidden up to 141 mm. The blue line marks 61 mm, about the width of a board that spans all three Pmods.*
 

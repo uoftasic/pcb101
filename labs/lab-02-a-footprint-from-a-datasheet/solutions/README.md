@@ -6,8 +6,8 @@ once by `kicad-cli fp upgrade --force` and `kicad-cli sym upgrade --force` in th
 | File | What it is |
 |---|---|
 | `pads.md` | the hand calculation |
-| `ic103.pretty/RHL0024A.kicad_mod` | the footprint |
-| `ic103.kicad_sym` | the symbol `SN74LVC8T245RHL` |
+| `pcb101.pretty/RHL0024A.kicad_mod` | the footprint |
+| `pcb101.kicad_sym` | the symbol `SN74LVC8T245RHL` |
 
 | | Long sides (2–11, 14–23) | Short sides (1, 12, 13, 24) |
 |---|---|---|

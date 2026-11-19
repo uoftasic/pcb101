@@ -14,7 +14,7 @@ For the DIP dock, the board's own Gerber settings produce ten files:
 
 ![KiCad's SVG plots of six of the DIP dock's layers, each labelled with the Gerber file that holds it](../assets/img/dip-dock-gerber-layers.svg)
 
-*Six of the DIP dock's ten Gerber layers, plotted by `kicad-cli pcb export svg` from the same board, in black on white. Under each panel are the name of the Gerber file and the file function that KiCad records for it. Holes aren't drawn, because they go in the drill file and none of the Gerbers holds them. Made by [`scripts/figures/dip_dock_layers.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/dip_dock_layers.py).*
+*Six of the DIP dock's ten Gerber layers, plotted by `kicad-cli pcb export svg` from the same board, in black on white. Under each panel are the name of the Gerber file and the file function that KiCad records for it. Holes aren't drawn, because they go in the drill file and none of the Gerbers holds them. Made by [`scripts/figures/dip_dock_layers.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/dip_dock_layers.py).*
 
 | File | What the fabricator does with it |
 |---|---|
@@ -91,7 +91,7 @@ When we exported the drill file again with `--drill-origin plot`, which uses the
 
 ![GerbView showing the same Gerbers with the drill holes centred in their pads](../assets/img/kicad-gerbview-dip-dock.png)
 
-*The same Gerbers with a drill file made with `--drill-origin plot`. The Layers Manager on the right lists all eleven files, each with the function that GerbView read from it, such as "Copper, L2", "Soldermask, Bot" and "Profile, NP". Both screenshots were made by [`scripts/figures/shots/fab-outputs-dip-dock.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/shots/fab-outputs-dip-dock.sh).*
+*The same Gerbers with a drill file made with `--drill-origin plot`. The Layers Manager on the right lists all eleven files, each with the function that GerbView read from it, such as "Copper, L2", "Soldermask, Bot" and "Profile, NP". Both screenshots were made by [`scripts/figures/shots/fab-outputs-dip-dock.sh`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/shots/fab-outputs-dip-dock.sh).*
 
 Opening the whole set in GerbView before you upload it takes a minute, and it shows you the files the fab will get rather than the board they were made from. Lab 05 has you do it with the files your CI built. Lab 05's check catches this offset as well, because it checks that every hole in the drill file lies inside the outline in the Edge.Cuts Gerber.
 

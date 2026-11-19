@@ -24,7 +24,7 @@ Current is the first thing you read when you power a new board. A board that dra
 
 There are two ordinary ways to measure a current on the bench. Both put a resistor in the current's path and read the voltage across it. On a multimeter's current range the resistor is inside the meter, and the other way is to build one into your board as a sense resistor.
 
-![A meter in series, and a sense resistor with two test points](../assets/img/ic103-current-spy.svg)
+![A meter in series, and a sense resistor with two test points](../assets/img/pcb101-current-spy.svg)
 
 *(a) A multimeter on a current range, in series with the supply. (b) A sense resistor in the supply, with a test point at each end and a multimeter on a volts range across them. In (b) the bypass capacitors are on the board's side of the resistor, as in Horowitz and Hill's Figure 10.93.*
 
@@ -36,9 +36,9 @@ There are two ordinary ways to measure a current on the bench. Both put a resist
 
 The voltage across the resistor is $V = IR$. You want it large enough for your meter to read, and small enough that the board is still left with the supply voltage it needs.
 
-![Voltage across a sense resistor against current](../assets/img/ic103-shunt-drop.svg)
+![Voltage across a sense resistor against current](../assets/img/pcb101-shunt-drop.svg)
 
-*$V = IR$ for 0.1 Ω, 1 Ω and 10 Ω, drawn by [`scripts/figures/shunt_drop.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/shunt_drop.py). The blue band is the 0.1 V to 0.25 V that a multimeter drops at full scale, and the grey band is the 180 mA to 200 mA that the whole kit draws from USB on its factory test.*
+*$V = IR$ for 0.1 Ω, 1 Ω and 10 Ω, drawn by [`scripts/figures/shunt_drop.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/shunt_drop.py). The blue band is the 0.1 V to 0.25 V that a multimeter drops at full scale, and the grey band is the 180 mA to 200 mA that the whole kit draws from USB on its factory test.*
 
 The figure gives these numbers for three cases:
 
@@ -54,9 +54,9 @@ The figure gives these numbers for three cases:
 
 **One of the chip's rails.** You can measure a single rail only after rework on the breakout. Its schematic says each supply pin "may be monitored or fed through these headers by popping off the relevant resistor (0805s for easier manip)". The resistors are the 0 Ω links R13 (`VDD_IO`), R14 (`VCCD`) and R15 (`VDDA`), and the header is J2, a 1 × 12 header that the board marks as not fitted. To measure `VCCD`, for example, you'd remove R14, fit J2, and connect a meter or a sense resistor between the J2 pins on the regulator's side and on the chip's side.
 
-![The top edge of the SKY130 breakout, with the 0 Ω links and J2](../assets/img/ic103-sky-breakout-links.svg)
+![The top edge of the SKY130 breakout, with the 0 Ω links and J2](../assets/img/pcb101-sky-breakout-links.svg)
 
-*A 12.5 mm strip along the top edge of Tiny Tapeout's SKY130 breakout, drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/sky_breakout_map.py), with pads coloured by supply. R14, R13 and R15 each join a regulator net (red) to one of the chip's rails. J2's twelve pads, and U2's, are grey because those parts aren't fitted.*
+*A 12.5 mm strip along the top edge of Tiny Tapeout's SKY130 breakout, drawn to scale from the board file by [`scripts/figures/sky_breakout_map.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/sky_breakout_map.py), with pads coloured by supply. R14, R13 and R15 each join a regulator net (red) to one of the chip's rails. J2's twelve pads, and U2's, are grey because those parts aren't fitted.*
 
 That rework is on the board that carries the kit's only chip, which is why the course doesn't ask you to do it. The current a project draws lowers the supply voltage that reaches it inside the chip. Tiny Tapeout's [analog page](https://tinytapeout.com/specs/analog/) says that "A draw of around 20mA from the power supply will result in a 0.1V drop through the PDN", where the PDN is the chip's internal power network. If the team needs per-rail readings, practise the rework first on a breakout made from Tiny Tapeout's open files, with its passives and no chip.
 

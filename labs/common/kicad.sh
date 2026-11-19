@@ -14,18 +14,18 @@
 # command ends.
 #
 # Environment:
-#   IC103_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
-#   IC103_QUIET=1       don't print the image line on stderr
-#   IC103_IMAGE         run this image (name@digest) instead of the pinned one; the course's
+#   PCB101_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
+#   PCB101_QUIET=1       don't print the image line on stderr
+#   PCB101_IMAGE         run this image (name@digest) instead of the pinned one; the course's
 #                       render script uses it for 3D renders, which need KiCad's 3D models,
 #                       and kibot.sh for the KiBot image
-#   IC103_IMAGE_LABEL   the word in the image line on stderr (default KiCad; kibot.sh sets KiBot)
+#   PCB101_IMAGE_LABEL   the word in the image line on stderr (default KiCad; kibot.sh sets KiBot)
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root="$(cd "$here/../.." && pwd)"
 pinned="$(head -n 1 "$here/kicad-image.txt" | tr -d '[:space:]')"
-image="${IC103_IMAGE:-$pinned}"
+image="${PCB101_IMAGE:-$pinned}"
 
 if [ "$#" -eq 0 ]; then
     sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//'
@@ -43,30 +43,30 @@ esac
 
 if ! docker image inspect "$image" >/dev/null 2>&1; then
     if [ "$image" = "$pinned" ]; then
-        echo "ic103: pulling $image (808 MB, once)" >&2
+        echo "pcb101: pulling $image (808 MB, once)" >&2
     else
-        echo "ic103: pulling $image" >&2
+        echo "pcb101: pulling $image" >&2
     fi
     docker pull "$image" >&2
 fi
 
 # Record exactly which image ran: the digest from the pin file, as Docker resolved it.
-if [ "${IC103_QUIET:-0}" != "1" ]; then
+if [ "${PCB101_QUIET:-0}" != "1" ]; then
     digest="$(docker image inspect --format '{{range .RepoDigests}}{{println .}}{{end}}' "$image" \
               | grep -m1 "${image#*@}" || true)"
-    echo "ic103: ${IC103_IMAGE_LABEL:-KiCad} image ${digest:-$image}" >&2
+    echo "pcb101: ${PCB101_IMAGE_LABEL:-KiCad} image ${digest:-$image}" >&2
 fi
 
-name="ic103-kicad-$$-${RANDOM}"
+name="pcb101-kicad-$$-${RANDOM}"
 trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT INT TERM
 
 tty_flags=()
 [ -t 0 ] && [ -t 1 ] && tty_flags=(-it)
 
-# shellcheck disable=SC2086  # IC103_DOCKER_ARGS is a list of flags on purpose
-docker run --rm --name "$name" ${tty_flags[@]+"${tty_flags[@]}"} ${IC103_DOCKER_ARGS:-} \
+# shellcheck disable=SC2086  # PCB101_DOCKER_ARGS is a list of flags on purpose
+docker run --rm --name "$name" ${tty_flags[@]+"${tty_flags[@]}"} ${PCB101_DOCKER_ARGS:-} \
     --user "$(id -u):$(id -g)" \
     -e HOME=/tmp/home \
-    -e IC103_KICAD_IMAGE="$image" \
+    -e PCB101_KICAD_IMAGE="$image" \
     -v "$root":/w ${extra[@]+"${extra[@]}"} -w "$workdir" \
     "$image" bash /w/labs/common/image-entry.sh "$@"

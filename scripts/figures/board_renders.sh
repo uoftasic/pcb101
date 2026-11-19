@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 3D renders of Tiny Tapeout's boards for the guide pages, and of the course's own boards
 # for the lab pages, from kicad-cli in the render image (scripts/screenshots/kicad/render.sh),
-# which has KiCad's 3D models of parts. Set IC103_RENDER_IMAGE to render in another image;
+# which has KiCad's 3D models of parts. Set PCB101_RENDER_IMAGE to render in another image;
 # by default it's the one named by digest in scripts/screenshots/kicad/render-image.txt.
 # Fetch the boards first:
 #   python3 labs/common/fetch_boards.py breakout-pcb tinytapeout-kicad-libs
@@ -18,7 +18,7 @@
 #   capstone-brief-a-top.png      the capstone's Brief A reference board, top
 #
 # The two Lab 03 figures are 1060 x 672 pixels cut out of render.sh's 1568 x 984 render,
-# 254 pixels from its left edge and 110 from its top, by ImageMagick in ic103/kicad-shot
+# 254 pixels from its left edge and 110 from its top, by ImageMagick in pcb101/kicad-shot
 # (scripts/screenshots/kicad/build.sh builds it), because the 64 x 32 mm board fills only
 # the middle of the full render. The cut-out takes in the Pmod connectors' pins, which stick
 # out past the board's top edge. The intermediate files go in Lab 03's results/figures/
@@ -54,10 +54,10 @@ labs/common/kicad.sh python3 "$L3/src/make_reference.py" connectors "$T/connecto
 "$R" 3d "$T/connectors/pmod.kicad_pcb" "$T/pmod-connectors-top.png" top >/dev/null
 "$R" 3d "$L3/solutions/simproc-pmod/pmod.kicad_pcb" "$T/pmod-simproc-lab03-top.png" top >/dev/null
 base="$(head -n 1 labs/common/kicad-image.txt | tr -d '[:space:]')"
-shot_image="ic103/kicad-shot:$(echo "${base%@*}" | sed 's/.*://')"
+shot_image="pcb101/kicad-shot:$(echo "${base%@*}" | sed 's/.*://')"
 docker image inspect "$shot_image" >/dev/null 2>&1 || scripts/screenshots/kicad/build.sh >/dev/null
 for f in pmod-connectors-top pmod-simproc-lab03-top; do
-    docker run --rm ${IC103_DOCKER_ARGS:-} --user "$(id -u):$(id -g)" -e HOME=/tmp/h \
+    docker run --rm ${PCB101_DOCKER_ARGS:-} --user "$(id -u):$(id -g)" -e HOME=/tmp/h \
         -v "$root":/w -w /w --entrypoint convert "$shot_image" \
         "$T/$f.png" -crop 1060x672+254+110 +repage -strip "$I/$f.png"
 done

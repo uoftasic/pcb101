@@ -1,9 +1,9 @@
 """Bringing up a chip: the order of a first power-up, each step with the reading you expect.
 
     pip install -r scripts/figures/requirements.txt
-    python3 scripts/figures/bringup_order.py    # writes docs/assets/img/ic103-bringup-order.svg
+    python3 scripts/figures/bringup_order.py    # writes docs/assets/img/pcb101-bringup-order.svg
 
-The steps are the ones an IC103 BRINGUP.md covers (Lab 04): checks before power, a current
+The steps are the ones an PCB101 BRINGUP.md covers (Lab 04): checks before power, a current
 limit, a known firmware mode, project select, clock and reset, a first functional test, and
 only then anything with a supply of its own. The right-hand column is what you write down
 before each step.
@@ -58,4 +58,4 @@ text(d, (X_STEP - STEP_W / 2, y_bottom - 1.4),
      "At any step, a reading that doesn't match: power off first, then find out why.",
      halign="left", size=NOTE)
 
-print(save(d, "ic103-bringup-order"))
+print(save(d, "pcb101-bringup-order"))

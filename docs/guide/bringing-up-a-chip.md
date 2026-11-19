@@ -6,9 +6,9 @@ This page answers: *the first time you power a board with one of the team's chip
 
 In [Lab 04](../labs/lab-04-protect-and-plan-overview.md) you write a `BRINGUP.md` for your Pmod. It opens with a table of every line that leaves your board, which says what drives each line, what it drives, and what happens when one side is powered and the other isn't. Then come your settings (the current limit, the firmware mode, the switch positions and the clock), the checks you make before anything is powered, and the steps in order, each with the reading you expect and its unit. It ends with what to do when a reading is wrong. This page explains what goes in each part after the table, and why.
 
-![A flow chart of seven bring-up steps, each with the reading written down beforehand](../assets/img/ic103-bringup-order.svg)
+![A flow chart of seven bring-up steps, each with the reading written down beforehand](../assets/img/pcb101-bringup-order.svg)
 
-*The order of a first power-up. Each step has a reading that you write down before you do it. If a step doesn't give that reading, you turn the power off and find out why before you go on. Made by [`scripts/figures/bringup_order.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/bringup_order.py).*
+*The order of a first power-up. Each step has a reading that you write down before you do it. If a step doesn't give that reading, you turn the power off and find out why before you go on. Made by [`scripts/figures/bringup_order.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/bringup_order.py).*
 
 ## Before any power
 
@@ -36,7 +36,7 @@ Your Pmod can't measure the chip's current, because the chip's current never flo
 
 ![The bottom of Tiny Tapeout's SKY130 breakout: the DF12 connectors J1 and J3, and the unfitted supply header with a note about measuring each supply](../assets/img/sky-breakout-3d-bottom.png)
 
-*The bottom of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`breakout-pcb` at 91a2bf1, Apache-2.0), rendered by `kicad-cli` with the parts' 3D models. J1 and J3 are the DF12 connectors to the demo board. The row of pads at the top is J2, a header that isn't fitted on the boards Tiny Tapeout ships, so the render leaves out its part and shows only the pads. To measure one supply, the note on the silkscreen under it says to "remove the relevant resistor, feed/monitor current going into pin marked \*". Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/board_renders.sh).*
+*The bottom of Tiny Tapeout's SKY130 QFN breakout, rev 3.2 (`breakout-pcb` at 91a2bf1, Apache-2.0), rendered by `kicad-cli` with the parts' 3D models. J1 and J3 are the DF12 connectors to the demo board. The row of pads at the top is J2, a header that isn't fitted on the boards Tiny Tapeout ships, so the render leaves out its part and shows only the pads. To measure one supply, the note on the silkscreen under it says to "remove the relevant resistor, feed/monitor current going into pin marked \*". Made by [`scripts/figures/board_renders.sh`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/board_renders.sh).*
 
 Measuring one rail on its own means taking an 0805 link off the breakout and fitting J2. That's rework on the board that holds the kit's only chip, so the course doesn't ask you to do it ([Measuring current](measuring-current.md) describes the links and J2). If the team ever needs per-rail readings, practise the rework first on a breakout without a chip.
 

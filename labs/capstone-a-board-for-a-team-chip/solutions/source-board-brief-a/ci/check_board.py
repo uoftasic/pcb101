@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""IC103 board check: ERC, DRC and schematic parity from kicad-cli's JSON reports.
+"""PCB101 board check: ERC, DRC and schematic parity from kicad-cli's JSON reports.
 
     labs/common/kicad.sh python3 labs/common/check_board.py path/to/board.kicad_pro
 
@@ -131,7 +131,7 @@ def main():
               "which runs it in the course's pinned KiCad image.", file=sys.stderr)
         return 2
 
-    image = os.environ.get("IC103_KICAD_IMAGE", "")
+    image = os.environ.get("PCB101_KICAD_IMAGE", "")
     want_version = pinned_version(pinned_image())
     seed_library_tables()
     _, version = run(["kicad-cli", "version"])
@@ -152,7 +152,7 @@ def main():
     else:
         rules = DEFAULT_RULES
 
-    out = args.reports or tempfile.mkdtemp(prefix="ic103-check-")
+    out = args.reports or tempfile.mkdtemp(prefix="pcb101-check-")
     os.makedirs(out, exist_ok=True)
     erc_json, drc_json = os.path.join(out, "erc.json"), os.path.join(out, "drc.json")
 
@@ -187,7 +187,7 @@ def main():
     failures = [(k, count(k), v) for k, v in rules.items() if count(k) != v]
     verdict = "FAIL" if failures else "PASS"
 
-    print("IC103 board check")
+    print("PCB101 board check")
     print(f"  project   {name}")
     note = ""
     if version != want_version:

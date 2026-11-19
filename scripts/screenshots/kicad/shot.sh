@@ -4,13 +4,13 @@
 #   scripts/screenshots/kicad/shot.sh scripts/screenshots/kicad/shots/sky-breakout.sh
 #   scripts/screenshots/kicad/shot.sh SHOT_FILE OUT_DIR      # default OUT_DIR: docs/assets/img
 #
-# Builds ic103/kicad-shot first if it isn't there. The repo is mounted read-only; only
+# Builds pcb101/kicad-shot first if it isn't there. The repo is mounted read-only; only
 # OUT_DIR is written. The container runs as your uid and is removed when the shot ends,
 # or after 10 minutes where GNU timeout is installed.
 #
 # Environment:
 #   SCREEN              virtual screen size, default 1600x1000 (each editor fills it)
-#   IC103_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
+#   PCB101_DOCKER_ARGS   extra `docker run` flags, for example "--cpus 1 --memory 2g"
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -31,11 +31,11 @@ out="$(cd "$out" && pwd)"
 
 base="$(head -n 1 "$root/labs/common/kicad-image.txt" | tr -d '[:space:]')"
 version="$(echo "${base%@*}" | sed 's/.*://')"
-image="ic103/kicad-shot:$version"
+image="pcb101/kicad-shot:$version"
 docker image inspect "$image" >/dev/null 2>&1 || "$here/build.sh" >/dev/null
 echo "shot.sh: $image, built from $base" >&2
 
-name="ic103-shot-$$-${RANDOM}"
+name="pcb101-shot-$$-${RANDOM}"
 trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT INT TERM
 
 # GNU timeout ends a stuck shot after 10 minutes; macOS has no `timeout` unless coreutils
@@ -43,8 +43,8 @@ trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT INT TERM
 limit=()
 command -v timeout >/dev/null 2>&1 && limit=(timeout 600)
 
-# shellcheck disable=SC2086  # IC103_DOCKER_ARGS is a list of flags on purpose
-${limit[@]+"${limit[@]}"} docker run --rm --name "$name" ${IC103_DOCKER_ARGS:-} \
+# shellcheck disable=SC2086  # PCB101_DOCKER_ARGS is a list of flags on purpose
+${limit[@]+"${limit[@]}"} docker run --rm --name "$name" ${PCB101_DOCKER_ARGS:-} \
     --user "$(id -u):$(id -g)" \
     -e SCREEN="${SCREEN:-1600x1000}" \
     -v "$root":/w:ro -v "$here":/rig:ro -v "$out":/out \

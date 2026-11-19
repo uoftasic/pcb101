@@ -3,7 +3,7 @@
 <!--
   Lab 02, Part 2: replace every TODO with a number in mm, to two decimal places. The
   writeup has the method:
-  https://uoftasic.com/ic103/labs/lab-02-a-footprint-from-a-datasheet-overview.html
+  https://uoftasic.com/pcb101/labs/lab-02-a-footprint-from-a-datasheet-overview.html
   Keep the row names and the "Exposed pad:" line as they are, because the check reads them.
 -->
 

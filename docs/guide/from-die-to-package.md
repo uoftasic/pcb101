@@ -35,7 +35,7 @@ Services that package dies publish rules of the same kind for their packages. Eu
 
 ![A die's pad ring wired out to a package's leads, and a cut through a QFN soldered to a board](../assets/img/pkg-die-to-qfn.svg){fig-alt="Two sketches. Left: the corner of a die, a grey square, with eight small bond pads along its right edge. Eight gold bond wires fan out from the pads to eight copper leads on the right, which are spaced further apart, inside a dashed package outline. A note reads: wires may not cross, and none may run more than 45 degrees away from straight out. Right: a cross-section. A dark mould compound block sits on a green board. Inside it, the die sits on a copper die pad, the exposed pad, and gold bond wires arch from the top of the die to copper leads at both ends of the package. Under the leads and the die pad are copper lands on the board with solder between them, the solder under the die pad in separate windows, and thermal vias running down through the board under the die pad."}
 
-*Not to scale. Left: a die's pad ring wired out to the leads of its package. Right: a QFN soldered to a board. Drawn by [`scripts/figures/qfn_package.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/qfn_package.py).*
+*Not to scale. Left: a die's pad ring wired out to the leads of its package. Right: a QFN soldered to a board. Drawn by [`scripts/figures/qfn_package.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/qfn_package.py).*
 
 ## Packages
 
@@ -87,7 +87,7 @@ Each pad is then $(Z - G)/2$ = 0.85 mm long and 0.25 mm wide, centred $(Z + G)/4
 
 ![The QFN-64 land pattern with its three dimensions](../assets/img/pkg-qfn64-land-pattern.svg){fig-alt="A footprint drawn to scale: sixteen narrow copper pads along each side of a 9 by 9 mm dashed package outline, and a large pale copper square in the middle labelled exposed pad, 7.65 by 7.65 mm. A dimension below the footprint reads Z = 9.75 mm, outer edge to outer edge. A dimension across the middle reads G = 8.05 mm, inner edge to inner edge. A leader to the top pad of the left column reads X = 0.25 mm wide, 0.85 mm long."}
 
-*The land pattern worked out above, drawn by [`scripts/figures/qfn_land_pattern.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/qfn_land_pattern.py), which also prints the working.*
+*The land pattern worked out above, drawn by [`scripts/figures/qfn_land_pattern.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/qfn_land_pattern.py), which also prints the working.*
 
 The generator's entry also gives the exposed pad 6 × 6 separate paste openings. A second version of the footprint, with `_ThermalVias` at the end of its name, adds a 7 × 7 grid of thermal vias with 0.2 mm drills, which carry heat down into the board as in the cut through the QFN above. Add the silkscreen, the outline on the fab layer and the courtyard, and you have the whole footprint that [Symbols, footprints and libraries](symbols-footprints-and-libraries.md) showed, which was the version without thermal vias. In Lab 02 you do the same calculation for a package that KiCad's library doesn't have, and then check your footprint against your own numbers. In the lab, the formula for $G$ and the course's check both take the worst case for $S$, instead of adding its tolerances as a root sum of squares the way the generator does.
 

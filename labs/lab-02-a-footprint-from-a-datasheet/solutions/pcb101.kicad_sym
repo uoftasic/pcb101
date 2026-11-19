@@ -28,7 +28,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ic103:RHL0024A"
+		(property "Footprint" "pcb101:RHL0024A"
 			(at 0 -23.78 0)
 			(show_name no)
 			(do_not_autoplace no)

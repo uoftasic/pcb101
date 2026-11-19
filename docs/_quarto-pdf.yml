@@ -7,10 +7,10 @@ project:
   output-dir: _book
 
 book:
-  title: "IC103 — PCB Design with KiCad"
+  title: "PCB101 — PCB Design with KiCad"
   subtitle: "Design the boards a chip sits on: schematics, footprints from datasheets, layout, protection, fab outputs in CI, review, and a bring-up board for a team chip."
   author: "UofT ASIC Team"
-  output-file: "ic103-course"
+  output-file: "pcb101-course"
   chapters:
     - index.md
     - part: "1. Reading a board"

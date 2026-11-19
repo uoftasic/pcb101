@@ -41,7 +41,7 @@ def main():
     m = d.add(elm.MeterV().down().toy(tp2.center).label("meter on\na volts range", loc="top", ofst=0.25))
     d.add(elm.Line().right(1.4).at(m.end))
     d.add(elm.Label().at((7.0, 1.6)).label("(b)", fontsize=14))
-    print(save(d, "ic103-current-spy"))
+    print(save(d, "pcb101-current-spy"))
 
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@ LAB = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(LAB))
 COMMON = os.path.join(REPO, "labs", "common")
 OUT = os.path.join(LAB, "results", "selftest")
-GIT = ["git", "-c", "user.name=IC103 selftest", "-c", "user.email=selftest@example.com",
+GIT = ["git", "-c", "user.name=PCB101 selftest", "-c", "user.email=selftest@example.com",
        "-c", "init.defaultBranch=main", "-c", "commit.gpgsign=false"]
 
 
@@ -47,7 +47,7 @@ def pmod_fails(folder, *args):
     rows = {}
     in_pmod = False
     for line in r.stdout.splitlines():
-        if line.startswith("IC103 Pmod check"):
+        if line.startswith("PCB101 Pmod check"):
             in_pmod = True
         elif in_pmod and re.match(r"^  (ok  |FAIL)  ", line):
             rows[line[8:21].strip()] = line[2:6].strip()

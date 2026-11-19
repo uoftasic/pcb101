@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""IC103 Pmod check: the board check, then where the Pmod connectors are and whether the
+"""PCB101 Pmod check: the board check, then where the Pmod connectors are and whether the
 board connects a project's pins the way its pin list says.
 
     labs/common/kicad.sh python3 labs/common/check_pmod.py BOARD [--pins FILE] [--protect] [--bringup FILE]
@@ -83,7 +83,7 @@ def find_project(arg):
 
 class Netlist:
     def __init__(self, sch):
-        tmp = tempfile.mkdtemp(prefix="ic103-pmod-")
+        tmp = tempfile.mkdtemp(prefix="pcb101-pmod-")
         out = os.path.join(tmp, "netlist.net")
         r = subprocess.run(["kicad-cli", "sch", "export", "netlist", "--format", "kicadsexpr", "-o", out, sch],
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -524,7 +524,7 @@ def main():
             return 2
         print()
 
-    print("IC103 Pmod check")
+    print("PCB101 Pmod check")
     print(f"  project   {name}")
     print(f"  pins      {shown(args.pins)}: {spec['project']}")
     print(f"  rules     Lab 03{' and Lab 04 (--protect)' if args.protect else ''}")

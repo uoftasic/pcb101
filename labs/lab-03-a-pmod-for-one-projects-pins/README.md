@@ -1,13 +1,13 @@
 # Lab 03: A Pmod for one project's pins
 
 Writeup: [`docs/labs/lab-03-a-pmod-for-one-projects-pins-overview.md`](../../docs/labs/lab-03-a-pmod-for-one-projects-pins-overview.md)
-· live: <https://uoftasic.com/ic103/labs/lab-03-a-pmod-for-one-projects-pins-overview.html>
+· live: <https://uoftasic.com/pcb101/labs/lab-03-a-pmod-for-one-projects-pins-overview.html>
 
 You copy `template/` out of the course repo into a board repository of your own, draw a 2-layer Pmod for SimProc in it, and check it with:
 
 ```bash
 cd ~/simproc-pmod                                              # your board repository
-~/ic103/labs/lab-03-a-pmod-for-one-projects-pins/check.sh      # ~/ic103 is the course clone
+~/pcb101/labs/lab-03-a-pmod-for-one-projects-pins/check.sh      # ~/pcb101 is the course clone
 ```
 
 `check.sh [FOLDER] [ARGS]` runs [`labs/common/check_pmod.py`](../common/check_pmod.py) on the project in FOLDER (default: the current folder) in the course's pinned KiCad image, through `labs/common/kicad.sh`. It prints the board check (ERC, DRC, unconnected items, schematic parity), then the Pmod check: the three connectors 22.86 mm apart, in a row, locked, with their pins past the board's edge, and every pin in SimProc's pin list, [`labs/common/pins/simproc.json`](../common/pins/simproc.json). It ends with one line, `PASS` or `FAIL`, and exits 0 for PASS, 1 for FAIL and 2 if it couldn't run. Extra arguments go to `check_pmod.py`; `--pins FILE` checks another project's pin list.
@@ -20,7 +20,7 @@ cd ~/simproc-pmod                                              # your board repo
 `check.sh` is bash, for Linux, macOS and WSL. Without bash, this does the same from your board repository; we have run it on Linux and not on Windows:
 
 ```bash
-docker run --rm -v "${PWD}:/work" -v "<path to ic103>:/w" -w /work kicad/kicad:10.0.5@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de python3 /w/labs/common/check_pmod.py .
+docker run --rm -v "${PWD}:/work" -v "<path to pcb101>:/w" -w /work kicad/kicad:10.0.5@sha256:182c8005cb775a2c448a4c18681d489f1ff472a761885eba3e08b07e3c0564de python3 /w/labs/common/check_pmod.py .
 ```
 
 ## Rows of the check

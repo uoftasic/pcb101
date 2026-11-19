@@ -14,7 +14,7 @@ import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LAB = os.path.dirname(HERE)
-SALT = "ic103-lab06"
+SALT = "pcb101-lab06"
 
 
 def digest(word, line):

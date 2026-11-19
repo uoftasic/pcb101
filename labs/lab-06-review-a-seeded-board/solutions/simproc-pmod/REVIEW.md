@@ -1,10 +1,10 @@
 # Review: the seeded SimProc Pmod
 
 <!--
-  IC103 Lab 06 reference review. It finds all eight planted faults; the course check needs 5.
+  PCB101 Lab 06 reference review. It finds all eight planted faults; the course check needs 5.
 -->
 
-Reviewer: IC103 reference
+Reviewer: PCB101 reference
 
 Board: `labs/lab-06-review-a-seeded-board/board/` in the course repo.
 

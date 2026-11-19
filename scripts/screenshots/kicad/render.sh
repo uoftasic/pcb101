@@ -18,7 +18,7 @@
 # '#001023' for a footprint. COLOR is #rrggbb.
 #
 # The plots run in the pinned image (labs/common/kicad-image.txt). The 3D renders run in the
-# render image, which has KiCad's 3D models of parts as well: IC103_RENDER_IMAGE if it's
+# render image, which has KiCad's 3D models of parts as well: PCB101_RENDER_IMAGE if it's
 # set, otherwise the image named by digest in render-image.txt next to this script
 # (kicad/kicad:10.0.5-full, the same kicad-cli build as the pinned image plus the models).
 #
@@ -45,7 +45,7 @@ strip_dates() {
     local files=() f
     while IFS= read -r f; do files+=("$f"); done < <(find "$@" -name '*.svg' -newer "$stamp")
     [ "${#files[@]}" -gt 0 ] || return 0
-    IC103_QUIET=1 "$kicad" sed -i -E \
+    PCB101_QUIET=1 "$kicad" sed -i -E \
         's#^(<title>SVG Image created as .*) date [0-9T:-]+ (</title>)$#\1\2#' "${files[@]}"
 }
 # --bg: an opaque rectangle of that colour behind everything else, just after <desc>.
@@ -54,7 +54,7 @@ add_bg() {
     local files=() f
     while IFS= read -r f; do files+=("$f"); done < <(find "$@" -name '*.svg' -newer "$stamp")
     [ "${#files[@]}" -gt 0 ] || return 0
-    IC103_QUIET=1 "$kicad" sed -i -E \
+    PCB101_QUIET=1 "$kicad" sed -i -E \
         "0,/<\/desc>/s|</desc>|&\n<rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\"$bg\"/>|" \
         "${files[@]}"
     for f in "${files[@]}"; do
@@ -67,7 +67,7 @@ trap 'rm -f "$stamp"' EXIT
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 kicad="$here/../../../labs/common/kicad.sh"
-render_image="${IC103_RENDER_IMAGE:-$(head -n 1 "$here/render-image.txt" | tr -d '[:space:]')}"
+render_image="${PCB101_RENDER_IMAGE:-$(head -n 1 "$here/render-image.txt" | tr -d '[:space:]')}"
 
 usage() { sed -n '2,/^set -e/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//'; exit 2; }
 bg=""
@@ -89,7 +89,7 @@ case "$mode" in
             iso)        side=(--side top --rotate '-45,0,45') ;;
             *)          usage ;;
         esac
-        IC103_IMAGE="$render_image" "$kicad" kicad-cli pcb render --quality basic --background opaque \
+        PCB101_IMAGE="$render_image" "$kicad" kicad-cli pcb render --quality basic --background opaque \
             --width 1600 --height 1000 "${side[@]}" "$@" -o "$out" "$board"
         ;;
     pcb)

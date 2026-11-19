@@ -1,6 +1,6 @@
 # Checks the board and builds its fabrication files and review images on every push and pull
 # request. Every step runs ci/build.sh in the KiCad image named in ci/kicad-image.txt, by
-# digest, so CI runs the same KiCad as the IC103 checks on your own machine.
+# digest, so CI runs the same KiCad as the PCB101 checks on your own machine.
 name: Board
 
 on:
@@ -27,7 +27,7 @@ jobs:
       # Each step runs one stage of ci/build.sh in a fresh container, as the runner's own uid,
       # with the repository at /work. If a stage fails, the later ones are skipped.
       - name: ERC, DRC and schematic parity
-        run: docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp/home -e IC103_KICAD_IMAGE="$IMAGE" -v "$PWD:/work" -w /work "$IMAGE" bash ci/build.sh check
+        run: docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp/home -e PCB101_KICAD_IMAGE="$IMAGE" -v "$PWD:/work" -w /work "$IMAGE" bash ci/build.sh check
 
       - name: Fabrication files
         run: docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp/home -v "$PWD:/work" -w /work "$IMAGE" bash ci/build.sh fab

@@ -1,7 +1,7 @@
 # Lab 01: Open a board you didn't design
 
 Writeup: [`docs/labs/lab-01-open-a-board-you-didnt-design-overview.md`](../../docs/labs/lab-01-open-a-board-you-didnt-design-overview.md)
-· live: <https://uoftasic.com/ic103/labs/lab-01-open-a-board-you-didnt-design-overview.html>
+· live: <https://uoftasic.com/pcb101/labs/lab-01-open-a-board-you-didnt-design-overview.html>
 
 You read Tiny Tapeout's SKY130 QFN breakout (rev 3.2), which `labs/common/fetch_boards.py`
 fetches into `labs/common/upstream/breakout-pcb/breakout-sky-qfn/`, and write what you find

@@ -28,9 +28,9 @@ def run_check(folder, *args):
                        stderr=subprocess.STDOUT, text=True)
     rows, in_pmod = {}, False
     for line in r.stdout.splitlines():
-        if line.startswith("IC103 Pmod check"):
+        if line.startswith("PCB101 Pmod check"):
             in_pmod = True
-        elif line.startswith("IC103 bring-up plan check"):
+        elif line.startswith("PCB101 bring-up plan check"):
             in_pmod = False
         elif in_pmod and re.match(r"^  (ok  |FAIL)  ", line):
             rows[line[8:20].strip()] = line[2:6].strip()

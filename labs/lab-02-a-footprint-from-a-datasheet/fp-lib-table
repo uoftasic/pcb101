@@ -1,4 +1,4 @@
 (fp_lib_table
 	(version 7)
-	(lib (name "ic103")(type "KiCad")(uri "${KIPRJMOD}/ic103.pretty")(options "")(descr "Lab 02: your footprints"))
+	(lib (name "pcb101")(type "KiCad")(uri "${KIPRJMOD}/pcb101.pretty")(options "")(descr "Lab 02: your footprints"))
 )

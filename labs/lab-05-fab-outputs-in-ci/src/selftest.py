@@ -5,7 +5,7 @@
 
 Run it on the host, not through kicad.sh: every case runs the lab's check.sh, which starts
 containers of two images, the pinned KiCad image and the pinned KiBot image. It needs Python 3,
-git and Docker, and passes IC103_DOCKER_ARGS on to every container.
+git and Docker, and passes PCB101_DOCKER_ARGS on to every container.
 
 It builds git repositories in results/selftest/, each starting from Lab 04's reference board
 (labs/lab-04-protect-and-plan/solutions/simproc-pmod/), the way a student's repository stands
@@ -46,7 +46,7 @@ CHECK = os.path.join(LAB, "check.sh")
 sys.path.insert(0, HERE)
 import planted  # noqa: E402
 
-GIT = ["git", "-c", "user.name=IC103 selftest", "-c", "user.email=selftest@example.com",
+GIT = ["git", "-c", "user.name=PCB101 selftest", "-c", "user.email=selftest@example.com",
        "-c", "init.defaultBranch=main", "-c", "commit.gpgsign=false"]
 
 

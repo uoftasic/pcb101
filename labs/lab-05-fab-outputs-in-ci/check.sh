@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # The Lab 05 check, run on your own board repository:
 #
-#   ~/ic103/labs/lab-05-fab-outputs-in-ci/check.sh [--planted REV]
+#   ~/pcb101/labs/lab-05-fab-outputs-in-ci/check.sh [--planted REV]
 #
-# Run it from your repository's root folder; ~/ic103 is wherever you cloned the course. It
+# Run it from your repository's root folder; ~/pcb101 is wherever you cloned the course. It
 # runs your ci/build.sh the way your workflow does: `all` (the check, fab and images stages)
 # in the course's pinned KiCad image, then, if those passed, `kibot` in the pinned KiBot
 # image. Then it checks the files they built and what git sees. With --planted REV it also
@@ -24,7 +24,7 @@ fi
 #    one failed, and so does the check.
 kibot=skipped
 if [ "$built" -eq 0 ]; then
-    echo "IC103 Lab 05: bash ci/build.sh kibot, in the KiBot image"
+    echo "PCB101 Lab 05: bash ci/build.sh kibot, in the KiBot image"
     echo "------------------------------------------------------------------------"
     "$common/kibot.sh" bash ci/build.sh kibot
     kibot=$?

@@ -2,7 +2,7 @@
 
 <!--
   Lab 01: fill in every TODO. The writeup tells you where to look for each one:
-  https://uoftasic.com/ic103/labs/lab-01-open-a-board-you-didnt-design-overview.html
+  https://uoftasic.com/pcb101/labs/lab-01-open-a-board-you-didnt-design-overview.html
   Check your notes with
     labs/common/kicad.sh python3 labs/lab-01-open-a-board-you-didnt-design/src/check_notes.py
   Keep the section headings and the table columns as they are, because the check reads them.

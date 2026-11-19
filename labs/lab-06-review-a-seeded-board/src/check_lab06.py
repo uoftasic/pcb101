@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""IC103 Lab 06 check: does your review find the planted faults, and does your quote record
+"""PCB101 Lab 06 check: does your review find the planted faults, and does your quote record
 describe your own board?
 
     labs/common/kicad.sh python3 /w/labs/lab-06-review-a-seeded-board/src/check_lab06.py REPO
@@ -207,7 +207,7 @@ def main():
         print(f"check_lab06: no {' or '.join(lost)} in {repo}; copy the lab's templates in first", file=sys.stderr)
         return 2
 
-    print("IC103 Lab 06 check")
+    print("PCB101 Lab 06 check")
     print(f"  folder    {repo}")
     print()
     rrows = []

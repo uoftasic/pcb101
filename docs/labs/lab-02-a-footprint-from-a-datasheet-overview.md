@@ -4,7 +4,7 @@ In this lab you make a KiCad footprint for TI's RHL0024A package, which KiCad's 
 
 This lab takes about 2 h.
 
-Package: [`labs/lab-02-a-footprint-from-a-datasheet/`](https://github.com/uoftasic/ic103/tree/main/labs/lab-02-a-footprint-from-a-datasheet)
+Package: [`labs/lab-02-a-footprint-from-a-datasheet/`](https://github.com/uoftasic/pcb101/tree/main/labs/lab-02-a-footprint-from-a-datasheet)
 
 ## Before you start
 
@@ -74,8 +74,8 @@ How big should each pad be, and where does it go?
 
    ```text
      ok        pads.md    Z, G, X, pad lengths and centres within 0.02 mm of the course's
-     MISMATCH  Footprint  no labs/lab-02-a-footprint-from-a-datasheet/ic103.pretty/RHL0024A.kicad_mod yet
-     MISMATCH  Symbol     no symbol called SN74LVC8T245RHL in labs/lab-02-a-footprint-from-a-datasheet/ic103.kicad_sym
+     MISMATCH  Footprint  no labs/lab-02-a-footprint-from-a-datasheet/pcb101.pretty/RHL0024A.kicad_mod yet
+     MISMATCH  Symbol     no symbol called SN74LVC8T245RHL in labs/lab-02-a-footprint-from-a-datasheet/pcb101.kicad_sym
      MISMATCH  Fit        needs both the footprint and the symbol
 
    FAIL  3 of 4 parts have a MISMATCH: Footprint, Symbol and Fit
@@ -96,7 +96,7 @@ Check: the `pads.md` row says `ok`.
 
 Can you turn your numbers into a KiCad footprint that matches them?
 
-1. Open `labs/lab-02-a-footprint-from-a-datasheet/lab02.kicad_pro` in KiCad, then the Footprint Editor. The project's library tables add the lab folder's `ic103.pretty` as a library called `ic103`. Make a new footprint in `ic103` called `RHL0024A`.
+1. Open `labs/lab-02-a-footprint-from-a-datasheet/lab02.kicad_pro` in KiCad, then the Footprint Editor. The project's library tables add the lab folder's `pcb101.pretty` as a library called `pcb101`. Make a new footprint in `pcb101` called `RHL0024A`.
 
 2. Place one pad with the pad tool on the right-hand toolbar, then press E on it to open its properties:
 
@@ -119,7 +119,7 @@ Can you turn your numbers into a KiCad footprint that matches them?
    - on F.Silkscreen, a mark at pin 1 and short lines at the body's corners, all at least 0.2 mm clear of every pad;
    - on F.Courtyard, a rectangle 0.25 mm outside the pads and the body, which for the reference is ±2.37 × ±3.37 mm.
 
-   ![The reference footprint in the Footprint Editor, loaded from library ic103: pads 1 to 24 around exposed pad 25, the pin 1 triangle on the silkscreen, the body outline with its cut corner on F.Fab, and the courtyard.](../assets/img/kicad-footprint-editor-rhl0024a.png)
+   ![The reference footprint in the Footprint Editor, loaded from library pcb101: pads 1 to 24 around exposed pad 25, the pin 1 triangle on the silkscreen, the body outline with its cut corner on F.Fab, and the courtyard.](../assets/img/kicad-footprint-editor-rhl0024a.png)
 
 7. Save, and run the check from Part 2 again. You should see `ok  Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 776 QFN footprints`, with your own paste percentage in place of the reference's 66. The check compares every pad with your `pads.md` to within 0.01 mm, and if a pad is off, it names the pad and says where your numbers put it.
 
@@ -138,11 +138,11 @@ Which pins does the schematic need, and what kind is each one?
 
    </details>
 
-2. In the Symbol Editor, make a new symbol in the project library `ic103` called `SN74LVC8T245RHL`. Give it the pins in Table 4-1 on page 5: VCCA on 1, DIR on 2, A1 to A8 on 3 to 10, GND on 11, 12 and 13, B8 to B1 on 14 to 21, OE on 22 and VCCB on 23 and 24. Add pin 25 for the thermal pad, called `EP`. The Pin Table lets you type the pins into a grid rather than placing each one.
+2. In the Symbol Editor, make a new symbol in the project library `pcb101` called `SN74LVC8T245RHL`. Give it the pins in Table 4-1 on page 5: VCCA on 1, DIR on 2, A1 to A8 on 3 to 10, GND on 11, 12 and 13, B8 to B1 on 14 to 21, OE on 22 and VCCB on 23 and 24. Add pin 25 for the thermal pad, called `EP`. The Pin Table lets you type the pins into a grid rather than placing each one.
 
 3. Set each pin's electrical type, because ERC decides what to report from the pin types. Make the supplies power input, DIR and OE input, and the A and B pins bidirectional. GND has three pins and VCCB has two, and a schematic should have to connect each supply only once, so stack each supply's pins. In KiCad 10 a stack can be a single pin with a list of numbers. Number one GND pin `[11,12,13]` and one VCCB pin `[23,24]`, and KiCad gives that pin's net to every pad in the list. KiCad's library convention (KLC S4.3) asks for these pin stacks from KiCad 10 on, in place of the older way, in which several pins are drawn on top of each other and all but one are hidden. The check accepts either, and the reference was drawn the older way. If you draw it that way, make the hidden pins passive, because KiCad joins a hidden power-input pin to a global net named after it, and then in Part 5 the pads' nets wouldn't match the schematic. If you leave one as a power input, the check's Symbol row names the pin to change. Table 4-1 gives the thermal pad no type. The reference makes it passive, and the check accepts passive, power input, input, bidirectional or unspecified for it.
 
-4. Set the symbol's Footprint field to `ic103:RHL0024A`, and save.
+4. Set the symbol's Footprint field to `pcb101:RHL0024A`, and save.
 
 5. Table 4-1 lists the thermal pad with no pin number, type or description, and note 3 on page 36 says only that it must be soldered to the board. Neither says what to connect it to. Where would you find out?
 
@@ -155,7 +155,7 @@ Which pins does the schematic need, and what kind is each one?
 
    ![The reference symbol SN74LVC8T245RHL, plotted with kicad-cli: VCCA, DIR, OE and A1 to A8 on the left, VCCB and B1 to B8 on the right, GND (pin 11) and EP (pin 25) underneath.](../assets/img/lab02-sn74lvc8t245rhl-symbol.svg){width=45%}
 
-Check: the check's Symbol row says `ok  Symbol  25 pins with Table 4-1's names and types, footprint ic103:RHL0024A`.
+Check: the check's Symbol row says `ok  Symbol  25 pins with Table 4-1's names and types, footprint pcb101:RHL0024A`.
 
 ## Part 5: Put it on a board
 
@@ -166,7 +166,7 @@ Do your symbol and footprint work together the way KiCad expects?
    ```text
      ok        pads.md    Z, G, X, pad lengths and centres within 0.02 mm of the course's
      ok        Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 776 QFN footprints
-     ok        Symbol     25 pins with Table 4-1's names and types, footprint ic103:RHL0024A
+     ok        Symbol     25 pins with Table 4-1's names and types, footprint pcb101:RHL0024A
      ok        Fit        ERC, DRC and parity clean on a board with your part (17 ERC and 0 DRC warnings)
 
    PASS  labs/lab-02-a-footprint-from-a-datasheet/solutions
@@ -180,7 +180,7 @@ Do your symbol and footprint work together the way KiCad expects?
      MISMATCH  pads.md    X, long sides: 0.32 is more than 0.02 mm from the course's value
      MISMATCH             X, short sides: 0.32 is more than 0.02 mm from the course's value
      ok        Footprint  25 pads where your numbers put them, paste 66 %, and matches none of KiCad's 776 QFN footprints
-     ok        Symbol     25 pins with Table 4-1's names and types, footprint ic103:RHL0024A
+     ok        Symbol     25 pins with Table 4-1's names and types, footprint pcb101:RHL0024A
      MISMATCH  Fit        drc.error 18 (clearance 18)
    ```
 

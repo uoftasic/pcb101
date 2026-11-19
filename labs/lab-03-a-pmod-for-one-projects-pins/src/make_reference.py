@@ -299,7 +299,7 @@ class Sheet:
     def write(self, path):
         head = (f'(kicad_sch\n\t(version 20260306)\n\t(generator "eeschema")\n\t(generator_version "10.0")\n'
                 f'\t(uuid "{self.root}")\n\t(paper "A4")\n\t(title_block\n\t\t(title "{self.title}")\n'
-                f'\t\t(date "2026-11-16")\n\t\t(rev "1")\n\t\t(company "UofT ASIC Team, IC103")\n'
+                f'\t\t(date "2026-11-16")\n\t\t(rev "1")\n\t\t(company "UofT ASIC Team, PCB101")\n'
                 f'\t\t(comment 1 "{self.comment}")\n\t)\n\t(lib_symbols\n')
         libs = "".join("\t\t" + s.raw.replace("\n", "\n\t\t") + "\n" for s in self.syms.values())
         body = "".join(self.items) + "".join(self.instances)
@@ -791,11 +791,11 @@ def main():
             if f.startswith(NAME + ".kicad_") or f.startswith(NAME + "-backups") or \
                     f in ("fp-lib-table", "sym-lib-table", "lib", "fp-info-cache"):
                 shutil.rmtree(path) if os.path.isdir(path) else os.remove(path)
-    work = tempfile.mkdtemp(prefix="ic103-ref-")
+    work = tempfile.mkdtemp(prefix="pcb101-ref-")
     write_template(out)
     lab = "04" if args.stage == "protected" else "03"
     title = "SimProc Pmod" + (", protected" if lab == "04" else "")
-    sheet = Sheet(work, title, f"IC103 Lab {lab} reference")
+    sheet = Sheet(work, title, f"PCB101 Lab {lab} reference")
     schematic(sheet, lab, flags=args.stage != "noflags", swap=args.stage == "swapped")
     sch = os.path.join(out, NAME + ".kicad_sch")
     sheet.write(sch)

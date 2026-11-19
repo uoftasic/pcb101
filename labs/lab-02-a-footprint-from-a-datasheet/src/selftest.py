@@ -50,8 +50,8 @@ def sub(path, old, new, count=0):
 
 
 def main():
-    work = tempfile.mkdtemp(prefix="ic103-lab02-")
-    fp = os.path.join("ic103.pretty", "RHL0024A.kicad_mod")
+    work = tempfile.mkdtemp(prefix="pcb101-lab02-")
+    fp = os.path.join("pcb101.pretty", "RHL0024A.kicad_mod")
 
     def copy_kicad(d):
         with open(os.path.join(KICAD_QFN, COPY + ".kicad_mod")) as f:
@@ -65,7 +65,7 @@ def main():
         sub(os.path.join(d, fp), "(size 0.26 0.89)", "(size 0.32 0.89)")
 
     def no_pin_25(d):
-        path = os.path.join(d, "ic103.kicad_sym")
+        path = os.path.join(d, "pcb101.kicad_sym")
         with open(path) as f:
             text = f.read()
         out = re.sub(r'\(pin passive line\s*\(at [^)]*\)\s*\(length [^)]*\)\s*\(name "EP".*?\(number "25".*?\)\s*\)\s*\)\s*\)\s*\)',
@@ -81,7 +81,7 @@ def main():
         return re.search(r'\(number "([^"]*)"', block).group(1)
 
     def native_stacks(d):
-        path = os.path.join(d, "ic103.kicad_sym")
+        path = os.path.join(d, "pcb101.kicad_sym")
         with open(path) as f:
             text = f.read()
         for b in pin_blocks(text):
@@ -96,7 +96,7 @@ def main():
             f.write(text)
 
     def hidden_power_pin(d):
-        path = os.path.join(d, "ic103.kicad_sym")
+        path = os.path.join(d, "pcb101.kicad_sym")
         with open(path) as f:
             text = f.read()
         b = next(b for b in pin_blocks(text) if number(b) == "24")

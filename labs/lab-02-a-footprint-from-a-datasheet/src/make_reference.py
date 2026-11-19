@@ -5,8 +5,8 @@
 
 Writes, under labs/lab-02-a-footprint-from-a-datasheet/solutions/:
   pads.md                         the hand calculation, filled in
-  ic103.pretty/RHL0024A.kicad_mod  the footprint
-  ic103.kicad_sym                 the symbol SN74LVC8T245RHL
+  pcb101.pretty/RHL0024A.kicad_mod  the footprint
+  pcb101.kicad_sym                 the symbol SN74LVC8T245RHL
 
 The files are text in KiCad 10's formats. Run them through `kicad-cli fp upgrade` and
 `kicad-cli sym upgrade` afterwards (selftest.py shows how) so KiCad has written them once.
@@ -94,7 +94,7 @@ def footprint(c):
          '\t(generator_version "10.0")\n\t(layer "F.Cu")\n'
          '\t(descr "TI RHL0024A, VQFN-24, 3.5x5.5 mm body, 0.5 mm pitch, 2.05x4.05 mm exposed pad '
          '(SN74LVC8T245 datasheet SCES584D, https://www.ti.com/lit/ds/symlink/sn74lvc8t245.pdf, page 36). '
-         'IC103 Lab 02 reference solution: IPC-7351B nominal goals, pads trimmed to 0.2 mm from the exposed pad.")\n'
+         'PCB101 Lab 02 reference solution: IPC-7351B nominal goals, pads trimmed to 0.2 mm from the exposed pad.")\n'
          '\t(tags "VQFN RHL0024A")\n')
     s += text_prop("Reference", "REF**", 0, -crt_y - 1, "F.SilkS")
     s += text_prop("Value", "RHL0024A", 0, crt_y + 1, "F.Fab")
@@ -191,7 +191,7 @@ def symbol():
          '\t\t(exclude_from_sim no)\n\t\t(in_bom yes)\n\t\t(on_board yes)\n')
     s += sprop("Reference", "U", body[0], body[1] + 1.27)
     s += sprop("Value", "SN74LVC8T245RHL", body[2] - 8, body[1] + 1.27)
-    s += sprop("Footprint", "ic103:RHL0024A", 0, body[3] - 6, hide=True)
+    s += sprop("Footprint", "pcb101:RHL0024A", 0, body[3] - 6, hide=True)
     s += sprop("Datasheet", "https://www.ti.com/lit/ds/symlink/sn74lvc8t245.pdf", 0, body[3] - 8, hide=True)
     s += sprop("Description", "8-bit dual-supply bus transceiver, VQFN-24 (RHL) with exposed pad", 0,
                body[3] - 10, hide=True)
@@ -232,14 +232,14 @@ sides) and {sh['inner']:.3f} mm (short sides) from the centre, and the pads get 
 
 def main():
     c = compute()
-    os.makedirs(os.path.join(OUT, "ic103.pretty"), exist_ok=True)
-    with open(os.path.join(OUT, "ic103.pretty", "RHL0024A.kicad_mod"), "w") as fh:
+    os.makedirs(os.path.join(OUT, "pcb101.pretty"), exist_ok=True)
+    with open(os.path.join(OUT, "pcb101.pretty", "RHL0024A.kicad_mod"), "w") as fh:
         fh.write(footprint(c))
-    with open(os.path.join(OUT, "ic103.kicad_sym"), "w") as fh:
+    with open(os.path.join(OUT, "pcb101.kicad_sym"), "w") as fh:
         fh.write(symbol())
     with open(os.path.join(OUT, "pads.md"), "w") as fh:
         fh.write(pads_md(c))
-    print(f"wrote {os.path.relpath(OUT)}/pads.md, ic103.pretty/RHL0024A.kicad_mod, ic103.kicad_sym")
+    print(f"wrote {os.path.relpath(OUT)}/pads.md, pcb101.pretty/RHL0024A.kicad_mod, pcb101.kicad_sym")
 
 
 if __name__ == "__main__":

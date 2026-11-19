@@ -26,9 +26,9 @@ Tiny Tapeout's [GPIO page](https://tinytapeout.com/specs/gpio/) lists 26 pins fo
 
 The demo board's README says the three Pmod headers along its bottom edge "provide access to all the project I/O in a logical fashion, with inputs, bidirectional pins and outputs available on their own distinct headers", and that "extension boards will often need to span at least two, and sometimes three, distinct headers." Tiny Tapeout's [guide to the ETR demo board](https://tinytapeout.com/guides/get-started-demoboard-etr/) (ETR is the name printed on the board) adds that the headers "follow the digilent PMOD spec and spacing".
 
-![The demo board's three I/O Pmod sockets, with SimProc's pins](../assets/img/ic103-pmod-pinout-simproc.svg)
+![The demo board's three I/O Pmod sockets, with SimProc's pins](../assets/img/pcb101-pmod-pinout-simproc.svg)
 
-*The demo board's sockets J14, J15 and J16, seen from above, drawn from the board file (`TinyTapeout/tt-demo-pcb` at bbf3dd1) by [`scripts/figures/pmod_pinout.py`](https://github.com/uoftasic/ic103/blob/main/scripts/figures/pmod_pinout.py). Each pad is labelled with the net that the board file gives it, and pin 1 is drawn square. SimProc's pins are in blue, labelled with what each one does, from its `info.yaml` and RTL. Each `uio` pin sets one bit of SimProc's `clk_per_bit`.*
+*The demo board's sockets J14, J15 and J16, seen from above, drawn from the board file (`TinyTapeout/tt-demo-pcb` at bbf3dd1) by [`scripts/figures/pmod_pinout.py`](https://github.com/uoftasic/pcb101/blob/main/scripts/figures/pmod_pinout.py). Each pad is labelled with the net that the board file gives it, and pin 1 is drawn square. SimProc's pins are in blue, labelled with what each one does, from its `info.yaml` and RTL. Each `uio` pin sets one bit of SimProc's `clk_per_bit`.*
 
 Each socket has twelve pins in two rows of six. Pins 1 to 4 carry bits 0 to 3 of the socket's bus, pins 7 to 10 carry bits 4 to 7, pins 5 and 11 are ground, and pins 6 and 12 are the demo board's +3V3. A Pmod takes its power from pins 5, 6, 11 and 12, at the same 3.3 V that the chip's pads run from. Pin 1 of each socket is 22.86 mm from pin 1 of the next. That's the spacing Tiny Tapeout's Pmod library asks for, and the one [Placement and routing](placement-and-routing.md#connectors-first) uses for a Pmod's connectors.
 

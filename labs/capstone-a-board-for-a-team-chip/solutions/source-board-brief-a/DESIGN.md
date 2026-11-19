@@ -1,7 +1,7 @@
 # Design note: source board for an0
 
 <!--
-  IC103 capstone, Brief A reference. The figures for the analog pin's path come from Tiny
+  PCB101 capstone, Brief A reference. The figures for the analog pin's path come from Tiny
   Tapeout's analog spec and ETR demo board guide, as "Boards for chips" quotes them; J13's
   pins come from TinyTapeout/tt-demo-pcb at bbf3dd1 and the SKY130 breakout's J1 at
   breakout-pcb 91a2bf1. The sample rate in decision 5 is our assumption. Nothing here has
@@ -49,5 +49,5 @@ Brief: A. Project: CrossWalk, the team's 8-bit SAR ADC (uoftasic/crosswalk, `clo
 
 - J13 is marked DNP in the demo board's files at bbf3dd1, while Tiny Tapeout's ETR guide says analog signals come out on a 100 mil header. Someone with a kit should check whether J13 is fitted on it before this board is ordered.
 - CrossWalk's sample rate and full scale aren't written down yet. Decision 5 assumes 400 kS/s; at a higher rate the droop grows in proportion, and a buffer amplifier between the trimmer and R1 would remove most of it.
-- The source is only as good as the demo board's 3.3 V, which is the trimmer's reference. A characterization board needs a reference of its own, and that board is PB201's.
+- The source is only as good as the demo board's 3.3 V, which is the trimmer's reference. A characterization board needs a reference of its own, and that board is PCB201's.
 - Which of the chip's analog pads, an0 to an11, CrossWalk's two analog pins land on: its `info.yaml` pinout is still empty.

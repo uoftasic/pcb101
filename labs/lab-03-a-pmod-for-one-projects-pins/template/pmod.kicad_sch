@@ -8,7 +8,7 @@
 		(title "Pmod for a Tiny Tapeout project")
 		(date "2026-11-16")
 		(rev "1")
-		(company "UofT ASIC Team, IC103")
+		(company "UofT ASIC Team, PCB101")
 		(comment 1 "Your name")
 	)
 	(lib_symbols)

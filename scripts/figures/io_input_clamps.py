@@ -37,7 +37,7 @@ def main():
     d.add(elm.CurrentLabel(top=False, ofst=0.45, length=1.4).at(rs).label("$I$", loc="bottom"))
     d.add(elm.EncircleBox([pad, up, vdd, dn, g1, c, g2, buf], padx=0.6, pady=0.3).linestyle("--")
           .label("the chip", loc="top", halign="left"))
-    print(save(d, "ic103-io-input-clamps"))
+    print(save(d, "pcb101-io-input-clamps"))
 
 
 if __name__ == "__main__":
