@@ -19,11 +19,13 @@ The capstone takes about 4 hours for Brief D on the SimProc board you already ha
 Brief D is for SimProc, Sentry, or a digital Tiny Tapeout project of your own. The board plugs into the demo board's I/O sockets and adds the hardware that the project needs and the demo board doesn't have, the way the SimProc Pmod adds a header for a USB-UART dongle and eight switches that set SimProc's bit period. It must have:
 
 - every pin the project uses brought to the right socket, as its pin list says;
-- a series resistor, or a translator, on every line that crosses from another supply. The resistor limits the current into the chip when one side is powered and the other isn't, and a translator also shifts the signal's level, which a 5 V signal needs because the chip's inputs aren't 5 V tolerant;
+- a buffer with Ioff, powered from the kit's 3.3 V, on every line that crosses from another supply, then a resistor of 330 Ω to 8.2 kΩ on a line into the chip, or 1 kΩ to 5.1 kΩ on a line out of it;
 - an ESD part to GND on every signal pin of a connector that a cable plugs into;
-- a test point on every signal pin of that connector, on either side of its series resistor;
+- a test point for every signal pin of that connector, anywhere on its line from the connector through the buffer and the resistor to the Pmod pin. One on GND doesn't count, and nor does one on the kit's 3.3 V, such as one at the far end of a pull-up;
 - in `DESIGN.md`, what happens on each line when either side is unpowered, which firmware mode and switch settings the board assumes, and a check that the project's clock and its fastest signals stay within the pins' ratings, which Tiny Tapeout's GPIO spec gives as 33 MHz for an output and 66 MHz for an input;
 - if the project's pinout is awkward for the demo board, a line in `DESIGN.md` on what it cost the board.
+
+With the kit off, the buffer on a line that crosses from another supply is unpowered. Ioff is the most current a pin of the buffer passes while the buffer's supply is at 0 V. For the 74LVC2G17 on our board it's at most 10 µA, under the 100 µA that SkyWater's I/O guide allows into a chip pin held above its supply. On a line into the chip, the resistor limits the current if something else, such as the RP2350, drives the line against the buffer; on a line out of the chip, it limits the current into an unpowered receiver such as a dongle's RX pin. The buffer's inputs take up to 5.5 V, so it also brings a 5 V signal down to 3.3 V for the chip, whose inputs aren't 5 V tolerant. The capstone check's pmod row runs Lab 04's check. It accepts only the 74LVC1G17, 74LVC1G34, 74LVC1G125, 74LVC2G17, 74LVC2G34, 74LVC2G125, 74AUP1G17, 74AUP1G34 and 74AUP1G125 as the buffer, so a line with a translator in its place fails.
 
 For a project other than SimProc, write its pin list in the form of [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pcb101/blob/main/labs/common/pins/simproc.json), as Lab 03's Going further describes, and pass it to the check with `--pins`.
 
@@ -73,7 +75,7 @@ What does your board have to do, in numbers?
      FAIL  design       7 lines still say TODO; only 1 numbered requirement, and at least 3 are needed; only 1 numbered decision, and at least 3 are needed; decision 1 has no 'Meets:' line naming requirements; decision 1 gives no value with its unit; requirement 1 isn't met by any decision
      FAIL  history      1 commit changes the schematic or the board; at least 2 needed
      ok    pmod         PASS  pmod.kicad_pro: 17 of 17 Pmod checks ok; bring-up plan PASS
-     FAIL  test points  no test point on J4 pin 2 (/DONGLE_TXD) or J4 pin 3 (/DONGLE_RXD), or on the other side of their series resistors
+     FAIL  test points  no test point on J4 pin 2 (/DONGLE_TXD) or J4 pin 3 (/DONGLE_RXD), or along their lines to the Pmod pins
    ```
 
    You should see the design row name what's still missing from your requirements and decisions. Your history row will differ from ours, because a repository carried through Labs 03 to 05 already has several commits that change the board. When we worked through the labs the way you have, it read `ok    history      5 commits change the schematic or the board`.
@@ -113,7 +115,7 @@ Does your board do what your requirements say?
 
    ![The Brief D reference board from the top](../assets/img/capstone-brief-d-top.png)
 
-   *Our Brief D board, rendered by `kicad-cli` 10.0.5 with the parts' 3D models. It's Lab 04's SimProc Pmod with TP3 added to the right of R1, and TP4 to the right of the track that runs from R2 down to J4.*
+   *Our Brief D board, rendered by `kicad-cli` 10.0.5 with the parts' 3D models. It's Lab 04's SimProc Pmod with TP3 added to the right of R1, and TP4 below R2.*
 
    ![The Brief A reference board from the top](../assets/img/capstone-brief-a-top.png)
 
@@ -123,7 +125,7 @@ Does your board do what your requirements say?
 
 Why is each part there, and what will you read at each step?
 
-1. Write the Decisions in `DESIGN.md` as a numbered list, with one item for each part or choice. Each item gives the value that justifies it, with its unit, and has a line starting `Meets:` that names the requirements it meets. Every requirement needs at least one decision. Work every number out in the note itself, as our references do. For a series resistor that might be "(3.3 V − 0.6 V) / 1 kΩ = 2.7 mA into an unpowered pin", and for the pull-down on Brief A, with a 1.25 kΩ source, "1.25 kΩ / 10 MΩ = 0.0125 %".
+1. Write the Decisions in `DESIGN.md` as a numbered list, with one item for each part or choice. Each item gives the value that justifies it, with its unit, and has a line starting `Meets:` that names the requirements it meets. Every requirement needs at least one decision. Work every number out in the note itself, as our references do. For our R1, the 1 kΩ resistor after the buffer on `ui[0]`, that might be "3.3 V × 36 kΩ / 37 kΩ = 3.21 V against the RP2350's 36 kΩ pull-down, above the 2.31 V the chip needs for a high", and for the pull-down on Brief A, with a 1.25 kΩ source, "1.25 kΩ / 10 MΩ = 0.0125 %".
 
 2. For Brief A, take care over the current that the pin's sampling capacitor draws on average. It's roughly $C \cdot V \cdot f_s$, and the voltage it drops across your source's resistance is an error at the pin. Before you work it out, write down whether you think it matters for an 8-bit converter. Our reference assumes a sample rate of 400 kS/s, because CrossWalk's documentation doesn't give one yet. At that rate the current is 5 pF × 3.3 V × 400 kHz = 6.6 µA, and across 1.25 kΩ it drops 8.3 mV, which is 0.64 of one 12.9 mV step. That's why our trimmer is 1 kΩ and not 10 kΩ.
 
@@ -136,15 +138,15 @@ Why is each part there, and what will you read at each step?
 
 3. Fill in Checks (what you checked and how) and Open questions (what you couldn't settle, and who could). Our Brief A reference lists four open questions, one of them the DNP mark on J13.
 
-4. Write `BRINGUP.md`. For Brief D, start from your Lab 04 plan and change the steps that measure the UART lines so that they measure at your new test points; ours reads steps 5 and 6 at TP4 and TP3. For Brief A, copy Lab 04's template and fill it in for your board, where the lines that leave the board are the analog pin, 3.3 V and GND. As in Lab 04, every step needs an `Expect:` with a value and its unit.
+4. Write `BRINGUP.md`. For Brief D, start from your Lab 04 plan and change the steps that measure the UART lines so that they measure at your new test points; in ours, step 6 measures at TP4 and step 7 at TP3. For Brief A, copy Lab 04's template and fill it in for your board, where the lines that leave the board are the analog pin, 3.3 V and GND. As in Lab 04, every step needs an `Expect:` with a value and its unit.
 
-5. Commit, and run the check. You should see `ok    design       ...` with your own counts, for example `9 requirements, 9 decisions, every requirement met`, and for Brief A `ok    bringup      PASS  BRINGUP.md: 6 of 6 parts ok`.
+5. Commit, and run the check. You should see `ok    design       ...` with your own counts, for example `9 requirements, 11 decisions, every requirement met`, and for Brief A `ok    bringup      PASS  BRINGUP.md: 6 of 6 parts ok`.
 
 ## Part 4: Review it and push
 
 Would your board pass the review you gave the seeded one?
 
-1. Review your own board against the checklist from Lab 06, line by line, and write what you checked under Checks in `DESIGN.md`. Fix what you find. For a line that doesn't apply, say why, as "there are no ICs, so nothing needs decoupling" does in ours.
+1. Review your own board against the checklist from Lab 06, line by line, and write what you checked under Checks in `DESIGN.md`. Fix what you find. For a line that doesn't apply, say why, as "there is no IC, so nothing needs decoupling" does in our Brief A note.
 
 2. Commit, push, and wait for your workflow's run. You should see it green, with the `board-outputs` artifact.
 

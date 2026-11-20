@@ -113,7 +113,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
    - A render takes `--side top` or `--side bottom`.
    - For the copper plots, `--layers F.Cu,B.Cu` with `--mode-multi` writes one SVG per layer, `--common-layers Edge.Cuts` adds the outline to each, and `--page-size-mode 2` with `--exclude-drawing-sheet` crops them to the board.
 
-2. Before you run the check, count the holes that your drill file should have, one for every pad with a hole and one for every via, and write the number down. On our board it's 65: 36 pins in the three Pmod connectors, 3 in the dongle header, 16 in the switch, 9 in the resistor network and 1 via.
+2. Before you run the check, count the holes that your drill file should have, one for every pad with a hole and one for every via, and write the number down. On our board it's 70: 36 pins in the three Pmod connectors, 3 in the dongle header, 16 in the switch, 9 in the resistor network and 6 vias.
 
 3. Run the check. You should see every row `ok` except `ibom` and `report`, which fail until you've done Part 5. Our rows were:
 
@@ -121,9 +121,9 @@ What do a fab, an assembler and a reviewer each need from your CI?
      ok    workflow   .github/workflows/board.yml runs check, fab and images in kicad/kicad:10.0.5 and kibot in kicad10_auto_full:1.9.1-2_k10.0.5_d13.2_b4.2.4LTS, both by digest, and uploads out/
      ok    check      the board check passes
      ok    gerbers    9 Gerbers and pmod-job.gbrjob in out/fab/
-     ok    drill      pmod.drl: 65 holes, all inside the outline
-     ok    bom        pmod-bom.csv: 12 rows, every footprint listed
-     ok    position   pmod-pos.csv: 10 parts, in mm, where the board has them
+     ok    drill      pmod.drl: 70 holes, all inside the outline
+     ok    bom        pmod-bom.csv: 15 rows, every footprint listed
+     ok    position   pmod-pos.csv: 13 parts, in mm, where the board has them
      ok    images     5 files in out/review/: renders, copper plots and the schematic
      FAIL  ibom       no interactive HTML BOM in out/kibot/ (the .html that an ibom output writes)
      FAIL  report     no design report in out/kibot/ (a .txt from a report output, with a 'Board size:' line)
@@ -134,7 +134,7 @@ What do a fab, an assembler and a reviewer each need from your CI?
 
    The drill row checks that every hole lies inside the outline in the Edge.Cuts Gerber, so a drill file made in a different origin from the Gerbers fails it. [Fabrication outputs](../guide/fabrication-outputs.md) shows that mistake on the DIP dock.
 
-4. Our BOM has 12 rows and our position file only 10 parts. Open `out/assembly/` and find the two parts that the position file leaves out. Why would KiCad leave them out?
+4. Our BOM has 15 rows and our position file only 13 parts. Open `out/assembly/` and find the two parts that the position file leaves out. Why would KiCad leave them out?
 
    <details>
    <summary>Answer</summary>
@@ -221,15 +221,18 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    CI/CD environment detected
    WARNING:(W182) No instance for `/00000000-0000-0000-0000-000000000000` using the first (kibot - v6_sch.py:1458)
    - 'Interactive HTML BOM' (ibom) [ibom]
+   WARNING:(W013) U1 not linked to an existing schematic component, but U1 found in schematic, assuming this is the same (kibot - kiplot.py:488)
    - 'Design report' (report) [report]
-   Found 1 unique warning/s (36 total, 3 filtered)
+   Found 2 unique warning/s (47 total, 3 filtered)
    ```
 
    The text in quotes on each output's line is that output's `comment`. Our configuration gives each output one (`Interactive HTML BOM` and `Design report`). An output without a comment makes the same file, and its line reads `- '' (ibom) [ibom]`.
 
-   The warning, W182, comes from the way KiBot reads a schematic. It looks for each symbol's instance under a sheet path of zeros, while our schematic records each one under the schematic's own UUID, so KiBot falls back to the symbol's first instance, as the message says. Our schematic is one sheet and each of its 33 symbols has only one instance, so that's the right one. KiBot prints the warning once and counts it for each symbol.
+   The first warning, W182, comes from the way KiBot reads a schematic. KiBot looks for each symbol's instance under a sheet path of zeros, while our schematic records each one under the schematic's own UUID, so KiBot falls back to the symbol's first instance, as the message says. Our schematic is one sheet, and each of its 43 symbols (the power symbols and U1's three units among them) has only one instance, so the first instance is the right one. KiBot prints W182 once and counts it for each symbol.
 
-6. Open `out/kibot/pmod-ibom.html` in a browser. When you click a row of the BOM, its parts light up on the drawing of the board. You should see the parts and rows that you wrote down in step 3. Ours has 12 parts in 8 rows:
+   The second warning, W013, is about U1, the 74LVC2G17 dual buffer. The schematic draws it as three units, one for each buffer and one for the GND and VCC pins. Each unit is a symbol of its own in the schematic, with its own UUID. KiBot folds the three into one U1 and keeps the UUID of the first unit it reads, unit 2, which is one of the buffers. Our board's U1 footprint records the UUID of unit 3, the one with the power pins, so KiBot can't match the footprint to its symbol by UUID. It looks the footprint up by its reference instead and finds the U1 it folded, which is the right part.
+
+6. Open `out/kibot/pmod-ibom.html` in a browser. When you click a row of the BOM, its parts light up on the drawing of the board. You should see the parts and rows that you wrote down in step 3. Ours has 15 parts in 11 rows:
 
    ![KiBot's interactive BOM for the SimProc Pmod, with the row for R1 and R2 selected and both resistors highlighted on the front of the board](../assets/img/kibot-ibom-simproc-pmod.png)
 
@@ -240,7 +243,7 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    <details>
    <summary>Answer</summary>
 
-   It would have listed the part like any other. The course's self-test marks J4 DNP in our schematic and on our board, and runs the check twice. With `dnf_filter` naming the filter, the ibom listed 11 parts in 7 rows and left J4 out. With that line taken out, it listed J4 again, and the check's `ibom` row failed with `pmod-ibom.html lists J4, which the board marks Do not populate; give the ibom output a filter for DNP parts (dnf_filter)`. The BOM that `kicad-cli` made from the schematic listed all 12 parts both times.
+   It would have listed the part like any other. The course's self-test marks J4 DNP in our schematic and on our board, and runs the check twice. With `dnf_filter` naming the filter, the ibom listed 14 parts in 10 rows and left J4 out. With that line taken out, it listed J4 again, and the check's `ibom` row failed with `pmod-ibom.html lists J4, which the board marks Do not populate; give the ibom output a filter for DNP parts (dnf_filter)`. The BOM that `kicad-cli` made from the schematic listed all 15 parts both times.
 
    </details>
 
@@ -249,12 +252,12 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    ```text
    Drill tools (including vias and computing adjusts and rounding):
 
-   - 0.4 mm (16 mils) (1)
+   - 0.4 mm (16 mils) (6)
    - 0.9 mm (35 mils) (25)
    - 1.1 mm (43 mils) (39)
    ```
 
-   That's 65 holes, as in the drill file, but the via and the pads on our board have holes of 0.3, 0.8 and 1.0 mm. Why is each tool 0.1 mm larger?
+   That's 70 holes, as in the drill file, but the vias and the pads on our board have holes of 0.3, 0.8 and 1.0 mm. Why is each tool 0.1 mm larger?
 
    <details>
    <summary>Answer</summary>
@@ -268,8 +271,8 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
 8. Run the Lab 05 check. You should see the two new rows `ok`:
 
    ```text
-     ok    ibom       pmod-ibom.html: 12 parts in 8 rows, none of them marked DNP
-     ok    report     pmod-report.txt: 64 x 32 mm and 65 holes, as in the Gerbers and pmod.drl
+     ok    ibom       pmod-ibom.html: 15 parts in 11 rows, none of them marked DNP
+     ok    report     pmod-report.txt: 64 x 32 mm and 70 holes, as in the Gerbers and pmod.drl
    ```
 
    and the last line `PASS  pmod: 10 of 10 Lab 05 checks ok; add --planted REV once you've done Part 6`. The `ibom` row reads the board data inside the page and compares its BOM with the footprints on your board. It passes when every part that belongs in a BOM is listed, none of the listed parts is marked DNP, and the BOM has nothing that isn't on the board. The `report` row compares the report's board size with the outline in the Gerbers, and checks that its drill tools add up to the number of holes in the drill file. Then commit `ci/board.kibot.yaml` and push. The run's "KiBot outputs" step now makes the two files, and the artifact has a `kibot/` folder. Our local run of the workflow, with one CPU for each container, succeeded in all seven steps in 30 s, and the artifact held 23 files.
@@ -317,7 +320,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
    ~/pcb101/labs/lab-05-fab-outputs-in-ci/check.sh --planted <hash>
    ```
 
-   It copies that commit's files into a temporary folder, runs `bash ci/build.sh check` there, and checks that the board check fails. You should see an eleventh row, `ok    planted    367a4f1, an earlier commit on this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 11 of 11 Lab 05 checks ok`.
+   It copies that commit's files into a temporary folder, runs `bash ci/build.sh check` there, and checks that the board check fails. You should see an eleventh row, `ok    planted    f1b503c, an earlier commit on this branch, fails the board check (drc.error 2)`, with your own hash and counts, and the last line `PASS  pmod: 11 of 11 Lab 05 checks ok`.
 
 ## Finishing
 

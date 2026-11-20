@@ -22,7 +22,7 @@ Static can damage a chip before it has ever been powered. Chip makers model a ch
 
 ### Unpowered checks
 
-Before you measure anything, work out from the schematic what each reading should be and write it down, so that you have something to compare each measurement with. Then, with nothing connected, use a multimeter to measure the resistance from each supply rail of your board to ground. A rail that reads close to 0 Ω is shorted, and you stop there, because a short that you find with a meter costs you nothing, while the same short found by powering the board may cost you a trace or a part.
+Before you measure anything, work out from the schematic what each reading should be and write it down, so that you have something to compare each measurement with. Then, with nothing connected, use a multimeter to measure the resistance from each supply rail of your board to ground. A capacitor on the rail, such as C1, the 100 nF capacitor that you put beside the UART lines' buffer in Lab 04, makes the reading start low and climb for a moment while the meter charges it, so read the value once it settles. On Lab 04's board, with every switch off, it settles above 1 MΩ. A rail that stays close to 0 Ω is shorted, and you stop there, because a short that you find with a meter costs you nothing, while the same short found by powering the board may cost you a trace or a part.
 
 ### Orientation
 
@@ -40,7 +40,9 @@ Your Pmod can't measure the chip's current, because the chip's current never flo
 
 Measuring one rail on its own means taking an 0805 link off the breakout and fitting J2. That's rework on the board that holds the kit's only chip, so the course doesn't ask you to do it ([Measuring current](measuring-current.md) describes the links and J2). If the team ever needs per-rail readings, practise the rework first on a breakout without a chip.
 
-Your Pmod can measure its own draw. A 10 Ω resistor in your board's supply turns your board's current into a voltage that you can read with a meter. Horowitz and Hill call this a "current spy" (§10.7.1), and they recommend one on every board, because a chip damaged by static can draw too much current, and the spy makes that easy to find. Work out from the part values what your board should draw, counting the switches, their pull-downs and anything else on it, and write it down.
+Your Pmod can measure its own draw. A 10 Ω resistor in your board's supply turns your board's current into a voltage that you can read with a meter. Horowitz and Hill call this a "current spy" (§10.7.1), and they recommend one on every board, because a chip damaged by static can draw too much current, and the spy makes that easy to find. Work out from the part values what the spy should read, and write it down. It sees only the current of the parts on the far side of the resistor from the sockets. On Lab 04's board those are the switches and their pull-downs. The buffer U1 that you add in Lab 04, C1 and the pull-up R4 take their 3.3 V from the sockets' side of the resistor, so their current doesn't pass through it.
+
+If you power your board on its own from a bench supply, before it goes into the kit, first hold at a fixed level each buffer input that the chip would drive. A floating input on a powered buffer can switch back and forth, and TI's [datasheet](https://www.ti.com/lit/ds/symlink/sn74lvc2g17.pdf) for U1, a 74LVC2G17, says that "All unused inputs of the device must be held at VCC or GND". On Lab 04's board that's the input on pin 1 of your Pmod's J3, its connector for the chip's outputs. A 10 kΩ resistor from that pin to GND holds it low during the bench test, and comes off before the board goes into the kit.
 
 ## The order of the supplies
 
@@ -74,7 +76,7 @@ Step 6 is the first functional test, which should be the smallest test that show
 
 Connect your board to the kit while nothing is powered. Connect anything with a supply of its own, such as a USB-UART dongle powered from your laptop, only once the kit is up. Disconnect in the reverse order.
 
-This order protects the chip's inputs. A CMOS input has clamp diodes to its supply, and if something drives the input HIGH while the chip is unpowered, current flows through the clamp into the chip's supply rail, enough to power it partly (Horowitz and Hill, §12.1.2). Enough of that current can also trigger latch-up, and because latch-up depends on the input current rather than the voltage, a series resistor on the line prevents it (§10.8.3). After Lab 04 your board has that resistor on `ui[0]`, the line the dongle drives. Connecting in this order adds a second protection, because the dongle then never drives the input of an unpowered chip. [Supplies, back-powering and ESD](supplies-back-powering-and-esd.md) goes through the cases.
+This order keeps a powered dongle from feeding current into the kit while the kit is off. On the board as Lab 03 leaves it, nothing sits between the dongle and the chip, so that current goes into the chip's pins. A CMOS input has clamp diodes to its supply, and if something drives the input HIGH while the chip is unpowered, current flows through the clamp into the chip's supply rail, enough to power it partly (Horowitz and Hill, §12.1.2). Enough of that current can also trigger latch-up, and because latch-up depends on the input current rather than the voltage, a series resistor on the line prevents it (§10.8.3). SkyWater allows a pin to be driven above its supply only if the current into it is limited to 100 µA, though. On `ui_in[0]`, the line the dongle drives, that takes a resistor of at least (3.3 V − 0.6 V) / 100 µA = 27 kΩ, and a resistor that big can leave the high too low for the chip to read, because the demo board's firmware turns on the RP2350's pull-down on the same line. So after Lab 04 your board has a buffer, U1, between the dongle and `ui_in[0]`. With the kit off, U1 is unpowered as well, and TI specifies at most 10 µA through each of its pins in that state (its Ioff), so the current into the chip stays under SkyWater's 100 µA even if you connect the dongle before the kit is up. On Lab 04's board the order is a second protection. It keeps the dongle's TX off U1's unpowered input, and stops R4, the pull-up on that input, from passing up to 33 µA into the kit's +3V3. [Supplies, back-powering and ESD](supplies-back-powering-and-esd.md) goes through the cases.
 
 ## When a reading is wrong
 
@@ -110,7 +112,7 @@ Two things to watch when you measure with an oscilloscope:
    <details>
    <summary>Answer</summary>
 
-   The dongle's TX drives a `ui_in` pin of an unpowered chip, so current flows through the input's clamp diode into the chip's supply and partly powers it, and enough of that current can cause latch-up. The series resistor on that line limits the current. Connecting the dongle only after the kit is powered keeps it from happening at all.
+   On the board as Lab 03 leaves it, nothing sits between the dongle and the chip, so the dongle's TX drives a `ui_in` pin of an unpowered chip. Current flows through the input's clamp diode into the chip's supply and partly powers it, and enough of that current can cause latch-up. On your board after Lab 04, the TX drives U1's input instead. U1 is unpowered too, and passes at most 10 µA (its Ioff) on to `ui_in[0]`, a tenth of SkyWater's 100 µA limit. R4, the pull-up on U1's input, passes up to 33 µA from the TX into the kit's +3V3. Connecting the dongle only after the kit is powered keeps both from flowing.
 
    </details>
 

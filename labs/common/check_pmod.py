@@ -46,8 +46,8 @@ With --protect (Lab 04), three more:
       and 3.3 V × 36 kΩ / (36 kΩ + R) is the high level against the RP2350's strongest
       pull-down, which reaches the chip's 2.31 V input high at 15.4 kΩ. The window stops lower,
       at 8.2 kΩ, because of the RP2350's erratum E9: on its A2 stepping, a GPIO input leaks about
-      120 µA and holds the line near 2.2 V, and Raspberry Pi says only a source of 8.2 kΩ or
-      less pulls it low. On a uo line, 1 kΩ to
+      120 µA and holds the line near 2.2 V, and Raspberry Pi says that a source of 8.2 kΩ or
+      less overcomes it. On a uo line, 1 kΩ to
       5.1 kΩ: (3.3 V - 0.6 V) / R is the current into an unpowered dongle (2.7 mA at 1 kΩ),
       and 3.3 V × R / (R + 16.5 kΩ) is the low level against a CH340's strongest RX pull-up,
       which reaches its 0.8 V input low at 5.28 kΩ. The window ends at 5.1 kΩ, the E24 value

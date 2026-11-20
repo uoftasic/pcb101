@@ -34,7 +34,7 @@ The conversion happens only if you save. Once you have saved the board, it's a 1
 
 Within the 10.0 series, the patch releases (10.0.1, 10.0.2 and so on) share a file format. The three we checked in KiCad's source, 10.0.0, 10.0.5 and 10.0.8, all write boards as version 20260206 and schematics as version 20260306, so any 10.0 release opens files saved by another. KiCad encourages everyone to update to the latest bugfix release regularly. Patch releases can still differ in what ERC and DRC report, though. On November 16, 2026 we ran the course's checks in both 10.0.5 and 10.0.8, in KiCad's Docker images, and compared the counts:
 
-- On the course's own reference boards, for Labs 03 and 04 and the capstone, every count was the same.
+- On the course's own reference boards for Labs 03 and 04 and the capstone, as they were on November 16, every count was the same. Lab 04's board and the capstone's Brief D board have gained a buffer since, and we haven't run 10.0.8 on them again.
 - On Tiny Tapeout's SKY130 breakout, the KiCad 9 board you open in Lab 01, both releases found the same errors, 10 from ERC and none from DRC. The warning counts differed: 10.0.5 reported 97 ERC and 120 DRC warnings, and 10.0.8 reported 103 and 123. 10.0.5 also reported 37 schematic parity warnings that 10.0.8 didn't, every one of them about a part's Datasheet field, which is `~` on the board and empty in the schematic.
 - On a copy of one of KiCad's demo boards with a GND track laid across a VCC track, both releases found the tracks crossing and a solder mask bridge. 10.0.5 also reported the GND track as shorting to a pad on a third net, so it counted three DRC errors, and 10.0.8 counted two.
 

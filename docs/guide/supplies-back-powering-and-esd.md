@@ -20,6 +20,21 @@
   - The 5VTVS lines against the SKY breakout: we matched the demo board's J5 pad Ln to
     the breakout's J1 pad n (all 16 digital project nets on those pads agree); /A-/X are
     an0-an11, res_an16, res_an19 and eight GND.
+  - SkyWater sky130_fd_io user guide, read Nov 19, 2026: a pin may go above vddio if "the
+    current flowing into/out of the pin is externally limited to 100uA" (General
+    Integration Requirements); CMOS input thresholds 0.3 and 0.7 x vddio (Table 103), the
+    setting of Tiny Tapeout's ui_in pads (TT_PAD_IN, tt-multiplexer 7481146).
+  - TI SN74LVC2G17 datasheet, SCES381N (revised January 2015),
+    https://www.ti.com/lit/ds/symlink/sn74lvc2g17.pdf, read Nov 19, 2026: "fully specified
+    for partial-power-down applications using Ioff"; Ioff 10 uA max at VCC = 0; +/-24 mA
+    output drive at 3.3 V.
+  - tt-micropython-firmware 15ba5ce: default_pull() returns Pin.PULL_DOWN for the ui_in
+    pins, and SAFE and ASIC_MANUAL_INPUTS build them with it (the class docstring says SAFE
+    has "no pulls"). RP2350 datasheet, Release 8: pull-down 36 to 113 kOhm at IOVDD = 3.3 V
+    (Table 1683). The 15.4 kOhm limit is worked out on protecting-the-chips-io.
+  - Lab 04's reference board and BRINGUP.md (labs/lab-04-protect-and-plan/solutions/):
+    U1 74LVC2G17, R1 and R2 1k, R4 100k; 1.65 V on ui[0] with DIP switch 1 on. An unpowered
+    dongle's TX clamp pulling R4 to about 0.6 V is our inference, and we haven't measured it.
 -->
 
 This page answers: *where does each of the chip's supplies come from, what happens to the chip when one board is powered and the board connected to it isn't, and where does static get in?*
@@ -56,29 +71,29 @@ These rules are written for the people who design the chip's I/O ring, and the g
 
 Tiny Tapeout's ETR guide uses "back-powered" for feeding the boards 3.3 V on purpose, through a header pin. None of the breakout boards so far needs the 5 V that comes in from USB, it says, so "the boards can be back-powered by feeding 3v3 on a header pin marked as such". On this page the word means an accident instead, in which a chip is powered through its own input pins.
 
-![A powered dongle driving an input of an unpowered kit](../assets/img/pcb101-back-powering-path.svg)
+![A powered dongle driving an input of an unpowered kit, through a series resistor in (a) and through a buffer and a resistor in (b)](../assets/img/pcb101-back-powering-path.svg)
 
-*The kit is switched off, but the USB-UART dongle on the SimProc Pmod takes its power from the laptop, and the dongle's TX line sits high between characters. Current flows through $R_S$ and the pad's upper protection diode into `VDD_IO`, and from there through the breakout's 0 Ω links onto the demo board's +3V3 net. The figure draws the three links as one resistor, and everything else on that net as a second resistor. In the demo board's file, that net includes its RP2350, the RP2350's flash memory and the output of its TLV1117LV33 regulator.*
+*The kit is switched off, but the USB-UART dongle on the SimProc Pmod takes its power from the laptop, and the dongle's TX line sits high between characters. (a) With only a series resistor $R_S$ between the dongle and `ui_in[0]`, current flows through $R_S$ and the pad's upper protection diode into `VDD_IO`, and from there through the breakout's 0 Ω links onto the demo board's +3V3 net. With 1 kΩ, that's about 2.7 mA. (b) On Lab 04's board, the dongle's TX goes through U1, a 74LVC2G17 buffer powered from the kit's +3V3, and then through R1 to `ui_in[0]`. U1 is unpowered too, so at most 10 µA, U1's $I_{off}$, reaches `ui_in[0]`. The pull-up R4 puts up to about 33 µA onto +3V3. Each panel draws the three links as one resistor, and everything else on +3V3 as a second resistor. In the demo board's file, that net includes its RP2350, the RP2350's flash memory and the output of its TLV1117LV33 regulator.*
 
 Horowitz and Hill say that a HIGH input on an unpowered chip without tolerant inputs will "partially power the supply rail" through the clamp (p. 795). The "craziest" case they give is a CMOS chip whose supply pin was never wired up, and which works anyway because it is "powered by one of its logic inputs (via the chip's internal input-protection diodes from input to VDD)", until the moment all of its inputs are low at once (p. 760). Current through those input diodes can also start latch-up (p. 759). Their advice for low-power CMOS boards includes the same warning: "be careful whenever mixing supply voltages. Otherwise you may have current flowing through input-protection diodes" (p. 754).
 
 SkyWater's rules cover a supply that is grounded and a supply that is floating, and in this case the kit's +3V3 is neither, because the dongle's current holds it up at a voltage that depends on that current and on the rail's load. You can keep that current small, or stop it, in three ways:
 
-- **A series resistor** on the line, sized as on the previous page, limits the current to a value that you choose.
-- **A buffer whose inputs accept a voltage even while it's unpowered**, such as a 74LVC part, sits between the dongle and the chip, powered from the 3.3 V that your Pmod takes from the kit. When the kit is off, the buffer is off too, and its input takes the dongle's 3.3 V without passing current on to the chip.
-- **A written order** for powering and unplugging the boards keeps the dongle from driving an unpowered chip at all. In Lab 04 you'll write it in `BRINGUP.md`, which says which board is powered first and which is unplugged first, and why.
+- **A series resistor** on the line limits the current to $(3.3\ \text{V} - 0.6\ \text{V})/R_S$, and keeping it under the 100 µA that SkyWater allows into a pin driven above its supply takes at least 27 kΩ. [Protecting the chip's I/O](protecting-the-chips-io.md) shows why a resistor that big doesn't work on `ui_in[0]`. The demo board's firmware turns on the RP2350's pull-down on that line, and against the strongest pull-down a resistor over 15.4 kΩ leaves the high below the 2.31 V that the chip needs.
+- **A buffer whose inputs accept a voltage even while it's unpowered** sits between the dongle and the chip, powered from the 3.3 V that your Pmod takes from the kit, so when the kit is off, the buffer is off too. In Lab 04 you add a 74LVC2G17, which holds two such buffers, one for each UART line. After each buffer you put a 1 kΩ resistor, R1 on the way into `ui_in[0]` and R2 on the way out to the dongle. With its supply at 0 V, TI specifies each of the part's pins for at most 10 µA (Ioff), so the buffer's input can take the dongle's 3.3 V, and its output passes at most 10 µA into `ui_in[0]`, a tenth of SkyWater's limit. R4, 100 kΩ, holds the buffer's input high while no dongle is plugged in. With the kit off, it passes up to 3.3 V / 100 kΩ = 33 µA from the dongle into the kit's +3V3. On the line out of the chip, the dongle's RX pull-up pushes current into the second buffer's unpowered output, which passes at most 10 µA. `uo_out[0]` is on that buffer's input side, so none of the current reaches it.
+- **A written order** for powering and unplugging the boards keeps the dongle from feeding an unpowered kit at all. The buffer already keeps the chip within SkyWater's limit, so on Lab 04's board the order is a second protection. It keeps the dongle's TX off the buffer's unpowered input and stops the 33 µA through R4. In Lab 04 you'll write it in `BRINGUP.md`, which says which board is powered first and which is unplugged first, and why.
 
-It can also happen the other way round. If the kit is on and the dongle is unplugged from the laptop, SimProc's TX output on `uo_out[0]` drives the dongle's unpowered RX input, and the series resistor that you put on that line in Lab 04 limits the current that flows into the dongle.
+It can also happen the other way round. If the kit is on and the dongle is unplugged from the laptop, the buffer drives SimProc's TX into the dongle's unpowered RX input, and current flows through the dongle's own clamp diode into its supply. R2 limits that current to (3.3 V − 0.6 V) / 1 kΩ = 2.7 mA. None of the dongle datasheets we read gives a limit for it, so allowing 2.7 mA is a judgement of ours. An unpowered dongle may also pull the buffer's input low through a clamp diode on its own TX pin, and the buffer then holds `ui_in[0]` low ([Protecting the chip's I/O](protecting-the-chips-io.md) describes this), so keep the dongle powered whenever it's plugged into your board.
 
 ## Contention
 
 Contention means that two outputs are driving one line to different levels at the same time. Only the two drivers' output resistances limit the current, and it flows for as long as they disagree. A Pmod for a Tiny Tapeout project is never the only thing connected to its pins ([Pins, Pmods and planning a pinout](pins-pmods-and-planning-a-pinout.md#what-else-is-on-each-pin) has the list), so for each pin you need to know what the other drivers on it are doing:
 
-- **The RP2350.** The demo board's firmware has three modes, which the ETR guide's example `config.ini` lists: `SAFE`, with "all RP2 I/O connected pins inputs"; `ASIC_RP_CONTROL`, in which the "TT inputs,nrst and clock" are driven by the RP2350; and `ASIC_MANUAL_INPUTS`, "basically same as safe, but intent is clear". The example sets `ASIC_RP_CONTROL` as the default, and `config.ini` can set a different mode for each project. A SimProc Pmod drives `ui_in[0]` from the dongle, so SimProc's section of `config.ini` has to select `ASIC_MANUAL_INPUTS`. On the `uio` pins, a separate option called `uio_oe_pico` decides which of the RP2350's pins are outputs, and for SimProc it has to leave all eight as inputs, because the switches on your Pmod drive those lines.
-- **The DIP switches.** A switch that's on connects its `ui_in` line to +3V3 through 1 kΩ. With your board driving the same line low, 3.3 V / 1 kΩ = 3.3 mA flows into your driver, and the line's low level then depends on how stiff your driver is. For SimProc, switch 1, the one on `ui_in[0]`, has to be off.
+- **The RP2350.** The demo board's firmware has three modes, which the ETR guide's example `config.ini` lists: `SAFE`, with "all RP2 I/O connected pins inputs"; `ASIC_RP_CONTROL`, in which the "TT inputs,nrst and clock" are driven by the RP2350; and `ASIC_MANUAL_INPUTS`, "basically same as safe, but intent is clear". The example sets `ASIC_RP_CONTROL` as the default, and `config.ini` can set a different mode for each project. A SimProc Pmod drives `ui_in[0]` from the dongle, through its buffer, so SimProc's section of `config.ini` has to select `ASIC_MANUAL_INPUTS`. On the `uio` pins, a separate option called `uio_oe_pico` decides which of the RP2350's pins are outputs, and for SimProc it has to leave all eight as inputs, because the switches on your Pmod drive those lines.
+- **The DIP switches.** A switch that's on connects its `ui_in` line to +3V3 through 1 kΩ. If your board drives the same line low directly, 3.3 V / 1 kΩ = 3.3 mA flows into your driver, and the line's low level depends on how stiff that driver is. If your board drives it low through 1 kΩ, as Lab 04's buffer does through R1, then 3.3 V / 2 kΩ = 1.65 mA flows through the two resistors, and they leave the line at 1.65 V. That's between the chip's input thresholds of 0.99 V and 2.31 V (0.3 and 0.7 × `VDD_IO`), so the chip can read it either way. For SimProc, switch 1, the one on `ui_in[0]`, has to be off.
 - **The chip.** On a `uio` pin, the project's own `uio_oe` decides whether the chip drives it. SimProc sets `uio_oe` to 0, so its eight `uio` pins are inputs and your switches never fight it.
 
-A series resistor helps here as well, because with $R_S$ between your driver and the line, the worst-case contention current is about 3.3 V / $R_S$.
+R1 limits a fight on `ui_in[0]` with a stiff driver, such as the RP2350 in `ASIC_RP_CONTROL`, so the worst-case contention current is about 3.3 V / 1 kΩ = 3.3 mA. The buffer is a strong driver, rated for 24 mA of output current at 3.3 V, so without R1 only the two output stages would limit the fight.
 
 ## ESD
 
@@ -95,7 +110,7 @@ Static can also reach the chip while you're handling the breakout, and each kit 
    <details>
    <summary>Answer</summary>
 
-   It flows from the dongle's TX, which idles high, into `ui_in[0]`, through the pad's upper protection diode into `VDD_IO`, and through the breakout's 0 Ω links onto the demo board's +3V3, where it partly powers everything on that net. The series resistor you add to your Pmod in Lab 04 limits it, and so do the dongle's own output stage and the diode's drop. On the board as Lab 03 leaves it, with no series resistor, only the dongle's output stage and the diode's drop limit it.
+   On the board as Lab 03 leaves it, nothing sits between the dongle and the chip. Current flows from the dongle's TX, which idles high, into `ui_in[0]`, through the pad's upper protection diode into `VDD_IO`, and through the breakout's 0 Ω links onto the demo board's +3V3, where it partly powers everything on that net. Only the dongle's output stage and the diode's drop limit it. The dongle's RX pull-up also pushes current into the unpowered `uo_out[0]`, up to 164 µA for a CH340, one of the chips that dongles use, as [Protecting the chip's I/O](protecting-the-chips-io.md) works out. On the board as Lab 04 leaves it, the TX drives the unpowered buffer's input, and at most 10 µA, the buffer's Ioff, reaches `ui_in[0]`. R4, the pull-up on that input, passes up to 33 µA from the TX into the kit's +3V3. The dongle's RX pull-up pushes at most 10 µA into the buffer's other output, and none of it reaches `uo_out[0]`.
 
    </details>
 
@@ -104,7 +119,7 @@ Static can also reach the chip while you're handling the breakout, and each kit 
    <details>
    <summary>Answer</summary>
 
-   In `ASIC_RP_CONTROL`, the default in the example configuration, the RP2350 drives the `ui_in` pins. The dongle drives `ui_in[0]` too, so the two would fight. `ASIC_MANUAL_INPUTS` leaves the RP2350's pins as inputs.
+   In `ASIC_RP_CONTROL`, the default in the example configuration, the RP2350 drives the `ui_in` pins. The dongle drives `ui_in[0]` too, through your buffer, so the two would fight. `ASIC_MANUAL_INPUTS` leaves the RP2350's pins as inputs.
 
    </details>
 

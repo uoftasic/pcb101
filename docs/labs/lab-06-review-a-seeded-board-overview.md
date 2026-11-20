@@ -92,8 +92,9 @@ Which faults does a person find that the checks don't?
      *J4 selected on Lab 04's reference board (Ctrl+F, then J4), in KiCad 10.0.5. The status bar reads `Footprint: Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical`; Footprint Properties (E) gives the same name as its Library link.*
 
    - For connections (line 3), click a net in the Schematic Editor or a track in the PCB Editor to highlight it, follow it from the Pmod connector to every part it reaches, and compare with the pin list and with the silkscreen's labels.
-   - For I/O voltages (line 5), read every resistor's value and ask what current it lets through.
-   - For ESD (line 6), and for any part with more than two pins (line 1 again), compare which pin goes where with the symbol's pin names and with the part's datasheet. The symbol's Datasheet field links to the datasheet when it's filled in, and on some symbols, such as SW1's, it's empty.
+   - For decoupling (line 4), find each capacitor in the PCB Editor and the supply pin it serves, and see how far apart they are.
+   - For I/O voltages (line 5), follow each UART line between J4 and the Pmod connectors. Work out which end sends the signal, then check that this end reaches U1's input, that U1's output goes through a series resistor to the other end, and that the resistor's value is in the range that checklist line 5 gives for a line in that direction. U1's symbol numbers its signal pins but doesn't name them, so use the Pin Functions table in its datasheet to find which pins are inputs.
+   - For ESD (line 6), and for any part with more than two pins (line 1 again, for the footprint's pad numbers), compare which pin goes where with the part's datasheet, and with the symbol's pin names where it has them. The symbol's Datasheet field links to a document when it's filled in. On some symbols, such as SW1's, it's empty. U1's links to a TI document, scyt129e, rather than to the SN74LVC2G17 datasheet (SCES381), so search for SCES381 yourself.
    - For the plan (lines 7 and 8), read `BRINGUP.md` step by step against the board. Check the order in which things are plugged in and switched off, and whether every point it measures is on the board.
    - For the fabricator's rules (line 9), open File > Board Setup, look under Design Rules > Constraints, and compare the numbers there with the fabricator's numbers on the checklist page. On your own board they're JLCPCB's, because Lab 03's template set them:
 
@@ -173,11 +174,20 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Two of them, R1 and D1. R1's 0 Ω fails the `ui[0]` row with "its value '0' isn't a resistance the check can read", and a series resistor of 0 Ω doesn't limit the current at all. D1's common pin on +3V3 fails both ESD rows, because neither dongle line then has an ESD part to GND. With J3 put back, those three rows are the only ones that fail. Counting J3 itself, the checks find three of the eight faults, and the other five need a person to find them.
+   Two of them, U1 and C1. U1's second buffer, turned round, fails the `uo[0]` row with "U1 (74LVC2G17) is turned round on this line: its output, 2Y (pin 4), faces J3 pin 1, and its input, 2A (pin 3), faces J4 pin 3 (the dongle's RXD)". With the kit on, U1's output would drive the same line as SimProc's TX, and nothing would drive the dongle's RXD. C1's distance from U1 fails the `ui[0]` row with "no decoupling at U1's VCC: the nearest capacitor from +3V3 to GND, C1, has its nearest pad 35.50 mm from U1 pin 5, more than 3 mm". The `uo[0]` row stops at the turned-round buffer before it looks for a capacitor, so only `ui[0]` reports C1. With J3 put back, those two rows are the only ones that fail, and the last line is `FAIL  pmod.kicad_pro: board check PASS; 15 of 17 Pmod checks ok; bring-up plan PASS`. Counting J3 itself, the checks find three of the eight faults, and the other five need a person to find them.
 
    </details>
 
-3. The seeded board's "SimProc Pmod" legend is 0.8 mm high, and none of the board's 32 DRC warnings is about it. Why didn't DRC warn about it, when your own board's DRC would?
+3. The seeded `BRINGUP.md` switches the kit off before the dongle comes off J4. How much current can the dongle push into the chip while the kit is off, and which checklist line does the order break?
+
+   <details>
+   <summary>Answer</summary>
+
+   At most 10 µA, the Ioff of U1, which sits between the dongle and the chip and is unpowered while the kit is off. That's under the 100 µA that SkyWater allows (checklist line 5), so U1 keeps the current into the chip's pins within that limit in either order. The order breaks line 7, which asks for anything with a supply of its own, such as the dongle, to be unplugged before the kit is switched off. Until the dongle comes off, it drives U1's unpowered input. It also puts up to 3.3 V / 100 kΩ = 33 µA into the kit's +3V3 through R4, the 100 kΩ pull-up from its TXD to +3V3. Your own `BRINGUP.md` from Lab 04 unplugs the dongle first, so that none of this current flows.
+
+   </details>
+
+4. The seeded board's "SimProc Pmod" legend is 0.8 mm high, and none of the board's 32 DRC warnings is about it. Why didn't DRC warn about it, when your own board's DRC would?
 
    <details>
    <summary>Answer</summary>

@@ -59,7 +59,7 @@ Whether you can solder a part depends as much on whether the iron can reach the 
 - **SOD-882**, the package of 22 of the TVS diodes on the demo board, has a body of 1.0 × 0.6 mm and two pads of 0.4 × 0.7 mm, 0.7 mm apart between centres. Most of each pad is under the body, and only 0.05 mm of it reaches past the end. The whole part is about the size of an 0402, the size at which Horowitz and Hill say you have to work under a microscope.
 - **QFN-64**, 9 × 9 mm with a 0.5 mm pitch, has pads 0.25 mm wide. Each one reaches only 0.375 mm beyond the edge of the body, and the 7.65 × 7.65 mm exposed pad in the middle is entirely underneath the part, where no iron can reach it. The Tiny Tapeout chip comes already mounted on its breakout, so although you'll draw a footprint for a QFN in [Lab 02](../labs/lab-02-a-footprint-from-a-datasheet-overview.md), you won't have to solder one.
 
-When you add an ESD array to your Pmod's dongle header in Lab 04, choose one in a package with its leads beside the body, like SOT-23-5 or SOIC-8, and not one like SOD-882.
+When you add an ESD array to your Pmod's dongle header and a buffer to its UART lines in Lab 04, choose parts in packages with their leads beside the body, like SOT-23-5, SOT-23-6 or SOIC-8, and not in a package like SOD-882.
 
 ## Through-hole parts
 

@@ -1,7 +1,8 @@
 # Labs 03 and 04: where a student finds Tiny Tapeout's Pmod symbol, KiCad's Position Relative
-# To dialog, and the ESD array. Opens the board template and the Lab 03 reference board, both
-# in the repo. Writes kicad-symbol-chooser-pmod.png, kicad-position-relative-to.png and
-# kicad-symbol-chooser-sp0502.png.
+# To dialog, the ESD array and the dual buffer. Opens the board template and the Lab 03
+# reference board, both in the repo. Writes kicad-symbol-chooser-pmod.png,
+# kicad-position-relative-to.png, kicad-symbol-chooser-sp0502.png and
+# kicad-symbol-chooser-74lvc2g17.png.
 
 # The symbol chooser (Place > Place Symbols, A), filtered to the Pmod connector, in the template
 # a student starts from.
@@ -47,3 +48,13 @@ pause 10
 type_text SP0502
 pause 5
 capture kicad-symbol-chooser-sp0502
+key Escape
+pause 3
+
+# And filtered to the dual buffer Lab 04 puts on the UART lines.
+key a
+wait_window 'Choose Symbol' 90
+pause 10
+type_text 74LVC2G17
+pause 5
+capture kicad-symbol-chooser-74lvc2g17

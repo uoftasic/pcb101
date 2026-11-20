@@ -8,7 +8,7 @@ PCB101 is part of the UofT ASIC Team education materials, published at <https://
 
 The course is for anyone on the team, from the analog track or the digital one, who will bring up, measure or demonstrate one of the team's chips. Today that means the people working on SimProc, CrossWalk, Sentry and HART-1, and later it means whoever brings up the next shuttle's chips. The team has no board designs of its own yet, so the course covers the boards that the team's chips will need. The first of them is the Pmod you design in Labs 03 to 06, which is the simplest kind of board you can make for a Tiny Tapeout chip. The carriers, motherboards and characterization boards that come after it are described in Boards for chips, on the last Read row of the course path.
 
-You don't need to have designed a board before. You do need the circuits you learned in class, because the course explains decoupling with the voltage that a fast current pulse develops across a wire's inductance, filtering with an RC time constant, and protection with the current through a series resistor.
+You don't need to have designed a board before. You do need the circuits you learned in class, because the course explains decoupling with the voltage that a fast current pulse develops across a wire's inductance, and filtering with an RC time constant. It explains protection with the current that a series resistor lets through a clamp diode, and with the voltage divider that the same resistor forms with a pull-down.
 
 | | |
 |---|---|
@@ -16,7 +16,7 @@ You don't need to have designed a board before. You do need the circuits you lea
 | Prerequisites | [IC101](https://uoftasic.com/ic101/), then IC102 (either version), and circuits from class. [AD103](https://uoftasic.com/ad103/) helps with the analog capstone brief and [DD102](https://uoftasic.com/dd102/) with the digital one. |
 | Tools | KiCad 10.0 on your own computer; Docker, which you set up in IC101, for the checks; Python 3, for the script that fetches Tiny Tapeout's boards; git and a GitHub account. |
 | Checks | `kicad/kicad:10.0.5`, pinned by digest. Every count and message that a lab page quotes from KiCad or from one of the course's checks comes from a run in that image. The exceptions are KiBot's output in Lab 05, which comes from KiBot's own image (with KiCad 10.0.5), also pinned by digest, and Lab 01's comparison with KiCad 10.0.8. |
-| Total time | About 21.5 hours, self-paced. The course path rows below add up to 21 h 25 min. |
+| Total time | About 22 hours, self-paced. The course path rows below add up to 21 h 55 min. |
 
 IC102 is a prerequisite because from Lab 03 on you keep your board in a repository of your own on GitHub. You commit to it in every lab after that, and in Lab 05 you add a GitHub Actions workflow that checks it on every push.
 
@@ -42,7 +42,7 @@ Work down the table in order. A Read row points you to one or more guide pages, 
 | 5 | Read | [Layers and fabricator rules](guide/layers-and-fabricator-rules.md) · [Placement and routing](guide/placement-and-routing.md) · [Pins, Pmods and planning a pinout](guide/pins-pmods-and-planning-a-pinout.md) · [Parts you can solder by hand](guide/parts-you-can-solder-by-hand.md) | 1 h |
 | 6 | Do | [Lab 03: A Pmod for one project's pins](labs/lab-03-a-pmod-for-one-projects-pins-overview.md). Start your board repository, then draw and lay out a 2-layer Pmod for a Tiny Tapeout project until ERC, DRC and parity are clean and its connections match the project's pin list. | 4 h |
 | 7 | Read | [Protecting the chip's I/O](guide/protecting-the-chips-io.md) · [Supplies, back-powering and ESD](guide/supplies-back-powering-and-esd.md) · [Measuring current](guide/measuring-current.md) · [Bringing up a chip](guide/bringing-up-a-chip.md) | 1 h |
-| 8 | Do | [Lab 04: Protect and plan](labs/lab-04-protect-and-plan-overview.md). Add series resistors, ESD protection and a current-sense point to your Lab 03 board, and write its `BRINGUP.md` with the checks before power and an expected reading for every step. | 1 h 30 min |
+| 8 | Do | [Lab 04: Protect and plan](labs/lab-04-protect-and-plan-overview.md). Put a buffer and a resistor on each UART line of your Lab 03 board, add ESD protection and a current-sense point, and write its `BRINGUP.md` with the checks before power and an expected reading for every step. | 2 h |
 | 9 | Read | [Fabrication outputs](guide/fabrication-outputs.md) · [Outputs in CI](guide/outputs-in-ci.md) · [KiCad files in git](guide/kicad-files-in-git.md) | 45 min |
 | 10 | Do | [Lab 05: Fab outputs in CI](labs/lab-05-fab-outputs-in-ci-overview.md). Add a workflow to your board repository that fails on any ERC or DRC error or any parity item, and builds the fabrication files, review images, and KiBot's interactive BOM and design report, then break the board on purpose and fix it. | 1 h 40 min |
 | 11 | Read | [Reviewing and ordering a board](guide/reviewing-and-ordering-a-board.md) | 30 min |
