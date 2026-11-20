@@ -41,10 +41,13 @@ With --protect (Lab 04), three more:
       have no Ioff, and the 1G07's output is open drain, so they aren't on the list. A 125's
       OE is active low, and must be on GND.
    b. its VCC pin on the Pmod's 3.3 V (the net of pins 6 and 12) and its GND pin on GND.
-   c. the resistor in its window, compared in ohms. On a ui line, 330 Ω to 15 kΩ: 3.3 V / R
+   c. the resistor in its window, compared in ohms. On a ui line, 330 Ω to 8.2 kΩ: 3.3 V / R
       is the most current a fight with a pin driving the other way can pass (10 mA at 330 Ω),
       and 3.3 V × 36 kΩ / (36 kΩ + R) is the high level against the RP2350's strongest
-      pull-down, which reaches the chip's 2.31 V input high at 15.4 kΩ. On a uo line, 1 kΩ to
+      pull-down, which reaches the chip's 2.31 V input high at 15.4 kΩ. The window stops lower,
+      at 8.2 kΩ, because of the RP2350's erratum E9: on its A2 stepping, a GPIO input leaks about
+      120 µA and holds the line near 2.2 V, and Raspberry Pi says only a source of 8.2 kΩ or
+      less pulls it low. On a uo line, 1 kΩ to
       5.1 kΩ: (3.3 V - 0.6 V) / R is the current into an unpowered dongle (2.7 mA at 1 kΩ),
       and 3.3 V × R / (R + 16.5 kΩ) is the low level against a CH340's strongest RX pull-up,
       which reaches its 0.8 V input low at 5.28 kΩ. The window ends at 5.1 kΩ, the E24 value
@@ -210,7 +213,7 @@ R_PD = 36e3                # the RP2350's strongest pull-down (36 to 113 kΩ), o
 VIH_CHIP = 0.7 * V         # SKY130's CMOS input high, 2.31 V
 R_PU = 16.5e3              # a CH340's strongest RX pull-up: 3.3 V / 200 µA
 VIL_DONGLE = 0.8           # a CH340's input low
-R_UI = (330.0, 15e3)       # rule 5's window for a ui line's resistor
+R_UI = (330.0, 8.2e3)      # rule 5's window for a ui line's resistor (8.2 kΩ: RP2350-E9)
 R_UO = (1e3, 5.1e3)        # and for a uo line's
 DECOUPLE_MM = 3.0
 
@@ -562,8 +565,8 @@ def check(stem, spec, protect):
                     problem(txt + f"\n{rref} is below {fmt_ohms(lo)}, so a fight can pass more than "
                                   f"{fmt_amps(V / lo)}")
                 elif ohms > hi:
-                    problem(txt + f"\n{rref} is above {fmt_ohms(hi)}, so the high can be under the chip's "
-                                  f"{fmt_volts(VIH_CHIP)}")
+                    problem(txt + f"\n{rref} is above {fmt_ohms(hi)}, the most that still pulls the line low "
+                                  f"against an A2 RP2350's input leakage (erratum E9)")
                 else:
                     lines.append(txt)
             else:
