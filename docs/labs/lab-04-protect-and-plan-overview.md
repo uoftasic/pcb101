@@ -1,6 +1,6 @@
 # Lab 04: Protect and plan
 
-In this lab you make your Lab 03 board safe to plug into a Tiny Tapeout kit, and you write a plan for bringing it up with the kit. A kit has only one chip, so a mistake on your board that damages one of the chip's pins is expensive. On the board, you'll put a buffer and a resistor on each UART line, an ESD array on the dongle header and a current-sense point in the supply to your switches. The plan is a file in your repository, `BRINGUP.md`. It says what drives each line that leaves the board and what happens when one side is powered and the other isn't, it lists the checks you make before anything is powered, and it gives the reading you expect at every step.
+In this lab you make your Lab 03 board safe to plug into a Tiny Tapeout kit, and you write a plan for bringing it up with the kit. A kit has only one chip, so a mistake on your board that damages one of the chip's pins is expensive. On the board, you'll put a buffer and a resistor on each UART line, an ESD array on the dongle header and a current-sense point in the supply to your switches and the buffer. The plan is a file in your repository, `BRINGUP.md`. It says what drives each line that leaves the board and what happens when one side is powered and the other isn't, it lists the checks you make before anything is powered, and it gives the reading you expect at every step.
 
 The lab's files are in [`labs/lab-04-protect-and-plan/`](https://github.com/uoftasic/pcb101/tree/main/labs/lab-04-protect-and-plan) in the course repo.
 
@@ -102,7 +102,7 @@ What keeps the current into an unpowered chip under SkyWater's 100 µA, and stil
    - U1 pin 5 (VCC) to +3V3 and pin 2 (GND) to GND, with C1 (100 nF) from +3V3 to GND.
    - R4 (100 kΩ) from `DONGLE_TXD` to +3V3.
 
-   R1, R2 and R4 (our references; R3 is the sense resistor in Part 4) are `Device:R` with the footprint `Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder`, and C1 is `Device:C` with `Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder`. Why does U1's first input need R4, and why does R4 pull up rather than down?
+   U1's VCC, C1 and R4 go on +3V3 for now. In Part 4 you'll move them to the far side of a current-sense resistor. R1, R2 and R4 (our references; R3 is the sense resistor in Part 4) are `Device:R` with the footprint `Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder`, and C1 is `Device:C` with `Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder`. Why does U1's first input need R4, and why does R4 pull up rather than down?
 
    <details>
    <summary>Answer</summary>
@@ -179,14 +179,14 @@ The check counts a part as ESD protection if it has one pin on the line and anot
 
 What should your board draw from the demo board's 3.3 V, and how will you read it?
 
-1. Give your switches a supply net of their own. Put a 10 Ω resistor, with the same symbol and footprint as R1, from the sockets' `+3V3` to a new net (ours is `+3V3_PMOD`), and move the common side of the switches onto that net. Leave U1 and C1 on `+3V3`, the net of the sockets' pins 6 and 12. The check looks for U1's VCC there, and the 10 Ω then carries only the switches' current. Put a test point on each side of the resistor, using the symbol `Connector:TestPoint` with the footprint `TestPoint:TestPoint_Pad_D1.5mm`.
+1. Give your board a supply net of its own. Put a 10 Ω resistor, with the same symbol and footprint as R1, from the sockets' `+3V3` to a new net (ours is `+3V3_PMOD`), and move onto that net the common side of the switches, U1's pin 5 (VCC), and the ends of C1 and R4 that were on `+3V3`. The check would pass U1's VCC on either side of the 10 Ω, but on `+3V3_PMOD` the 10 Ω carries U1's current as well as the switches'. Add a `power:PWR_FLAG` on `+3V3_PMOD`, as you did on `+3V3` in Lab 03, because U1's VCC is a power input and the 10 Ω resistor, the only part that feeds the new net, is passive. Put a test point on each side of the resistor, using the symbol `Connector:TestPoint` with the footprint `TestPoint:TestPoint_Pad_D1.5mm`.
 
-2. Each switch that's on draws 3.3 V / 10 kΩ through its pull-down. Work out what your switches draw, set the way you'll use them, and the voltage that this current puts across the 10 Ω, and write both numbers in your plan.
+2. Each switch that's on draws 3.3 V / 10 kΩ through its pull-down. On the bench, U1 adds at most 10 µA of supply current (TI's ICC) and at most 5 µA into its first input through R4 (TI's II). Work out what your board draws, with the switches set the way you'll use them, and the voltage that this current puts across the 10 Ω, and write both numbers in your plan.
 
    <details>
    <summary>Answer</summary>
 
-   Each switch that's on draws 0.33 mA. With three on, the switches draw 0.99 mA, which drops 9.9 mV across 10 Ω, and with all eight on they draw 2.64 mA and drop 26.4 mV. A multimeter on its millivolt range can read either.
+   Each switch that's on draws 0.33 mA. With three on, the switches draw 0.99 mA and U1 up to 15 µA more, which drops 9.9 mV to 10.05 mV across 10 Ω. With all eight on, the switches draw 2.64 mA and drop 26.4 mV, plus up to 0.15 mV for U1. A multimeter on its millivolt range can read either.
 
    </details>
 
@@ -195,13 +195,19 @@ What should your board draw from the demo board's 3.3 V, and how will you read i
    <details>
    <summary>Answer</summary>
 
-   No. The chip's supplies stay on the breakout, so the current through this resistor is only what your switches and their pull-downs draw. With your board on the demo board and no rework on the breakout, you can read the chip's current only as part of the whole kit's, at the USB input, and Tiny Tapeout's ETR guide puts the kit's current at 180 to 200 mA with the factory test project running. [Measuring current](../guide/measuring-current.md#what-you-can-measure-on-a-tiny-tapeout-kit) explains why, and describes a board in the demo board's place that can measure the breakout's total current on +3V3.
+   No. The chip's supplies stay on the breakout, so this resistor carries only the current that your board's parts draw or pass on: the switches' current into their pull-downs, and U1's. In the kit, that includes what U1's output and each switch that's on drive into the RP2350's pull-downs. With your board on the demo board and no rework on the breakout, you can read the chip's current only as part of the whole kit's, at the USB input, and Tiny Tapeout's ETR guide puts the kit's current at 180 to 200 mA with the factory test project running. [Measuring current](../guide/measuring-current.md#what-you-can-measure-on-a-tiny-tapeout-kit) explains why, and describes a board in the demo board's place that can measure the breakout's total current on +3V3.
 
    </details>
 
-4. Update the board, place the resistor and the test points, route, and run the check. You should see:
+4. Update the board, place the resistor and the test points, and route, with one of C1's pads still within 3 mm of U1's pin 5. On ours, we turned C1 so that a track from TP2 reaches its `+3V3_PMOD` pad, R4 takes `+3V3_PMOD` through two vias and a track on the bottom layer, and DRC passed without the two GND vias from Part 2, so we took them out. Keep yours if DRC reports `starved_thermal` without them. Run the check. You should see the sense row pass, and the `ui[0]` row name `/+3V3_PMOD` for U1's VCC, C1 and R4 (the `uo[0]` row does the same for U1 and C1):
 
    ```text
+     ok    ui[0]        J4 pin 2 (the dongle's TXD) drives J1 pin 1 through U1 (74LVC2G17, 1A pin 1 to 1Y pin 6) and R1 (1k)
+                        U1: Ioff-rated, VCC (pin 5) on /+3V3_PMOD, GND (pin 2) on GND
+                        R1 = 1 kΩ (330 Ω to 8.2 kΩ): 3.3 V / 1 kΩ = 3.3 mA against a pin driving the other way; 3.3 V × 36 kΩ / (36 kΩ + 1 kΩ) = 3.21 V high against a 36 kΩ pull-down
+                        decoupling: C1 (100n) from /+3V3_PMOD to GND, a pad 2.33 mm from U1 pin 5
+                        pull: R4 (100k) from U1's input (/DONGLE_TXD) up to /+3V3_PMOD
+   ...
      ok    sense        R3 (10) from +3V3 to /+3V3_PMOD, test points TP1 and TP2
    ```
 
@@ -213,7 +219,7 @@ What do you check before power, and what should you read at each step?
 
    - the resistance from +3V3 to GND, with every switch off and again with every switch on;
    - the resistance across R1 and across R2;
-   - the resistance of R4, from J4 pin 2 to the test point on +3V3 (our TP1);
+   - the resistance of R4, from J4 pin 2 to the test point on `+3V3_PMOD` (our TP2);
    - the resistance from each of the header's two signal pins to GND.
 
    Give each check an `Expect:` with its value. With every switch on, ours is 10 Ω + 10 kΩ / 8 = 1.26 kΩ. With every switch off, the reading climbs for a moment while the meter charges C1, and then settles above 1 MΩ. Why do you measure R1 and R2 at their own pads, rather than from one header to another?
@@ -257,7 +263,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   The supply shows 0.99 mA, plus at most 10 µA of supply current for U1 (TI's ICC), and the meter across the test points reads 9.9 mV, as you worked out in Part 4, step 2. U1 takes its supply from +3V3 ahead of R3, so its current doesn't flow through R3.
+   The supply shows 0.99 mA, plus at most 15 µA for U1: up to 10 µA of supply current (TI's ICC) and up to 5 µA into its first input through R4 (TI's II). The meter across the test points reads 9.9 mV to 10.05 mV, as you worked out in Part 4, step 2. U1 and R4 take their supply from `+3V3_PMOD`, after R3, so their current flows through R3 too.
 
    </details>
 
@@ -276,5 +282,6 @@ Submit: nothing for this lab. Keep `BRINGUP.md` in your repository, because the 
 
 - Give U1's second input a pull-down of its own, from `UART_TX` to GND, so that the bench steps no longer need the 10 kΩ on J3. The check doesn't ask for a pull on a `uo` line. Work out what a 100 kΩ pull-down takes from SimProc's TX while the line is high.
 - Change R1 to 100 Ω, or R2 to 10 kΩ, run the check, and read the reason it gives. Then put the 1 kΩ back.
+- When the other side of a line runs at another voltage, such as 1.8 V, a dual-supply translator takes U1's place, and the check accepts two of TI's. [Changing a signal's level](../guide/protecting-the-chips-io.md#changing-a-signals-level) explains how they're wired, and the [capstone](capstone-a-board-for-a-team-chip-overview.md#a-line-to-a-part-at-another-voltage) has a design with one on each UART line.
 
 Next on the [Course path](../index.md#course-path): read [Fabrication outputs](../guide/fabrication-outputs.md), [Outputs in CI](../guide/outputs-in-ci.md) and [KiCad files in git](../guide/kicad-files-in-git.md), then do [Lab 05: Fab outputs in CI](lab-05-fab-outputs-in-ci-overview.md).

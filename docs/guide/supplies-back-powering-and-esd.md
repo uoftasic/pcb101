@@ -33,7 +33,8 @@
     has "no pulls"). RP2350 datasheet, Release 8: pull-down 36 to 113 kOhm at IOVDD = 3.3 V
     (Table 1683). The 15.4 kOhm limit is worked out on protecting-the-chips-io.
   - Lab 04's reference board and BRINGUP.md (labs/lab-04-protect-and-plan/solutions/):
-    U1 74LVC2G17, R1 and R2 1k, R4 100k; 1.65 V on ui[0] with DIP switch 1 on. An unpowered
+    U1 74LVC2G17, R1 and R2 1k, R4 100k; since 4bdb8bb, U1's VCC and R4 on +3V3_PMOD,
+    after R3 (10 ohm); 1.65 V on ui[0] with DIP switch 1 on. An unpowered
     dongle's TX clamp pulling R4 to about 0.6 V is our inference, and we haven't measured it.
 -->
 
@@ -73,7 +74,7 @@ Tiny Tapeout's ETR guide uses "back-powered" for feeding the boards 3.3 V on pur
 
 ![A powered dongle driving an input of an unpowered kit, through a series resistor in (a) and through a buffer and a resistor in (b)](../assets/img/pcb101-back-powering-path.svg)
 
-*The kit is switched off, but the USB-UART dongle on the SimProc Pmod takes its power from the laptop, and the dongle's TX line sits high between characters. (a) With only a series resistor $R_S$ between the dongle and `ui_in[0]`, current flows through $R_S$ and the pad's upper protection diode into `VDD_IO`, and from there through the breakout's 0 Ω links onto the demo board's +3V3 net. With 1 kΩ, that's about 2.7 mA. (b) On Lab 04's board, the dongle's TX goes through U1, a 74LVC2G17 buffer powered from the kit's +3V3, and then through R1 to `ui_in[0]`. U1 is unpowered too, so at most 10 µA, U1's $I_{off}$, reaches `ui_in[0]`. The pull-up R4 puts up to about 33 µA onto +3V3. Each panel draws the three links as one resistor, and everything else on +3V3 as a second resistor. In the demo board's file, that net includes its RP2350, the RP2350's flash memory and the output of its TLV1117LV33 regulator.*
+*The kit is switched off, but the USB-UART dongle on the SimProc Pmod takes its power from the laptop, and the dongle's TX line sits high between characters. (a) With only a series resistor $R_S$ between the dongle and `ui_in[0]`, current flows through $R_S$ and the pad's upper protection diode into `VDD_IO`, and from there through the breakout's 0 Ω links onto the demo board's +3V3 net. With 1 kΩ, that's about 2.7 mA. (b) On Lab 04's board (its U1, R1, R3 and R4 are parts of your Pmod, not the breakout's parts of the same names), the dongle's TX goes through U1, a 74LVC2G17 buffer, and then through R1 to `ui_in[0]`. U1 and the pull-up R4 take their supply from `+3V3_PMOD`, which joins the kit's +3V3 through R3, the 10 Ω current-sense resistor that Lab 04 adds. U1 is unpowered too, so at most 10 µA, U1's $I_{off}$, reaches `ui_in[0]`. R4 puts up to about 33 µA onto `+3V3_PMOD`, and through R3 onto +3V3. Each panel draws the three links as one resistor, and everything else on +3V3 as a second resistor. In the demo board's file, that net includes its RP2350, the RP2350's flash memory and the output of its TLV1117LV33 regulator.*
 
 Horowitz and Hill say that a HIGH input on an unpowered chip without tolerant inputs will "partially power the supply rail" through the clamp (p. 795). The "craziest" case they give is a CMOS chip whose supply pin was never wired up, and which works anyway because it is "powered by one of its logic inputs (via the chip's internal input-protection diodes from input to VDD)", until the moment all of its inputs are low at once (p. 760). Current through those input diodes can also start latch-up (p. 759). Their advice for low-power CMOS boards includes the same warning: "be careful whenever mixing supply voltages. Otherwise you may have current flowing through input-protection diodes" (p. 754).
 

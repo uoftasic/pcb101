@@ -223,12 +223,12 @@ How do you add outputs that `kicad-cli` can't make, such as an interactive BOM, 
    - 'Interactive HTML BOM' (ibom) [ibom]
    WARNING:(W013) U1 not linked to an existing schematic component, but U1 found in schematic, assuming this is the same (kibot - kiplot.py:488)
    - 'Design report' (report) [report]
-   Found 2 unique warning/s (47 total, 3 filtered)
+   Found 2 unique warning/s (45 total, 3 filtered)
    ```
 
    The text in quotes on each output's line is that output's `comment`. Our configuration gives each output one (`Interactive HTML BOM` and `Design report`). An output without a comment makes the same file, and its line reads `- '' (ibom) [ibom]`.
 
-   The first warning, W182, comes from the way KiBot reads a schematic. KiBot looks for each symbol's instance under a sheet path of zeros, while our schematic records each one under the schematic's own UUID, so KiBot falls back to the symbol's first instance, as the message says. Our schematic is one sheet, and each of its 43 symbols (the power symbols and U1's three units among them) has only one instance, so the first instance is the right one. KiBot prints W182 once and counts it for each symbol.
+   The first warning, W182, comes from the way KiBot reads a schematic. KiBot looks for each symbol's instance under a sheet path of zeros, while our schematic records each one under the schematic's own UUID, so KiBot falls back to the symbol's first instance, as the message says. Our schematic is one sheet, and each of its 41 symbols (the power symbols and U1's three units among them) has only one instance, so the first instance is the right one. KiBot prints W182 once and counts it for each symbol.
 
    The second warning, W013, is about U1, the 74LVC2G17 dual buffer. The schematic draws it as three units, one for each buffer and one for the GND and VCC pins. Each unit is a symbol of its own in the schematic, with its own UUID. KiBot folds the three into one U1 and keeps the UUID of the first unit it reads, unit 2, which is one of the buffers. Our board's U1 footprint records the UUID of unit 3, the one with the power pins, so KiBot can't match the footprint to its symbol by UUID. It looks the footprint up by its reference instead and finds the U1 it folded, which is the right part.
 
@@ -289,7 +289,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 
    ![The Design Rules Checker with a clearance violation and a thermal relief error](../assets/img/kicad-drc-planted-clearance.png)
 
-   *The Design Rules Checker in KiCad 10.0.5 on our board with the track dragged down. It lists a clearance violation between the track and J1's pad 7 (0.1600 mm against 0.2000 mm), and an incomplete thermal relief on pad 11, because the track now blocks part of that pad's connection to the GND zone. The other 32 items are the warnings that the board had before.*
+   *The Design Rules Checker in KiCad 10.0.5 on our board with the track dragged down. It lists a clearance violation between the track and J1's pad 9 (0.1600 mm against 0.2000 mm), and an incomplete thermal relief on pad 11, because the track now blocks part of that pad's connection to the GND zone. The other 32 items are the warnings that the board had before.*
 
    The dialog's Schematic Parity tab says "(not run)". Does that mean your CI doesn't check parity either?
 
@@ -304,7 +304,7 @@ Does your workflow stop a broken board before it makes a set of Gerbers?
 
    ```text
      DRC errors (2):
-       clearance                Clearance violation ( clearance 0.2000 mm; actual 0.1600 mm)  [PTH pad 7 [unconnected-(J1-IO5-Pad7)] of J1; Track [+3V3] on F.Cu, length 22.8600 mm]
+       clearance                Clearance violation ( clearance 0.2000 mm; actual 0.1600 mm)  [Track [+3V3] on F.Cu, length 22.8600 mm; PTH pad 9 [unconnected-(J1-IO7-Pad9)] of J1]
        starved_thermal          Thermal relief connection to zone incomplete (layer F.Cu; zone min spoke count 2; actual 1)  [Zone 'GND' [GND] on F.Cu, priority 0; PTH pad 11 [GND] of J1]
    ```
 

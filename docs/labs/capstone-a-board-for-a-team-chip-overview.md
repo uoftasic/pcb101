@@ -19,15 +19,46 @@ The capstone takes about 4 hours for Brief D on the SimProc board you already ha
 Brief D is for SimProc, Sentry, or a digital Tiny Tapeout project of your own. The board plugs into the demo board's I/O sockets and adds the hardware that the project needs and the demo board doesn't have, the way the SimProc Pmod adds a header for a USB-UART dongle and eight switches that set SimProc's bit period. It must have:
 
 - every pin the project uses brought to the right socket, as its pin list says;
-- a buffer with Ioff, powered from the kit's 3.3 V, on every line that crosses from another supply, then a resistor of 330 Ω to 8.2 kΩ on a line into the chip, or 1 kΩ to 5.1 kΩ on a line out of it;
+- a buffer with Ioff, powered from the kit's 3.3 V, on every line that crosses from another supply, then a resistor of 330 Ω to 8.2 kΩ on a line into the chip or 1 kΩ to 5.1 kΩ on a line out of it; on a line whose other side runs at another voltage, a dual-supply translator in the buffer's place, wired as [A line to a part at another voltage](#a-line-to-a-part-at-another-voltage) describes;
 - an ESD part to GND on every signal pin of a connector that a cable plugs into;
-- a test point for every signal pin of that connector, anywhere on its line from the connector through the buffer and the resistor to the Pmod pin. One on GND doesn't count, and nor does one on the kit's 3.3 V, such as one at the far end of a pull-up;
+- a test point for every signal pin of that connector, anywhere on its line from the connector through the buffer or translator and the resistor to the Pmod pin. One on GND doesn't count, and nor does one on the kit's 3.3 V on either side of the current-sense resistor from Lab 04 (R3 on ours), such as one at the far end of a pull-up. A pin that brings the other side's supply to a translator's VCCB isn't a signal pin, and needs no test point;
 - in `DESIGN.md`, what happens on each line when either side is unpowered, which firmware mode and switch settings the board assumes, and a check that the project's clock and its fastest signals stay within the pins' ratings, which Tiny Tapeout's GPIO spec gives as 33 MHz for an output and 66 MHz for an input;
 - if the project's pinout is awkward for the demo board, a line in `DESIGN.md` on what it cost the board.
 
-With the kit off, the buffer on a line that crosses from another supply is unpowered. Ioff is the most current a pin of the buffer passes while the buffer's supply is at 0 V. For the 74LVC2G17 on our board it's at most 10 µA, under the 100 µA that SkyWater's I/O guide allows into a chip pin held above its supply. On a line into the chip, the resistor limits the current if something else, such as the RP2350, drives the line against the buffer; on a line out of the chip, it limits the current into an unpowered receiver such as a dongle's RX pin. The buffer's inputs take up to 5.5 V, so it also brings a 5 V signal down to 3.3 V for the chip, whose inputs aren't 5 V tolerant. The capstone check's pmod row runs Lab 04's check. It accepts only the 74LVC1G17, 74LVC1G34, 74LVC1G125, 74LVC2G17, 74LVC2G34, 74LVC2G125, 74AUP1G17, 74AUP1G34 and 74AUP1G125 as the buffer, so a line with a translator in its place fails.
+With the kit off, the buffer on a line that crosses from another supply is unpowered. Ioff is the most current a pin of the buffer passes while the buffer's supply is at 0 V. For the 74LVC2G17 on our board it's at most 10 µA, under the 100 µA that SkyWater's I/O guide allows into a chip pin held above its supply. On a line into the chip, the resistor limits the current if something else, such as the RP2350, drives the line against the buffer; on a line out of the chip, it limits the current into an unpowered receiver such as a dongle's RX pin. The buffer's inputs take up to 5.5 V, so it also brings a 5 V signal down to 3.3 V for the chip, whose inputs aren't 5 V tolerant. The capstone check's pmod row runs Lab 04's check. As the buffer it accepts only the 74LVC1G17, 74LVC1G34, 74LVC1G125, 74LVC2G17, 74LVC2G34, 74LVC2G125, 74AUP1G17, 74AUP1G34 and 74AUP1G125, and as a translator only TI's SN74LVC1T45 and SN74LVC2T45.
 
 For a project other than SimProc, write its pin list in the form of [`labs/common/pins/simproc.json`](https://github.com/uoftasic/pcb101/blob/main/labs/common/pins/simproc.json), as Lab 03's Going further describes, and pass it to the check with `--pins`.
+
+#### A line to a part at another voltage
+
+A buffer powered from the kit's 3.3 V drives its outputs to 3.3 V, too high for a part that runs at 1.8 V, and a 1.8 V high can fall short of the buffer's input threshold, which TI gives as up to 2.0 V for the 74LVC2G17 with a 3 V supply. On a line like that, put a dual-supply translator in the buffer's place: TI's SN74LVC1T45 for one line (`SN74LVC1T45DBV`, `SN74LVC1T45DCK` or `SN74LVC1T45DRL` in KiCad's `Logic_LevelTranslator` library), or the SN74LVC2T45 (`SN74LVC2T45DCUR`) for two lines that run the same way. [Changing a signal's level](../guide/protecting-the-chips-io.md#changing-a-signals-level) explains how they work. On each line, Lab 04's check wants:
+
+- the A port on the chip's side, and the B port on the connector pin's net, with nothing between B and the pin;
+- VCCA on the kit's 3.3 V, on either side of the current-sense resistor, and VCCB on another pin of the same connector, which brings in the other side's own supply;
+- DIR on GND on a line into the chip, and on VCCA's 3.3 V on a line out of it;
+- on a line into the chip, a resistor of 330 Ω to 8.2 kΩ between A and the Pmod pin. A line out of the chip needs none, because with the other side off, both ports are high-impedance and B passes at most its $I_{off}$ of 2 µA;
+- a capacitor from each VCC pin's net to GND, with a pad within 3 mm of the pin;
+- GND on GND, and the same ESD part on the connector's signal pins as with a buffer.
+
+A translator that is turned round, or has DIR the wrong way, or has VCCB on the kit's 3.3 V fails its row, and the row says which.
+
+For a 1.8 V part, a design that passes Lab 04's Pmod checks puts one SN74LVC1T45DBV, a SOT-23-6 that you can solder by hand, on each line, with a 4-pin connector that carries GND, the line into the chip, the line out and the other side's 1.8 V. Both translators have VCCA (pin 1) on `+3V3_PMOD`, VCCB (pin 6) on the connector's 1.8 V pin, and 100 nF beside each VCC pin. On the line in, DIR (pin 5) is on GND, B (pin 4) is on the connector's pin, and A (pin 3) goes through a 1 kΩ resistor to the Pmod pin. On the line out, DIR is on `+3V3_PMOD`, A is on the Pmod pin and B is on the connector's pin. We drew this as a variant of Lab 04's board, whose J4 gets a fourth pin, `DONGLE_VCC`, for the other side's supply (stage `translated` of Lab 03's generator, [`make_reference.py`](https://github.com/uoftasic/pcb101/blob/main/labs/lab-03-a-pmod-for-one-projects-pins/src/make_reference.py)). Its parts are placed but not routed, so we ran the Pmod check on it without the board check. All 17 Pmod checks passed, the UART rows among them (the check still calls J4's pins the dongle's, because SimProc's pin list names them that way):
+
+```text
+  ok    ui[0]        J4 pin 2 (the dongle's TXD) drives J1 pin 1 through U1 (SN74LVC1T45DBV, B pin 4 to A pin 3) and R1 (1k)
+                     U1: Ioff on both ports, VCCA (pin 1) on /+3V3_PMOD, VCCB (pin 6) on /DONGLE_VCC, J4 pin 4, GND (pin 2) on GND
+                     DIR (pin 5) on GND: B to A, the way this line runs
+                     R1 = 1 kΩ (330 Ω to 8.2 kΩ): 3.3 V / 1 kΩ = 3.3 mA against a pin driving the other way; 3.3 V × 36 kΩ / (36 kΩ + 1 kΩ) = 3.21 V high against a 36 kΩ pull-down
+                     decoupling: C1 (100n) from /+3V3_PMOD to GND, a pad 1.92 mm from U1 pin 1 (VCCA)
+                     decoupling: C2 (100n) from /DONGLE_VCC to GND, a pad 1.91 mm from U1 pin 6 (VCCB)
+  ok    uo[0]        J3 pin 1 drives J4 pin 3 (the dongle's RXD) through U2 (SN74LVC1T45DBV, A pin 3 to B pin 4)
+                     U2: Ioff on both ports, VCCA (pin 1) on /+3V3_PMOD, VCCB (pin 6) on /DONGLE_VCC, J4 pin 4, GND (pin 2) on GND
+                     DIR (pin 5) on /+3V3_PMOD: A to B, the way this line runs
+                     decoupling: C3 (100n) from /+3V3_PMOD to GND, a pad 2.49 mm from U2 pin 1 (VCCA)
+                     decoupling: C4 (100n) from /DONGLE_VCC to GND, a pad 1.91 mm from U2 pin 6 (VCCB)
+```
+
+The variant also has a 100 kΩ resistor from `DONGLE_VCC` to GND. TI specifies the translators' isolation for a supply at GND, and the resistor holds VCCB there while nothing is plugged in, instead of leaving it floating. The check doesn't ask for it. With both ports off, nothing drives `ui[0]`, and the RP2350's pull-down holds it low, which a UART reads as a break, until the other side is plugged in and powered. If your board leaves `ui[0]` to the RP2350's pull-down like this while the other side is unplugged, say so in `DESIGN.md`.
 
 ### Brief A: a source board for one analog pin
 

@@ -13,11 +13,12 @@ the current is (3.3 - 0.6) V / 1 kohm = 2.7 mA, so the label says "up to about".
 
 (b) Lab 04's reference board (labs/lab-04-protect-and-plan/solutions/simproc-pmod): the
 dongle's TXD goes into U1, an SN74LVC2G17, and U1's output goes through R1 (1 kohm) to
-ui_in[0]. R4 (100 kohm) pulls TXD up to +3V3, and U1 runs from the same +3V3, the kit's
-3.3 V. With the kit off U1 is unpowered. TI's datasheet (SCES381N) gives Ioff as 10 uA
-at most, at VCC = 0 V and VI or VO = 5.5 V, so at most 10 uA reaches ui_in[0]. With
-+3V3 at 0 V, R4 puts 3.3 V / 100 kohm = 33 uA onto it, so that label says "up to about"
-as well.
+ui_in[0]. R4 (100 kohm) pulls TXD up to +3V3_PMOD, and U1 runs from the same net, which
+takes the kit's 3.3 V (+3V3) through R3, the board's 10 ohm current-sense resistor. With
+the kit off U1 is unpowered. TI's datasheet (SCES381N) gives Ioff as 10 uA at most, at
+VCC = 0 V and VI or VO = 5.5 V, so at most 10 uA reaches ui_in[0]. With +3V3 at 0 V, R4
+puts 3.3 V / 100 kohm = 33 uA onto +3V3_PMOD, and on through R3 onto +3V3 (it drops
+0.33 mV across R3), so that label says "up to about" as well.
 """
 import schemdraw.elements as elm
 import schemdraw.logic as logic
@@ -26,7 +27,8 @@ from circuit_style import drawing, save
 
 R_X = 4.3       # where R_S in (a) and R1 in (b) start, so the two line up
 PAD_X = 8.6     # where ui_in[0] sits in both panels
-RAIL_UP = 1.6   # how far (b)'s +3V3 wire runs above the chip's VDD_IO
+RAIL_UP = 1.6   # how far (b)'s supply wire runs above the chip's VDD_IO
+R3_X = R_X      # where R3 starts on (b)'s supply wire, above R1
 Y_A = 9.5       # height of (a)'s signal line; (b)'s is at 0
 
 
@@ -90,15 +92,19 @@ def main():
     r1 = d.add(elm.Resistor().right().label("R1, 1 kΩ", loc="bottom"))
     wire_to(d, PAD_X)
     _, corner = chip_and_rail(d, "the rest of the\ndemo board's +3V3")
-    # R4's top and U1's VCC are on the kit's +3V3, the net the links feed
+    # R4's top and U1's VCC are on +3V3_PMOD, which takes the kit's +3V3 (the net the
+    # links feed) through R3, the current-sense resistor
     d.add(elm.Dot().at(corner))
     d.add(elm.Line().at(corner).up(RAIL_UP))
+    d.add(elm.Line().tox(R3_X + d.unit))
+    r3 = d.add(elm.Resistor().left().label("R3, 10 Ω", loc="bottom"))
     d.add(elm.Line().tox(rail_l[0]))
     vcc_x = u1.absanchors["in1"][0] + 0.25   # a point on the triangle's upper edge
     d.add(elm.Dot().at((vcc_x, rail_l[1])))
     d.add(elm.Line().at((vcc_x, rail_l[1])).down(rail_l[1] - 0.32))
     d.add(elm.Label().at((vcc_x + 0.12, 1.0)).label("VCC", halign="left"))
-    d.add(elm.Label().at((rail_l[0] + 0.15, rail_l[1] + 0.35)).label("+3V3", halign="left"))
+    d.add(elm.Label().at((rail_l[0] + 0.15, rail_l[1] + 0.35)).label("+3V3_PMOD", halign="left"))
+    d.add(elm.Label().at((r3.start[0] + 0.25, rail_l[1] + 0.35)).label("+3V3", halign="left"))
     d.add(elm.CurrentLabel(top=True, ofst=0.45, length=1.4).at(r4).label("up to about\n33 µA"))
     d.add(elm.CurrentLabel(top=True, ofst=0.45, length=1.4).at(r1).label("at most 10 µA\n($I_{off}$)"))
     d.add(elm.Label().at((0, 5.2)).label("(b)", fontsize=14))

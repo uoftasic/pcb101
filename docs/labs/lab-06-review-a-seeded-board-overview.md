@@ -174,7 +174,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   Two of them, U1 and C1. U1's second buffer, turned round, fails the `uo[0]` row with "U1 (74LVC2G17) is turned round on this line: its output, 2Y (pin 4), faces J3 pin 1, and its input, 2A (pin 3), faces J4 pin 3 (the dongle's RXD)". With the kit on, U1's output would drive the same line as SimProc's TX, and nothing would drive the dongle's RXD. C1's distance from U1 fails the `ui[0]` row with "no decoupling at U1's VCC: the nearest capacitor from +3V3 to GND, C1, has its nearest pad 35.50 mm from U1 pin 5, more than 3 mm". The `uo[0]` row stops at the turned-round buffer before it looks for a capacitor, so only `ui[0]` reports C1. With J3 put back, those two rows are the only ones that fail, and the last line is `FAIL  pmod.kicad_pro: board check PASS; 15 of 17 Pmod checks ok; bring-up plan PASS`. Counting J3 itself, the checks find three of the eight faults, and the other five need a person to find them.
+   Two of them, U1 and C1. U1's second buffer, turned round, fails the `uo[0]` row with "U1 (74LVC2G17) is turned round on this line: its output, 2Y (pin 4), faces J3 pin 1, and its input, 2A (pin 3), faces J4 pin 3 (the dongle's RXD)". With the kit on, U1's output would drive the same line as SimProc's TX, and nothing would drive the dongle's RXD. C1's distance from U1 fails the `ui[0]` row with "no decoupling at U1's VCC: the nearest capacitor from /+3V3_PMOD to GND, C1, has its nearest pad 35.50 mm from U1 pin 5, more than 3 mm". The `uo[0]` row stops at the turned-round buffer before it looks for a capacitor, so only `ui[0]` reports C1. With J3 put back, those two rows are the only ones that fail, and the last line is `FAIL  pmod.kicad_pro: board check PASS; 15 of 17 Pmod checks ok; bring-up plan PASS`. Counting J3 itself, the checks find three of the eight faults, and the other five need a person to find them.
 
    </details>
 
@@ -183,7 +183,7 @@ Questions:
    <details>
    <summary>Answer</summary>
 
-   At most 10 µA, the Ioff of U1, which sits between the dongle and the chip and is unpowered while the kit is off. That's under the 100 µA that SkyWater allows (checklist line 5), so U1 keeps the current into the chip's pins within that limit in either order. The order breaks line 7, which asks for anything with a supply of its own, such as the dongle, to be unplugged before the kit is switched off. Until the dongle comes off, it drives U1's unpowered input. It also puts up to 3.3 V / 100 kΩ = 33 µA into the kit's +3V3 through R4, the 100 kΩ pull-up from its TXD to +3V3. Your own `BRINGUP.md` from Lab 04 unplugs the dongle first, so that none of this current flows.
+   At most 10 µA, the Ioff of U1, which sits between the dongle and the chip and is unpowered while the kit is off. That's under the 100 µA that SkyWater allows (checklist line 5), so U1 keeps the current into the chip's pins within that limit in either order. The order breaks line 7, which asks for anything with a supply of its own, such as the dongle, to be unplugged before the kit is switched off. Until the dongle comes off, it drives U1's unpowered input. It also puts up to 3.3 V / 100 kΩ = 33 µA into the kit's +3V3 through R4, the 100 kΩ pull-up from its TXD to `+3V3_PMOD`, and on through R3. Your own `BRINGUP.md` from Lab 04 unplugs the dongle first, so that none of this current flows.
 
    </details>
 

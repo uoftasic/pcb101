@@ -31,6 +31,16 @@
     (the partial-power-down quote), Features (inputs accept 5.5 V, +-24 mA at 3.3 V), 7.5
     Electrical Characteristics (Ioff +-10 uA max at VCC = 0 V, VI or VO = 5.5 V; at VCC = 3 V,
     VT+ 1.3 to 2.0 V and VT- 0.8 to 1.3 V).
+  - Texas Instruments, SN74LVC1T45, SCES515N, and SN74LVC2T45, SCES516N (both revised June
+    2024), https://www.ti.com/lit/ds/symlink/sn74lvc1t45.pdf and
+    https://www.ti.com/lit/ds/symlink/sn74lvc2t45.pdf, read Nov 22, 2026: Features (VCCA and
+    VCCB 1.65 to 5.5 V; "VCC isolation feature"; "DIR input circuit referenced to VCCA";
+    "Ioff supports partial-power-down mode operation"), Description (the Ioff quote),
+    Electrical Characteristics (Ioff +-1 uA at 25 C, +-2 uA from -40 to 85 C, on the A port
+    with VCCA = 0 V and on the B port with VCCB = 0 V), Recommended Operating Conditions
+    (DIR's VIH 2 V and VIL 0.8 V at VCCA = 3 to 3.6 V; note 3, unused data inputs held at
+    VCCI or GND), 7.3.6 Vcc Isolation, 7.4 function table (DIR L, B to A; H, A to B; one DIR
+    for both channels of the 2T45).
   - Raspberry Pi, RP2350 datasheet, Release 8 (build date 01/10/2026),
     https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf, read Nov 19, 2026:
     Table 1683 (pull-down 36 to 113 kohm at IOVDD = 3.3 V), 9.6 Pads (drive strength 2, 4,
@@ -57,6 +67,7 @@
   - SimProc (uoftasic/simproc 1d97772): info.yaml and top-level RTL.
   - Lab 04's reference board (labs/lab-04-protect-and-plan/solutions/simproc-pmod) and rule 5
     of labs/common/check_pmod.py, at 955719c: U1, R1, R2 and R4, and the resistor windows.
+    At 4bdb8bb: U1's VCC, C1 and R4 on +3V3_PMOD, after R3; rule 5f, the translators.
     Its BRINGUP.md: DIP switch 1 against R1 leaves a low at 1.65 V; keep the dongle powered
     whenever it's plugged in.
 -->
@@ -121,17 +132,17 @@ Another board's driver or pull-up can push an output pin past its rails through 
 
 ## Buffers and translators
 
-A buffer drives its output from its own supply, so it gives the far side that supply's logic levels, which a series resistor can't do. A buffer that is specified for partial power down also passes almost no current while its supply is off. The course's reference board for Lab 04 has a buffer on each UART line for that second reason, although the dongle and the chip both run at 3.3 V. The part is U1, a Texas Instruments SN74LVC2G17, which has two Schmitt-trigger buffers, one for each line, in a SOT-23-6 package. The datasheet's row nearest the kit's 3.3 V is for a 3 V supply, where its inputs switch high somewhere between 1.3 and 2.0 V and low between 0.8 and 1.3 V, so a 3.3 V signal from the dongle or from the chip crosses both thresholds.
+A buffer drives its output from its own supply, so it gives the far side that supply's logic levels, which a series resistor can't do. A buffer that is specified for partial power down also passes almost no current while its supply is off. The course's reference board for Lab 04 has a buffer on each UART line for that second reason, although the dongle and the chip both run at 3.3 V. The part is U1, a Texas Instruments SN74LVC2G17, which has two Schmitt-trigger buffers, one for each line, in a SOT-23-6 package. The datasheet's row nearest the kit's 3.3 V is for a 3 V supply, where its inputs switch high somewhere between 1.3 and 2.0 V and low between 0.8 and 1.3 V, so a 3.3 V signal from the dongle or from the chip crosses both thresholds. A dual-supply translator does the same job on a line whose other side runs at a voltage other than 3.3 V ([Changing a signal's level](#changing-a-signals-level)).
 
 ### Partial power down
 
 TI's [datasheet](https://www.ti.com/lit/ds/symlink/sn74lvc2g17.pdf) for the part says, "This device is fully specified for partial-power-down applications using Ioff. The Ioff circuitry disables the outputs, preventing damaging current backflow through the device when it is powered down." $I_{off}$ is the most current a pin passes while the part's supply is at 0 V. For the SN74LVC2G17 it's ±10 µA at most, with 5.5 V on an input or an output, and its inputs accept up to 5.5 V. Horowitz and Hill describe the same behaviour for the 74LVC family as a whole. Its inputs accept up to 5.5 V "regardless of its own supply voltage (including when it is unpowered)" (p. 718), and its output stages are built not to load a shared line when the part is unpowered (p. 794).
 
-With the kit off and the dongle on, the dongle's TX drives U1's unpowered input, and U1's output passes at most 10 µA on to `ui_in[0]`, a tenth of SkyWater's limit. TI gives that figure with U1's supply at 0 V. U1 runs from the kit's +3V3, and current from the dongle's TX flows through R4, the 100 kΩ pull-up on U1's input ([Inputs that nobody drives](#inputs-that-nobody-drives)), into that rail and lifts it above 0 V. Even so, the most the dongle's TX can push onto the board is about 43 µA, up to 10 µA into U1's input and up to 33 µA through R4, so less than 100 µA can reach the chip. On the `uo_out[0]` line, the dongle's RX pull-up pushes current into U1's unpowered output, again at most 10 µA, and none of it reaches `uo_out[0]`, which is on U1's input side.
+With the kit off and the dongle on, the dongle's TX drives U1's unpowered input, and U1's output passes at most 10 µA on to `ui_in[0]`, a tenth of SkyWater's limit. TI gives that figure with U1's supply at 0 V. U1 runs from `+3V3_PMOD`, which takes the kit's +3V3 through R3, the 10 Ω current-sense resistor that Lab 04 adds. Current from the dongle's TX flows through R4, the 100 kΩ pull-up on U1's input ([Inputs that nobody drives](#inputs-that-nobody-drives)), into `+3V3_PMOD` and on through R3 into the kit's rail, and lifts U1's supply above 0 V. Even so, the most the dongle's TX can push onto the board is about 43 µA, up to 10 µA into U1's input and up to 33 µA through R4, so less than 100 µA can reach the chip. On the `uo_out[0]` line, the dongle's RX pull-up pushes current into U1's unpowered output, again at most 10 µA, and none of it reaches `uo_out[0]`, which is on U1's input side.
 
 ### U1's supply
 
-$I_{off}$ applies only while U1's own supply is at 0 V, so U1 has to lose its power whenever the chip does. The reference board runs it from the Pmod's +3V3, which is the kit's 3.3 V, and the chip's I/O supply comes from the same net. If U1 ran from the dongle's 3.3 V instead, it would stay on with the kit off and drive the unpowered pad through the resistor after it, with about (3.3 − 0.6) V / 1 kΩ = 2.7 mA, the same current that a 1 kΩ resistor with no buffer would pass. Powered from the kit, U1 also can't drive the chip's input above the chip's own I/O supply while the kit is on.
+$I_{off}$ applies only while U1's own supply is at 0 V, so U1 has to lose its power whenever the chip does. The reference board runs it from `+3V3_PMOD`, which takes the kit's 3.3 V through R3, and the chip's I/O supply comes from the kit's 3.3 V too, so the two lose their power together. If U1 ran from the dongle's 3.3 V instead, it would stay on with the kit off and drive the unpowered pad through the resistor after it, with about (3.3 − 0.6) V / 1 kΩ = 2.7 mA, the same current that a 1 kΩ resistor with no buffer would pass. Powered from the kit, U1 also can't drive the chip's input above the chip's own I/O supply while the kit is on.
 
 ### The resistor after each buffer
 
@@ -148,9 +159,17 @@ R2 sits between U1's second output and the dongle's RX pin, on the `uo_out[0]` l
 When the other side runs from a supply other than the chip's 3.3 V, you need a part in between that changes the signal's level. Horowitz and Hill give a set of recommended connections between logic families (pp. 798–800), and these four are the ones you'd use between another board and the chip:
 
 - **A buffer with 5 V-tolerant inputs**, such as U1, powered from your Pmod's 3.3 V. It turns a 5 V signal into a 3.3 V one for the chip's input, because its inputs accept up to 5.5 V.
-- **A dual-supply translator**, such as the 74LVC1T45, runs each side from its own supply, anywhere from 1.8 V to 5 V, and has a direction pin that sets which way the signal goes. Use one when the other side is lower than 3.3 V, or when the line goes both ways.
+- **A dual-supply translator**, such as the 74LVC1T45, runs each side from its own supply, which TI's datasheet allows anywhere from 1.65 V to 5.5 V, and has a direction pin that sets which way the signal goes. Use one when the other side is lower than 3.3 V, or when the line goes both ways.
 - **An open-drain output with a pull-up to the receiving side's supply.** It's simple, and it can translate a signal up or down across a wide range of voltages. The pull-up resistor is a compromise, because a smaller one gives faster rising edges but draws more current while the line is low.
 - **An auto-direction translator**, such as the TXB0101, senses transitions on either side, so it needs no direction pin, but the supply on its B side must be at least the supply on its A side.
+
+Lab 04's check accepts two dual-supply translators in place of a buffer: TI's SN74LVC1T45, which carries one line, and the SN74LVC2T45, which carries two. Each has an A port, powered from its VCCA pin, and a B port, powered from its VCCB pin. TI's datasheets for them ([SN74LVC1T45](https://www.ti.com/lit/ds/symlink/sn74lvc1t45.pdf), [SN74LVC2T45](https://www.ti.com/lit/ds/symlink/sn74lvc2t45.pdf)) give the three features that the check relies on:
+
+- **Partial power down.** As for U1, "The Ioff circuitry disables the outputs, preventing damaging current backflow through the device when it is powered down." For these two parts $I_{off}$ is at most ±2 µA from −40 to 85 °C, on the A port with VCCA at 0 V and on the B port with VCCB at 0 V.
+- **VCC isolation.** In TI's words, "if either VCC input is at GND, both ports are in the high-impedance state". With the kit off, or with the other side off, neither port drives its line. TI gives this for a supply at GND, though, and a VCCB pin that floats while the other side is unplugged isn't at GND. The capstone's design holds VCCB at GND through 100 kΩ while nothing is plugged in.
+- **A direction pin referenced to VCCA.** DIR low sends "B data to A bus", and DIR high sends "A data to B bus". TI lists a "DIR input circuit referenced to VCCA", so DIR's thresholds follow VCCA: at a VCCA of 3 to 3.6 V, DIR reads a high from 2 V and a low up to 0.8 V. The SN74LVC2T45 has one DIR for both of its channels, so its two lines have to run the same way.
+
+Lab 04's check wants A to face the chip, with VCCA on your Pmod's 3.3 V, and B to face the other side, with VCCB on that side's own supply, brought in on a pin of its connector, so that B is unpowered whenever the other side is. Because DIR follows VCCA, it goes on GND for a line into the chip and on VCCA's 3.3 V for a line out, and never on VCCB's net. The translator's outputs can drive ±24 mA at 3.3 V, as U1's can, so a line into the chip still needs a resistor between A and the Pmod pin, for the same reasons as R1. The [capstone](../labs/capstone-a-board-for-a-team-chip-overview.md#a-line-to-a-part-at-another-voltage) lists everything the check asks of a translator, and gives a design for a 1.8 V part that passes.
 
 The chip's analog pins carry an analog voltage rather than a logic level, so these parts don't apply to them. Tiny Tapeout's [analog page](https://tinytapeout.com/specs/analog/) gives the path from each analog pad to the project as under 500 Ω and under 5 pF, through an analog switch, with 4 mA at most. Brief A of the capstone, a source board for one analog pin, asks you to work with those numbers.
 
@@ -158,7 +177,7 @@ The chip's analog pins carry an analog voltage rather than a logic level, so the
 
 A CMOS input that nothing drives is left floating. Horowitz and Hill warn that an open input can float up to the logic threshold, which puts the gate's output at half the supply "with both MOS output transistors conducting", so the gate draws current and can oscillate (p. 806). So every input your board might leave undriven needs a resistor that holds it at a defined level. The usual case is a switch, which leaves its input undriven while it's open. Horowitz and Hill's circuit for a switch driving a logic input (p. 802) uses a 10 kΩ pull-up or pull-down, and with CMOS either one works. SimProc's `uio[0..7]` pins are all inputs (`uio_oe` is 0 in its RTL), and together they set its UART's bit period. On the Pmod you draw for it in Lab 03, each switch connects its `uio` line to +3V3, so each line needs a pull-down to ground. A closed switch then reads as 1, and an open one reads as 0 rather than as whatever the line picks up.
 
-Lab 04's board has another input of this kind, U1's input on the `ui_in[0]` line, which nothing drives while no dongle is plugged in. A floating input on a powered buffer can switch back and forth, and U1 would pass that on to SimProc as garbage. R4, 100 kΩ, pulls that input up to +3V3. It pulls up rather than down because a UART line idles high, and a receiver reads a line held low as a "break". With the kit off and the dongle on, R4 passes up to 3.3 V / 100 kΩ = 33 µA from the dongle's TX into the kit's +3V3. That current goes into a supply rail rather than into a pin, and it's 1/80 of the 2.7 mA that a bare 1 kΩ would put into `ui_in[0]`. With the kit on, a dongle that's plugged in but unpowered may pull U1's input down to about 0.6 V through the clamp diode on its TX pin, and so hold `ui_in[0]` low, because R4, at 100 kΩ, is too weak to stop it. That's our inference, not a measurement, and Lab 04's reference bring-up plan says to keep the dongle powered whenever it's plugged in.
+Lab 04's board has another input of this kind, U1's input on the `ui_in[0]` line, which nothing drives while no dongle is plugged in. A floating input on a powered buffer can switch back and forth, and U1 would pass that on to SimProc as garbage. R4, 100 kΩ, pulls that input up to `+3V3_PMOD`, the kit's 3.3 V after R3. It pulls up rather than down because a UART line idles high, and a receiver reads a line held low as a "break". With the kit off and the dongle on, R4 passes up to 3.3 V / 100 kΩ = 33 µA from the dongle's TX, through R3, into the kit's +3V3. That current goes into a supply rail rather than into a pin, and it's 1/80 of the 2.7 mA that a bare 1 kΩ would put into `ui_in[0]`. With the kit on, a dongle that's plugged in but unpowered may pull U1's input down to about 0.6 V through the clamp diode on its TX pin, and so hold `ui_in[0]` low, because R4, at 100 kΩ, is too weak to stop it. That's our inference, not a measurement, and Lab 04's reference bring-up plan says to keep the dongle powered whenever it's plugged in.
 
 ## Check yourself
 
