@@ -4,7 +4,7 @@ Each folder is a whole board repository: the KiCad project, `DESIGN.md`, `BRINGU
 
 | Folder | Brief | Board check in `kicad/kicad:10.0.5` | Capstone check |
 |---|---|---|---|
-| `simproc-pmod-brief-d/` | D: the SimProc Pmod | ERC 0; DRC 0 errors, 33 warnings (24 `silk_edge_clearance`, 6 `silk_over_copper`, 3 `silk_overlap`); 0 unconnected; 0 parity | `PASS  pmod, Brief D: 5 of 5 capstone checks ok` |
+| `simproc-pmod-brief-d/` | D: the SimProc Pmod | ERC 0; DRC 0 errors, 32 warnings (24 `silk_edge_clearance`, 6 `silk_over_copper`, 2 `silk_overlap`); 0 unconnected; 0 parity | `PASS  pmod, Brief D: 5 of 5 capstone checks ok` |
 | `source-board-brief-a/` | A: a source for an0 on J13 | ERC 0; DRC 0 errors, 0 warnings; 0 unconnected; 0 parity | `PASS  source, Brief A: 8 of 8 capstone checks ok` |
 
 ## Brief D
@@ -16,7 +16,7 @@ Lab 04's reference board with two test points, written by [`../src/make_brief_d.
 | TP3 | `TestPoint:TestPoint_Pad_D1.5mm` | `UART_RX` (`ui[0]`, between J1 and R1) | (117.3, 60.0), on a track from (114.70, 59.0) |
 | TP4 | same | `DONGLE_RXD` (`uo[0]`, between R2 and J4) | (119.0, 73.2), on a track from the via under R2 at (119.0, 71.08) |
 
-TP3 sits below the Pmod connectors' courtyards, which reach down to Y 58.2 mm. TP4's reference is moved under it, clear of TP2's. `BRINGUP.md` is Lab 04's, with steps 6 and 7 read at TP4 and TP3. The third `silk_overlap` is R1's reference against TP3's circle.
+TP3 sits below the Pmod connectors' courtyards, which reach down to Y 58.2 mm. Its reference is above it and 1 mm to the right, clear of R1's, which is above R1. TP4's reference is moved under it, clear of TP2's. `BRINGUP.md` is Lab 04's, with steps 6 and 7 read at TP4 and TP3. The two `silk_overlap` warnings are Lab 04's, R3's reference over SW1's outline.
 
 ## Brief A
 

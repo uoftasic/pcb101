@@ -28,15 +28,15 @@ Brief: D. Project: SimProc, `tt_um_ieeeuoftasic_simproc` (uoftasic/simproc), on 
    Meets: 1, 7
 3. SW1 is an 8-way DIP switch from `+3V3_PMOD` to each `uio` line, and RN1 a 10 kΩ bussed network that pulls each line to GND, so a switch that's off reads 0 V and one that's on draws 3.3 V / 10 kΩ = 0.33 mA.
    Meets: 2, 7
-4. U1 is a 74LVC2G17, two Schmitt-trigger buffers in SOT-23-6, run from the sockets' +3V3. The dongle's TXD drives `ui[0]` through U1's first buffer and R1, and `uo[0]` drives the dongle's RXD through its second buffer and R2. A series resistor alone can't meet requirement 4: 100 µA from a 3.3 V TXD needs at least (3.3 − 0.6) V / 100 µA = 27 kΩ, and a valid high against 36 kΩ needs at most 15.4 kΩ. With the kit off, U1 is unpowered, and TI specifies each of its pins for at most 10 µA (Ioff), so at most 10 µA reaches `ui[0]`.
+4. U1 is a 74LVC2G17, two Schmitt-trigger buffers in SOT-23-6, run from `+3V3_PMOD`, the sockets' 3.3 V after the current spy R3, so that R3 reads U1's current too. The dongle's TXD drives `ui[0]` through U1's first buffer and R1, and `uo[0]` drives the dongle's RXD through its second buffer and R2. A series resistor alone can't meet requirement 4: 100 µA from a 3.3 V TXD needs at least (3.3 − 0.6) V / 100 µA = 27 kΩ, and a valid high against 36 kΩ needs at most 15.4 kΩ. With the kit off, U1 is unpowered, and TI specifies each of its pins for at most 10 µA (Ioff), so at most 10 µA reaches `ui[0]`.
    Meets: 4, 7
 5. R1 is 1 kΩ, from U1's 1Y to `ui[0]`: the high there is 3.3 V × 36 kΩ / 37 kΩ = 3.21 V, and if the RP2350 drives the line the other way, at most 3.3 V / 1 kΩ = 3.3 mA flows. If the demo board's DIP switch 1 does, at most 3.3 V / 2 kΩ = 1.65 mA flows, because the switch's own 1 kΩ is in series with R1. R2 is 1 kΩ, from U1's 2Y to J4 pin 3: into an unpowered dongle at most (3.3 − 0.6) V / 1 kΩ = 2.7 mA, and against a CH340's 16.5 kΩ RX pull-up the low is 3.3 V × 1 kΩ / 17.5 kΩ = 0.19 V, under its 0.8 V. Into 10 pF, each makes an edge of 2.2 × 1 kΩ × 10 pF = 22 ns.
    Meets: 4, 6, 7
-6. R4 is 100 kΩ from U1's input on `ui[0]` to +3V3, so that with no dongle on J4 the input sits high, the UART's idle level, rather than floating. With the kit off and the dongle on, it passes at most 3.3 V / 100 kΩ = 33 µA from the dongle's TXD into the kit's +3V3 rail, not into a pin. C1 is 100 nF from +3V3 to GND, with a pad 2.24 mm from U1's VCC pin.
+6. R4 is 100 kΩ from U1's input on `ui[0]` to `+3V3_PMOD`, so that with no dongle on J4 the input sits high, the UART's idle level, rather than floating. With the kit off and the dongle on, it passes at most 3.3 V / 100 kΩ = 33 µA from the dongle's TXD into `+3V3_PMOD`, and through R3 into the kit's +3V3 rail, not into a pin. C1 is 100 nF from `+3V3_PMOD` to GND, with a pad 2.33 mm from U1's VCC pin.
    Meets: 1, 7
 7. D1 is an SP0502BAHT, a two-line TVS array with a 5.5 V standoff, in SOT-23, on J4 pins 2 and 3, with its common pin 3 to GND through a via. It sits between J4 and U1, so a discharge from the cable meets the clamp before the buffer and the chip.
    Meets: 5, 9
-8. R3 is a 10 Ω current spy from the sockets' +3V3 to `+3V3_PMOD`, which feeds SW1, with TP1 and TP2 on its two sides. With three switches on the board draws 0.99 mA and R3 drops 9.9 mV.
+8. R3 is a 10 Ω current spy from the sockets' +3V3 to `+3V3_PMOD`, which feeds U1, R4 and SW1, with TP1 and TP2 on its two sides. On the bench with three switches on, the board draws 0.99 mA, plus at most 15 µA for U1 (its 10 µA supply current and 5 µA into its first input through R4), and R3 drops 9.9 mV to 10.05 mV. In the kit, U1 also drives 29 µA to 89 µA through R1 into the RP2350's pull-down, and R3 drops 10.2 mV to 10.9 mV.
    Meets: 8
 9. TP3 is on `ui[0]` between J1 and R1, and TP4 on `uo[0]` between R2 and J4, each a 1.5 mm pad.
    Meets: 8
@@ -47,10 +47,10 @@ Brief: D. Project: SimProc, `tt_um_ieeeuoftasic_simproc` (uoftasic/simproc), on 
 
 ## Checks
 
-- The board check passes in `kicad/kicad:10.0.5`: ERC 0, DRC 0 errors and 33 warnings (24 `silk_edge_clearance` and 6 `silk_over_copper` from Tiny Tapeout's Pmod footprint, 3 `silk_overlap`), 0 unconnected items, 0 parity items.
+- The board check passes in `kicad/kicad:10.0.5`: ERC 0, DRC 0 errors and 32 warnings (24 `silk_edge_clearance` and 6 `silk_over_copper` from Tiny Tapeout's Pmod footprint, and 2 `silk_overlap`, R3's reference over SW1's outline), 0 unconnected items, 0 parity items.
 - Lab 04's check passes: 17 of 17 Pmod checks, and the bring-up plan.
 - Lab 05's check passes on the repository: the fabrication files, the review images and the `.gitignore`.
-- Against the course checklist: J4's pitch is 2.54 mm (line 1); the connections match SimProc's pin list, with switch *k* on `uio[k−1]` (line 3); C1 decouples U1, a pad 2.24 mm from its VCC pin, on the +3V3 that U1 runs from (line 4); U1's inputs face the dongle on `ui[0]` and the chip on `uo[0]` (line 5); D1's pin 3, its common pin, is on GND (line 6); `BRINGUP.md` unplugs the dongle before the kit is switched off (line 7) and measures only at TP1 to TP4 and connector pins (line 8); Board Setup holds JLCPCB's minimums, 1.0 mm text and 0.15 mm strokes (line 9).
+- Against the course checklist: J4's pitch is 2.54 mm (line 1); the connections match SimProc's pin list, with switch *k* on `uio[k−1]` (line 3); C1 decouples U1, a pad 2.33 mm from its VCC pin, on the `+3V3_PMOD` that U1 runs from (line 4); U1's inputs face the dongle on `ui[0]` and the chip on `uo[0]` (line 5); D1's pin 3, its common pin, is on GND (line 6); `BRINGUP.md` unplugs the dongle before the kit is switched off (line 7) and measures only at TP1 to TP4 and connector pins (line 8); Board Setup holds JLCPCB's minimums, 1.0 mm text and 0.15 mm strokes (line 9).
 
 ## Open questions
 

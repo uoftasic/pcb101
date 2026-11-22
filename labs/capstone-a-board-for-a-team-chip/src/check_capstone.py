@@ -21,9 +21,11 @@ then, for Brief D (a bring-up Pmod for a digital project):
             your project's pin list if you give one with --pins
   test points  a test point on every signal pin of the board's external connector, on
             its net or anywhere along its line to the Pmod pin: past a series resistor, and
-            through a buffer from labs/common/check_pmod.py's list (Lab 04's U1), in either
-            direction, but never onto GND or the Pmod's 3.3 V (so a pull-up's far side
-            doesn't count)
+            through a buffer or a translator from labs/common/check_pmod.py's lists (Lab 04's
+            U1, or an SN74LVC1T45), in either direction, but never onto GND or the Pmod's
+            3.3 V on either side of the current-sense resistor (so a pull-up's far side
+            doesn't count). A connector pin that feeds a translator's VCCB is the other
+            side's supply, not a signal, and needs no test point
 
 or, for Brief A (a source board for one analog pin):
 
@@ -51,7 +53,7 @@ LAB = os.path.dirname(HERE)
 LABS = os.path.dirname(LAB)
 COMMON = os.path.join(LABS, "common")
 sys.path.insert(0, COMMON)
-from check_pmod import BUFFERS, Netlist, buffer_type, parse_value  # noqa: E402
+from check_pmod import BUFFERS, TRANSLATORS, Netlist, buffer_type, parse_value, translator_type  # noqa: E402
 
 UNIT = (r"(?:[kKMmµu]?(?:Ω|ohms?)|[kKM]?R\b|[mµun]?V\b|[mµun]?A\b|[kKMG]?Hz\b|baud\b|bit/s\b|"
         r"[mµunp]?F\b|[mµunp]s\b|s\b|%|mm\b|mil\b|LSB\b|°C\b)")
@@ -191,15 +193,17 @@ def neighbours(nl, net):
 
 def line_nets(nl, net, rails, depth=4):
     """The nets along a signal's line from `net`: through two-pin resistors and through either
-    side of a buffer channel, up to `depth` steps, never into one of `rails`."""
+    side of a buffer's or a translator's channel, up to `depth` steps, never into one of
+    `rails`."""
     seen, edge = [net], [net]
     for _ in range(depth):
         nxt = []
         for n in edge:
             steps = [m for _, m in neighbours(nl, n)]
             for ref, p in nl.parts.items():
-                t = buffer_type(p)
-                for a, y, _ in BUFFERS[t][0] if t else []:
+                t, x = buffer_type(p), translator_type(p)
+                chans = [(a, y) for a, y, _ in BUFFERS[t][0]] if t else TRANSLATORS[x][0] if x else []
+                for a, y in chans:
                     for u, w in ((a, y), (y, a)):
                         if p["pins"].get(u) == n and p["pins"].get(w):
                             steps.append(p["pins"][w])
@@ -229,10 +233,16 @@ def check_brief_d(repo, pro, pins, rows):
         return
     rails = {"GND"} | {nl.net(r, p) for r, pp in nl.parts.items() if pp["part"] == "PMOD_PERIPH_2x6"
                        for p in ("6", "12")}
+    # The Pmod's 3.3 V past the current-sense resistor (Lab 04's +3V3_PMOD, after R3) is a rail
+    # too: R4 pulls the dongle's TXD up to it, and TP2 sits on it.
+    rails |= {n for r, a, b, v in nl.resistors() for x, n in ((nl.net(r, a), nl.net(r, b)), (nl.net(r, b), nl.net(r, a)))
+              if x in rails - {"GND"} and n and (parse_value(v) or 1e9) <= 100}
+    # A translator's VCCB, fed from the connector, is the other side's supply, not a signal.
+    supplies = {p["pins"].get(TRANSLATORS[t][3]) for p in nl.parts.values() for t in [translator_type(p)] if t}
     bad, good = [], []
     for ref in sorted(ext):
         for pin, net in sorted(nl.parts[ref]["pins"].items()):
-            if net == "GND":
+            if net == "GND" or net in supplies:
                 continue
             cands = line_nets(nl, net, rails)
             hit = [(n, t) for n in cands for t in tps.get(n, [])]

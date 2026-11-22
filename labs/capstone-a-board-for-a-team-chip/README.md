@@ -18,8 +18,8 @@ cp ~/pcb101/labs/capstone-a-board-for-a-team-chip/DESIGN.md .          # once
 | ci | both | Lab 05's check passes: `ci/build.sh` passes the board check, builds every output, and leaves nothing untracked |
 | design | both | `DESIGN.md` has its four sections filled in and no TODO, at least 3 numbered requirements and 3 numbered decisions, every decision a value with its unit and a `Meets:` line, and every requirement met |
 | history | both | at least 2 commits change a `.kicad_sch` or `.kicad_pcb` |
-| pmod | D | Lab 04's check passes (`check_pmod.py --protect --bringup BRINGUP.md`, with `--pins` if given) |
-| test points | D | every non-GND pin of a connector other than the Pmods has a test point on its net, or further along its line to the Pmod pin: past a series resistor, or through a buffer from the Lab 04 check's list, but not on GND or the sockets' 3.3 V, so the far side of a pull-up doesn't count |
+| pmod | D | Lab 04's check passes (`check_pmod.py --protect --bringup BRINGUP.md`, with `--pins` if given): on each line that crosses from another supply, a buffer and a resistor, or a dual-supply translator such as the SN74LVC1T45 for a part at another voltage |
+| test points | D | every non-GND pin of a connector other than the Pmods has a test point on its net, or further along its line to the Pmod pin: past a series resistor, or through a buffer or a translator from the Lab 04 check's lists, but not on GND or the sockets' 3.3 V on either side of the current-sense resistor, so the far side of a pull-up doesn't count. A connector pin that feeds a translator's VCCB carries the other side's supply, not a signal, and needs no test point |
 | connector | A | one `Conn_02x16` symbol, with pins 1, 6, 9, 14, 17, 22, 25, 30 and 31 on GND and pin 32 on a 3.3 V net or open, as J13 has them |
 | pin | A | exactly one of J13's twelve analog lines connected (pins 4, 5, 7, 10, 12, 13, 20, 21, 23, 26, 28, 29), and none of the eight that are ground on the SKY130 breakout |
 | filter | A | that pin's net has a two-pin capacitor to GND and a two-pin resistor to a source net |

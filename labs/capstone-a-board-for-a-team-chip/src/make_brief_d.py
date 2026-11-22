@@ -74,8 +74,10 @@ def main():
     mr.run(["kicad-cli", "sch", "upgrade", "--force", sch])
     comps, pad_net = mr.netlist(sch, work)
     mr.routes = routes
-    # TP4's reference under it, clear of the via above it and of TP2's reference.
+    # TP4's reference under it, clear of the via above it and of TP2's reference; TP3's
+    # above it and 1 mm to the right, clear of R1's above R1.
     mr.REF_AT["04"]["TP4"] = (TP4[0], TP4[1] + 1.75)
+    mr.REF_AT["04"]["TP3"] = (TP3[0] + 1.0, TP3[1] - 1.65)
     place = dict(mr.PLACE4, TP3=(TP3[0], TP3[1], 0), TP4=(TP4[0], TP4[1], 0))
     mr.build_board(os.path.join(out, mr.NAME + ".kicad_pcb"), comps, pad_net, place, "04", True, True)
     for f in (mr.NAME + ".kicad_prl",):
