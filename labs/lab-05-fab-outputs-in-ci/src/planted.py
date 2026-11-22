@@ -8,7 +8,7 @@ track that runs along the top edge from J1 to J2, at y = 51.6 mm, moves 1 mm dow
 y = 52.6 mm, and the two tracks it meets stretch to follow it. Its lower edge is then
 0.16 mm from the upper row of J1's pads, less than the 0.2 mm clearance from each of those
 pads that isn't on +3V3. DRC reports only one clearance error per track unless it's run with
---all-track-errors, so the board check reports one, with pad 7, and an incomplete thermal
+--all-track-errors, so the board check reports one, with pad 9, and an incomplete thermal
 relief on pad 11, whose GND zone connection the track now blocks. With --all-track-errors,
 DRC lists clearance errors with pads 7 to 11 and with the GND zone. Nothing is disconnected.
 """
