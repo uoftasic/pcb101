@@ -14,6 +14,9 @@ STAGE is one of:
   swapped     the routed board with the dongle header's TXD and RXD swapped in the schematic
   protected   Lab 04's reference board: a buffer and a resistor on each UART line, ESD, a
               current-sense point
+  translated  Lab 04's board with a dual-supply translator (SN74LVC1T45) on each UART line
+              instead of the buffers, and the dongle's VCC on a fourth pin of J4, placed but
+              not routed; Lab 04's self-test checks it
 
 It runs inside the course's pinned KiCad image, because it needs kicad-cli (to upgrade the
 schematic to KiCad 10's format and to export its netlist) and KiCad's pcbnew Python module
@@ -326,12 +329,64 @@ BUF = "74xGxx:74LVC2G17"
 SOT6_FP = "Package_TO_SOT_SMD:SOT-23-6"
 
 
+TRANSLATOR = "Logic_LevelTranslator:SN74LVC1T45DBV"
+
+
+def supply(s, ref, num, net, toward):
+    """A supply pin at the top of a symbol: a stub up, a short wire left or right, and the
+    net's label at its end, written level."""
+    end, _ = s.stub(ref, num)
+    far = (end[0] + (5.08 if toward == "right" else -5.08), end[1])
+    s.wire(end, far)
+    s.label(net, far, 0 if toward == "right" else 180)
+
+
+def translators(s):
+    """The translated variant's UART lines (stage translated): each through one TI
+    SN74LVC1T45, a dual-supply translator with Ioff on both ports, its A port on +3V3_PMOD and
+    its B port on the dongle's own VCC (J4 pin 4). U1 carries ui[0] from B to A (DIR on GND)
+    and on through R1; U2 carries uo[0] from A to B (DIR on +3V3_PMOD, VCCA's net). A
+    capacitor sits at each VCC pin, and R4 holds DONGLE_VCC at GND while no dongle is plugged
+    in, so that both ports then go high-impedance."""
+    s.place("R1", "Device:R", 205.74, 86.36, 90, value="1k", footprint=R_FP)
+    s.attach("R1", "1", "L:UART_RX")
+    for ref, y, a, b, d in (("U1", 86.36, "RX_BUF", "DONGLE_TXD", "P:GND"),
+                            ("U2", 116.84, "UART_TX", "DONGLE_RXD", "L:+3V3_PMOD")):
+        s.place(ref, TRANSLATOR, 233.68, y, 0, value="SN74LVC1T45DBV",
+                ref_at=(238.76, y + 10.16, "left"), value_at=(238.76, y + 12.7, "left"))
+        if ref == "U1":
+            s.wire(s.points[("R1", "2")][:2], s.points[("U1", "3")][:2])
+            s.label("RX_BUF", (210.82, 86.36), 0)
+        else:
+            s.attach(ref, "3", f"L:{a}")
+        s.attach(ref, "4", f"L:{b}")
+        s.attach(ref, "5", d)
+        s.attach(ref, "2", "P:GND")
+        supply(s, ref, "1", "+3V3_PMOD", "left")
+        supply(s, ref, "6", "DONGLE_VCC", "right")
+    for ref, x, y, net in (("C1", 264.16, 137.16, "+3V3_PMOD"), ("C2", 274.32, 137.16, "DONGLE_VCC"),
+                           ("C3", 269.24, 157.48, "+3V3_PMOD"), ("C4", 279.4, 157.48, "DONGLE_VCC")):
+        s.place(ref, "Device:C", x, y, 0, value="100n", footprint=C_FP,
+                ref_at=(x - 2.54, y - 1.27, "right"), value_at=(x - 2.54, y + 1.27, "right"))
+        s.attach(ref, "1", f"L:{net}")
+        s.attach(ref, "2", "P:GND")
+    s.place("R4", "Device:R", 271.78, 86.36, 0, value="100k", footprint=R_FP,
+            ref_at=(274.32, 85.09, "left"), value_at=(274.32, 87.63, "left"))
+    s.attach("R4", "1", "L:DONGLE_VCC")
+    s.attach("R4", "2", "P:GND")
+    s.text("U1, U2: SN74LVC1T45, A on the kit's 3.3 V\n"
+           "after R3, B on the dongle's VCC. U1: B to A\n"
+           "(DIR on GND); U2: A to B (DIR on VCCA).\n"
+           "R4 holds the dongle's VCC at 0 V while it's\n"
+           "unplugged; C1 to C4 decouple the VCC pins.", (185.42, 132.08))
+
+
 def pmod_pins(io):
     """Pmod symbol pin number for IO1..IO8."""
     return str(io) if io <= 4 else str(io + 2)
 
 
-def schematic(sheet, lab, flags=True, swap=False):
+def schematic(sheet, lab, flags=True, swap=False, translated=False):
     s = sheet
     protect = lab == "04"
     rx_hdr = "DONGLE_TXD" if protect else "UART_RX"     # the net on the header's pin 2
@@ -371,15 +426,24 @@ def schematic(sheet, lab, flags=True, swap=False):
            (152.4, 152.4))
 
     # The header for the USB-UART dongle.
-    s.place("J4", "Connector_Generic:Conn_01x03", 228.6, 50.8, 180, value="USB-UART",
-            footprint="Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+    if translated:
+        s.place("J4", "Connector_Generic:Conn_01x04", 228.6, 50.8, 180, value="USB-UART",
+                footprint="Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical")
+        s.attach("J4", "4", "L:DONGLE_VCC")
+        s.text("J4: a dongle at 1.65 V to 5.5 V. Pin 2 to its\nTXD, pin 3 to its RXD, pin 4 to its VCC.",
+               (205.74, 60.96))
+    else:
+        s.place("J4", "Connector_Generic:Conn_01x03", 228.6, 50.8, 180, value="USB-UART",
+                footprint="Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+        s.text("J4: header for a 3.3 V USB-UART dongle.\nPin 2 goes to the dongle's TXD, pin 3 to its RXD.\n"
+               "Leave the dongle's VCC unconnected.", (205.74, 60.96))
     s.attach("J4", "1", "P:GND")
     s.attach("J4", "2", f"L:{rx_hdr}")
     s.attach("J4", "3", f"L:{tx_hdr}")
-    s.text("J4: header for a 3.3 V USB-UART dongle.\nPin 2 goes to the dongle's TXD, pin 3 to its RXD.\n"
-           "Leave the dongle's VCC unconnected.", (205.74, 60.96))
 
-    if protect:
+    if protect and translated:
+        translators(s)
+    elif protect:
         # Each UART line goes through one buffer of U1 and then a resistor. ui[0] runs from
         # the dongle header on the right of the sheet to the input socket on the left, so its
         # buffer (unit 1) points left; uo[0]'s (unit 2) points right.
@@ -391,7 +455,9 @@ def schematic(sheet, lab, flags=True, swap=False):
         s.label("RX_BUF", (210.82, 86.36), 0)
         s.place("R4", "Device:R", 264.16, 82.55, 0, value="100k", footprint=R_FP,
                 ref_at=(266.7, 81.28, "left"), value_at=(266.7, 83.82, "left"))
-        s.attach("R4", "1", "P:+3V3")
+        end, _ = s.stub("R4", "1")
+        s.wire(end, (end[0] + 2.54, end[1]))
+        s.label("+3V3_PMOD", (end[0] + 2.54, end[1]), 0)
         s.wire(s.points[("U1", "1")][:2], s.points[("R4", "2")][:2])
         s.label("DONGLE_TXD", (250.19, 86.36), 0)
         s.place("U1", BUF, 233.68, 99.06, 0, value="74LVC2G17", footprint=SOT6_FP, unit=2,
@@ -403,13 +469,21 @@ def schematic(sheet, lab, flags=True, swap=False):
         s.attach("R2", "2", "L:DONGLE_RXD")
         s.place("U1", BUF, 264.16, 127.0, 0, value="74LVC2G17", footprint=SOT6_FP, unit=3,
                 ref_at=(256.54, 125.73, "right"), value_at=(256.54, 128.27, "right"))
-        s.attach("U1", "5", "P:+3V3")
         s.attach("U1", "2", "P:GND")
         s.place("C1", "Device:C", 279.4, 127.0, 0, value="100n", footprint=C_FP,
                 ref_at=(276.86, 125.73, "right"), value_at=(276.86, 128.27, "right"))
-        s.attach("C1", "1", "P:+3V3")
+        # U1's VCC and C1's top on one wire, labelled +3V3_PMOD at its left end.
+        vcc, _ = s.stub("U1", "5")
+        top, _ = s.stub("C1", "1")
+        corner = (top[0], vcc[1])
+        s.wire(vcc, corner)
+        s.wire(top, corner)
+        s.wire(vcc, (vcc[0] - 5.08, vcc[1]))
+        s.junction(vcc)
+        s.label("+3V3_PMOD", (vcc[0] - 5.08, vcc[1]), 180)
         s.attach("C1", "2", "P:GND")
-        s.text("U1: two Schmitt-trigger buffers on the kit's +3V3.\n"
+        s.text("U1: two Schmitt-trigger buffers on the kit's 3.3 V,\n"
+               "after R3, so the current spy sees U1's current.\n"
                "With the kit off, each pin of U1 passes at most\n"
                "10 uA (Ioff), so the dongle can't power the chip.\n"
                "R1: at most 3.3 V / 1k = 3.3 mA if something\n"
@@ -417,7 +491,8 @@ def schematic(sheet, lab, flags=True, swap=False):
                "R2: at most (3.3 - 0.6) V / 1k = 2.7 mA into an\n"
                "unpowered dongle.\n"
                "R4 holds U1's input high with no dongle in J4.\n"
-               "C1 decouples U1, next to its VCC pin.", (185.42, 121.92))
+               "C1 decouples U1, next to its VCC pin.", (185.42, 120.65))
+    if protect:
         s.place("D1", "Power_Protection:SP0502BAHT", 266.7, 50.8, 0, value="SP0502BAHT",
                 ref_at=(271.78, 49.53, "left"), value_at=(271.78, 52.07, "left"))
         s.attach("D1", "1", "L:DONGLE_TXD")
@@ -447,6 +522,19 @@ def schematic(sheet, lab, flags=True, swap=False):
         s.flag((38.1, 180.34), 0)
         s.text("Power enters through the Pmod connectors,\nso PWR_FLAG tells ERC where it comes from.",
                (45.72, 177.8))
+        if protect:
+            # U1's VCC is a power input on +3V3_PMOD, which takes its supply through R3, a
+            # passive part, so ERC needs a PWR_FLAG on that net too.
+            s.flag((50.8, 190.5), 0)
+            s.wire((50.8, 190.5), (55.88, 190.5))
+            s.label("+3V3_PMOD", (55.88, 190.5), 0)
+            s.text("+3V3_PMOD is fed through R3, a passive part,\nso it needs a PWR_FLAG of its own.",
+                   (71.12, 187.96))
+        if translated:
+            # The translators' VCCB pins are power inputs on DONGLE_VCC, which only J4 feeds.
+            s.flag((50.8, 198.12), 0)
+            s.wire((50.8, 198.12), (55.88, 198.12))
+            s.label("DONGLE_VCC", (55.88, 198.12), 0)
 
 
 # --------------------------------------------------------------------------------------
@@ -491,15 +579,26 @@ PLACE3 = {
     "SW1": (146.45, 67.0, 270),
 }
 # Lab 04 puts the protection between J1 and the dongle header J4: D1 at the header, U1 to its
-# upper right, R1 between U1 and J1's pin 1 (ui[0]), R2 under U1's 2Y pin, C1 beside U1's VCC
-# pin, and R4 above J4. U1 at 0 degrees has pins 1 to 3 down its left side (1A, GND, 2A) and
-# 6 to 4 down its right (1Y, VCC, 2Y).
+# upper right, R1 between U1 and J1's pin 1 (ui[0]), R2 under U1's 2Y pin, C1 to the right of
+# U1's VCC pin, and R4 above J4. U1 at 0 degrees has pins 1 to 3 down its left side (1A, GND,
+# 2A) and 6 to 4 down its right (1Y, VCC, 2Y).
 PLACE4 = dict(PLACE3, **{
     "R1": (114.70, 61.5, 270), "R2": (119.0, 68.6, 270), "R3": (124.86, 66.4, 270),
     "R4": (112.4, 61.6, 270),
-    "U1": (117.8625, 64.6, 0), "C1": (121.0, 66.6375, 270),
+    "U1": (117.8625, 64.6, 0), "C1": (121.9, 66.0, 0),
     "D1": (113.9, 69.49, 0),
     "TP1": (121.5, 63.0, 0), "TP2": (121.5, 70.0, 0),
+})
+
+# The translated variant (stage translated), placed but not routed: Lab 04's board with U1's
+# two buffers, R2 and C1 replaced by two SN74LVC1T45s turned round (180 degrees), so that each
+# has B (pin 4), DIR (5) and VCCB (6) down its left side, toward J4, and A (3), GND (2) and
+# VCCA (1) down its right. U1 sits where Lab 04's U1 does, U2 below it, a capacitor beside
+# each VCC pin, and J4 has a fourth pin for the dongle's VCC.
+PLACE_T = dict({k: v for k, v in PLACE4.items() if k not in ("R2", "R4", "C1")}, **{
+    "U1": (117.8625, 64.6, 180), "U2": (117.8625, 72.0, 180),
+    "C1": (121.9, 66.0, 0), "C2": (117.0, 67.3, 0), "C3": (121.9, 74.6, 0), "C4": (117.0, 74.7, 0),
+    "R4": (112.6, 76.4, 0),
 })
 
 SIG, PWR = 0.25, 0.4
@@ -535,6 +634,13 @@ def routes(lab, swapped=False):
         r.append(("F.Cu", PWR, [(124.86, 63.0), (121.5, 63.0)]))
         r.append(("F.Cu", PWR, [(124.86, 67.4), (124.86, 70.0), (124.86, 74.62)] + sw_low))
         r.append(("F.Cu", PWR, [(124.86, 70.0), (121.5, 70.0)]))
+        # U1, C1 and R4 take their 3.3 V from +3V3_PMOD, after R3, so that the current spy
+        # sees their current too: TP2 up to C1's pad 1, and C1's pad 1 to U1's VCC (pin 5)
+        # past a via that takes +3V3_PMOD to R4. C1's other pad goes up to a via into the
+        # bottom layer's ground.
+        r.append(("F.Cu", PWR, [(121.5, 70.0), (121.5, 67.4), (120.8625, 66.7625), (120.8625, 66.0)]))
+        r.append(("F.Cu", PWR, [(119.0, 64.6), (120.4, 64.6), (120.8625, 65.0625), (120.8625, 66.0)]))
+        r.append(("F.Cu", PWR, [(122.9375, 66.0), (122.9375, 64.4)]))
         # ui[0]: J1 pin 1 to R1, R1 to U1's 1Y (pin 6) over the top of U1, and U1's 1A (pin 1)
         # out to D1 pin 1 and J4 pin 2, with R4's lower pad joining it.
         r.append(("F.Cu", SIG, [(114.70, PMOD_Y), (114.70, 60.5)]))
@@ -542,13 +648,12 @@ def routes(lab, swapped=False):
         r.append(("F.Cu", SIG, [(116.725, 63.65), (113.6, 63.65), (113.6, 67.9025), (112.9625, 68.54),
                                 (110.0, 68.54)]))
         r.append(("F.Cu", SIG, [(112.4, 62.6), (112.4, 63.65), (113.6, 63.65)]))
-        # R4's 3.3 V comes from J1's pin 6, on the far side of the ui[0] line from U1's.
-        r.append(("F.Cu", PWR, [(102.0, PMOD_Y), (102.0, 58.6), (104.0, 60.6), (112.4, 60.6)]))
-        # U1's supply: TP1's +3V3 branch down to C1's pad, then on to VCC (pin 5); GND (pin 2)
-        # and C1's other pad each go to a via into the bottom layer's ground.
-        r.append(("F.Cu", PWR, [(121.5, 63.0), (121.0, 63.5), (121.0, 65.6), (120.0, 64.6), (119.0, 64.6)]))
+        # R4's +3V3_PMOD is on the far side of the ui[0] line (J1 pin 1, R1, U1) from C1, so it
+        # goes down the via beside U1's VCC pin, along the bottom layer under U1 and R1, and up
+        # a via above R4. U1's GND (pin 2) goes to a via into the bottom layer's ground.
+        r.append(("B.Cu", PWR, [(120.4, 64.6), (115.1, 59.3), (112.4, 59.3)]))
+        r.append(("F.Cu", PWR, [(112.4, 59.3), (112.4, 60.6)]))
         r.append(("F.Cu", PWR, [(116.725, 64.6), (115.5, 64.6)]))
-        r.append(("F.Cu", PWR, [(121.0, 67.675), (122.6, 67.675)]))
         # uo[0]: J3 pin 1 around the bottom of the board to U1's 2A (pin 3); 2Y (pin 4) down to
         # R2, then R2 to a via, and along the bottom layer under D1 to J4's pin 3, which is a
         # through-hole pad. That is the one place two lines cross: 2Y is beside VCC, and 2A
@@ -562,17 +667,17 @@ def routes(lab, swapped=False):
     return r
 
 
-# Vias take the net of a track that ends on them (GND if none does). Two of Lab 04's carry
-# pieces of the top layer's ground pour that its tracks cut off from the rest: (106, 58.4)
-# the piece under J1, closed off by R4's +3V3 track, and (118, 58) the piece between J1 and
-# J2, closed off by the ring of J1 pin 1, R1, U1, C1, TP1 and J2's +3V3. Without them, J1's
-# pads 5 and 11 reach only islands of the pour, and DRC reports a starved_thermal error on each.
-VIAS = {"03": [], "04": [(116.0, 69.49), (115.5, 64.6), (122.6, 67.675), (119.0, 71.08), (106.0, 58.4),
-                         (118.0, 58.0)]}
+# Vias take the net of a track that ends on them (GND if none does). Lab 04's take GND down
+# from D1, U1 and C1, DONGLE_RXD under D1 to J4, and +3V3_PMOD under U1 and R1 to R4.
+VIAS = {"03": [], "04": [(116.0, 69.49), (115.5, 64.6), (122.9375, 64.4), (119.0, 71.08), (120.4, 64.6),
+                         (112.4, 59.3)]}
 
-# Reference designators moved off their library positions, where they would print over a
-# neighbour's pads: R4's onto the left of it, R2's onto the left of it, TP2's under it.
-REF_AT = {"03": {}, "04": {"R4": (110.6, 61.6), "R2": (117.3, 68.6), "TP2": (121.5, 71.75)}}
+# Reference designators moved off their library positions, as (x, y) or (x, y, angle): R4's
+# and R2's onto the left of them and TP2's under it, where they would print over a
+# neighbour's pads; C1's under it, off TP1; and R1's above it and level, where it would crowd
+# U1's.
+REF_AT = {"03": {}, "04t": {}, "04": {"R4": (110.6, 61.6), "R2": (117.3, 68.6), "TP2": (121.5, 71.75),
+                           "C1": (122.2, 67.95), "R1": (114.7, 58.95, 0)}}
 
 SILK = [
     ("INPUT", 108.35, 59.7), ("BIDIR", 131.21, 59.7), ("OUTPUT", 154.07, 59.7),
@@ -663,7 +768,10 @@ def build_board(pcb_path, comps, pad_net, place, lab, route, zones, swapped=Fals
         if ref in ("J1", "J2", "J3"):
             fp.SetLocked(True)
         if ref in REF_AT.get(lab, {}):
-            fp.Reference().SetPosition(pt(*REF_AT[lab][ref]))
+            at = REF_AT[lab][ref]
+            fp.Reference().SetPosition(pt(at[0], at[1]))
+            if len(at) > 2:
+                fp.Reference().SetTextAngle(pcbnew.EDA_ANGLE(at[2], pcbnew.DEGREES_T))
         for p in fp.Pads():
             n = pad_net.get((ref, p.GetNumber()))
             if n:
@@ -859,7 +967,7 @@ def write_template(out):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("stage", choices=["template", "noflags", "schematic", "connectors", "placed", "routed",
-                                      "swapped", "protected"])
+                                      "swapped", "protected", "translated"])
     ap.add_argument("out", help="folder to write the project into; its KiCad files are replaced")
     args = ap.parse_args()
     out = args.out
@@ -878,15 +986,18 @@ def main():
                 shutil.rmtree(path) if os.path.isdir(path) else os.remove(path)
     work = tempfile.mkdtemp(prefix="pcb101-ref-")
     write_template(out)
-    lab = "04" if args.stage == "protected" else "03"
+    lab = "04" if args.stage in ("protected", "translated") else "03"
     title = "SimProc Pmod" + (", protected" if lab == "04" else "")
-    sheet = Sheet(work, title, f"PCB101 Lab {lab} reference")
-    schematic(sheet, lab, flags=args.stage != "noflags", swap=args.stage == "swapped")
+    sheet = Sheet(work, title, f"PCB101 Lab {lab} reference" + (", translators" if args.stage == "translated" else ""))
+    schematic(sheet, lab, flags=args.stage != "noflags", swap=args.stage == "swapped",
+              translated=args.stage == "translated")
     sch = os.path.join(out, NAME + ".kicad_sch")
     sheet.write(sch)
     run(["kicad-cli", "sch", "upgrade", "--force", sch])
     comps, pad_net = netlist(sch, work)
     place = PLACE4 if lab == "04" else PLACE3
+    if args.stage == "translated":
+        place, lab = PLACE_T, "04t"
     if args.stage in ("noflags", "schematic"):
         place = {}
     elif args.stage == "connectors":

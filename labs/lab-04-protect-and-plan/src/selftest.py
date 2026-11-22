@@ -20,6 +20,18 @@ Runs labs/common/check_pmod.py --protect on:
       C1 moved away from U1         C1 moved 34 mm to the right on the board, so no capacitor
                                     is within 3 mm of U1's VCC pin: ui[0] and uo[0], since both
                                     lines go through U1
+  - Lab 03's make_reference.py stage translated, written into results/selftest/translated/:
+    Lab 04's board with a TI SN74LVC1T45 dual-supply translator on each UART line instead of
+    U1's buffers (U1 on ui[0], U2 on uo[0]), each with VCCB on the dongle's VCC from a fourth
+    pin of J4. It's placed but not routed, so it runs without the board check, and the
+    reference plan goes with it. It must PASS. Then three copies of it, each changed by a text
+    edit, which must FAIL ui[0]:
+      translator, DIR the wrong way   U1's DIR on +3V3 instead of GND, so that it would send
+                                      A to B on a line that runs B to A
+      translator, VCCB on 3.3 V       U1's VCCB on +3V3_PMOD, the kit's 3.3 V, instead of the
+                                      dongle's VCC
+      translator turned round         U1 turned 180 degrees, so that its A port faces the
+                                      dongle and its B port the chip
 Then check_bringup.py on the template (FAIL) and on the reference plan (PASS). The copies and
 each case's output go in results/selftest/. Exit status 0 if every case gives its expected
 verdict.
@@ -38,6 +50,7 @@ OUT = os.path.join(LAB, "results", "selftest")
 LAB03 = os.path.join(REPO, "labs", "lab-03-a-pmod-for-one-projects-pins", "solutions", "simproc-pmod")
 SOLUTION = os.path.join(LAB, "solutions", "simproc-pmod")
 TEMPLATE_PLAN = os.path.join(LAB, "BRINGUP.md")
+MAKE_REFERENCE = os.path.join(REPO, "labs", "lab-03-a-pmod-for-one-projects-pins", "src", "make_reference.py")
 
 
 def run(cmd):
@@ -89,6 +102,22 @@ def set_value(sch, ref, old, new):
         f.write(s[:v] + f'(property "Value" "{new}"' + s[v + len(f'(property "Value" "{old}"'):])
 
 
+def set_power(sch, at, old, new):
+    """Change the power symbol at `at` from one net to another, as replacing a GND symbol
+    with a +3V3 one does: its lib_id and its Value, which names the net."""
+    with open(sch) as f:
+        s = f.read()
+    anchor = f'(lib_id "power:{old}")\n\t\t(at {at}'
+    if s.count(anchor) != 1:
+        raise SystemExit(f"selftest: expected one {old} symbol at {at} in {sch}, found {s.count(anchor)}")
+    i = s.index(anchor)
+    v = s.index(f'(property "Value" "{old}"', i)
+    s = (s[:i] + f'(lib_id "power:{new}")\n\t\t(at {at}' + s[i + len(anchor):v] + f'(property "Value" "{new}"'
+         + s[v + len(f'(property "Value" "{old}"'):])
+    with open(sch, "w") as f:
+        f.write(s)
+
+
 def drop_symbol(sch, ref):
     """Delete every placed unit of a symbol, as selecting it and pressing Delete does."""
     with open(sch) as f:
@@ -133,7 +162,24 @@ def main():
     set_value(os.path.join(big_r2, "pmod.kicad_sch"), "R2", "1k", "10k")
 
     far_c1 = copy(SOLUTION, "c1-moved")
-    edit(os.path.join(far_c1, "pmod.kicad_pcb"), "(at 121 66.6375 -90)", "(at 155 66.6375 -90)")
+    edit(os.path.join(far_c1, "pmod.kicad_pcb"), "(at 121.9 66)", "(at 155.9 66)")
+
+    # The translated variant, from the generator, and three copies of it with one fault each.
+    translated = os.path.join(OUT, "translated")
+    shutil.rmtree(translated, ignore_errors=True)
+    rc, out = run([sys.executable, MAKE_REFERENCE, "translated", translated])
+    if rc != 0:
+        raise SystemExit(f"selftest: make_reference.py translated exited {rc}:\n{out}")
+    shutil.copy(os.path.join(SOLUTION, "BRINGUP.md"), os.path.join(translated, "BRINGUP.md"))
+    dir_wrong = copy(translated, "translator-dir")
+    set_power(os.path.join(dir_wrong, "pmod.kicad_sch"), "220.98 91.44 270)", "GND", "+3V3")
+    vccb_kit = copy(translated, "translator-vccb")
+    edit(os.path.join(vccb_kit, "pmod.kicad_sch"), '(label "DONGLE_VCC"\n\t\t(at 241.3 73.66 0)',
+         '(label "+3V3_PMOD"\n\t\t(at 241.3 73.66 0)')
+    turned_t = copy(translated, "translator-turned")
+    edit(os.path.join(turned_t, "pmod.kicad_sch"),
+         '(lib_id "Logic_LevelTranslator:SN74LVC1T45DBV")\n\t\t(at 233.68 86.36 0)',
+         '(lib_id "Logic_LevelTranslator:SN74LVC1T45DBV")\n\t\t(at 233.68 86.36 180)')
 
     protect_rows = {"ui[0]", "uo[0]", "ESD J4.2", "ESD J4.3", "sense"}
     nb = ["--no-board-check"]
@@ -147,6 +193,10 @@ def main():
         ("solution, R1 = 100 ohm", small_r1, nb, 1, "-", "PASS", {"ui[0]"}, "below 330 Ω"),
         ("solution, R2 = 10k ohm", big_r2, nb, 1, "-", "PASS", {"uo[0]"}, "above 5.1 kΩ"),
         ("C1 moved away from U1", far_c1, nb, 1, "-", "PASS", {"ui[0]", "uo[0]"}, "no decoupling"),
+        ("translators, placed", translated, nb, 0, "-", "PASS", set(), "SN74LVC1T45DBV, B pin 4 to A pin 3"),
+        ("translator, DIR the wrong way", dir_wrong, nb, 1, "-", "PASS", {"ui[0]"}, "so DIR must be on GND"),
+        ("translator, VCCB on 3.3 V", vccb_kit, nb, 1, "-", "PASS", {"ui[0]"}, "the kit's 3.3 V"),
+        ("translator turned round", turned_t, nb, 1, "-", "PASS", {"ui[0]"}, "turned round"),
     ]
     good, total = 0, 0
     for name, folder, args, rc_w, board_w, plan_w, fails_w, text_w in cases:
@@ -154,7 +204,7 @@ def main():
         ok = (rc, board, plan, fails) == (rc_w, board_w, plan_w, fails_w) and text_w in out
         good += ok
         total += 1
-        print(f"{'ok  ' if ok else 'BAD '} {name:30} exit {rc}, board check {board}, plan {plan}, "
+        print(f"{'ok  ' if ok else 'BAD '} {name:31} exit {rc}, board check {board}, plan {plan}, "
               f"failing rows {', '.join(sorted(fails)) or 'none'}")
         with open(os.path.join(OUT, re.sub(r"\W+", "-", name).strip("-") + ".txt"), "w") as f:
             f.write(out)
@@ -166,7 +216,7 @@ def main():
         ok = rc == want
         good += ok
         total += 1
-        print(f"{'ok  ' if ok else 'BAD '} {name:30} exit {rc}: {out.strip().splitlines()[-1]}")
+        print(f"{'ok  ' if ok else 'BAD '} {name:31} exit {rc}: {out.strip().splitlines()[-1]}")
         if not ok:
             print(out)
     print(f"{good} of {total} cases gave the expected verdict")

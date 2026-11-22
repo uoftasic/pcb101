@@ -19,28 +19,31 @@ BOARD is a .kicad_pro, or a folder holding exactly one. The checks, in order:
    Pin numbers follow the demo board's sockets: bits 0-3 of a bus on pins 1-4, bits 4-7 on
    pins 7-10. "to" asks for the pin to reach a pin of another part (the dongle header, found
    as the connector other than the Pmods whose pin 1 is on GND), on the same net, through
-   one series resistor, or through one of rule 5's buffers the right way round (and a
-   resistor, or not). "switch" asks for a switch from the pin's line to the 3.3 V supply,
+   one series resistor, or through one of rule 5's buffers or translators the right way round
+   (and a resistor, or not). "switch" asks for a switch from the pin's line to the 3.3 V supply,
    and "pull": "down" for a resistor from the line to GND. A resistor counts if it's a
    two-pin part with a reference starting R, or one element of a bussed network
    (R_Network*) or an isolated array (R_Pack*).
 
 With --protect (Lab 04), three more:
 
-5. Every "crossing" pin reaches its part through a buffer and then one resistor, in the
-   direction the line runs. On a ui or uio line, into the chip, the header pin's net is on
-   the buffer's input (A) and its output (Y) reaches the Pmod pin through one resistor; on a
-   uo line, out of the chip, the Pmod pin's net is on the input and the output reaches the
-   header pin through one resistor. A and Y come from the pin numbers of KiCad's symbol, one
-   channel at a time (1A with 1Y, 2A with 2Y), so a buffer turned round fails, and says so.
-   The row prints what it measured, and also needs:
+5. Every "crossing" pin reaches its part through a buffer and then one resistor, or through
+   a dual-supply translator (f), in the direction the line runs. On a ui or uio line, into
+   the chip, the header pin's net is on the buffer's input (A) and its output (Y) reaches the
+   Pmod pin through one resistor; on a uo line, out of the chip, the Pmod pin's net is on the
+   input and the output reaches the header pin through one resistor. A and Y come from the
+   pin numbers of KiCad's symbol, one channel at a time (1A with 1Y, 2A with 2Y), so a buffer
+   turned round fails, and says so. The row prints what it measured, and also needs:
    a. the buffer to be one of BUFFERS, found by its symbol's name or its value: the 74LVC1G
       and 74LVC2G 17, 34 and 125, and the 74AUP1G17, 74AUP1G34 and 74AUP1G125, all in KiCad's
       74xGxx library. Each runs from one supply, and TI specifies each for partial power down:
       with its supply at 0 V, a pin passes at most 10 µA (Ioff). The 74AHC and 74HC parts
       have no Ioff, and the 1G07's output is open drain, so they aren't on the list. A 125's
       OE is active low, and must be on GND.
-   b. its VCC pin on the Pmod's 3.3 V (the net of pins 6 and 12) and its GND pin on GND.
+   b. its VCC pin on the Pmod's 3.3 V, on either side of the current-sense resistor: the net
+      of pins 6 and 12, or the far side of a resistor of 100 Ω or less from it (Lab 04's
+      +3V3_PMOD, past R3, where the current spy reads the buffer's current too). Its GND pin
+      on GND.
    c. the resistor in its window, compared in ohms. On a ui line, 330 Ω to 8.2 kΩ: 3.3 V / R
       is the most current a fight with a pin driving the other way can pass (10 mA at 330 Ω),
       and 3.3 V × 36 kΩ / (36 kΩ + R) is the high level against the RP2350's strongest
@@ -52,11 +55,44 @@ With --protect (Lab 04), three more:
       and 3.3 V × R / (R + 16.5 kΩ) is the low level against a CH340's strongest RX pull-up,
       which reaches its 0.8 V input low at 5.28 kΩ. The window ends at 5.1 kΩ, the E24 value
       under that, so that it ends on a value you can buy.
-   d. a capacitor (reference C...) from that 3.3 V to GND, with a pad within 3 mm (centre to
-      centre) of the buffer's VCC pad on the board.
-   e. on a ui or uio line, a resistor from the buffer's input to the 3.3 V (or the far side of
+   d. a capacitor (reference C...) from the net the buffer's VCC pin is on to GND, with a pad
+      within 3 mm (centre to centre) of the VCC pad on the board.
+   e. on a ui or uio line, a resistor from the buffer's input to the 3.3 V (on either side of
       the current-sense resistor) or to GND, so that the input doesn't float while no dongle
       is plugged in. A uo line doesn't need one.
+   f. Or a translator, one of TRANSLATORS: TI's SN74LVC1T45 (the DBV, DCK and DRL packages)
+      and SN74LVC2T45 (DCU), in KiCad's Logic_LevelTranslator library, found by the symbol's
+      name or its value. Each has two supplies, VCCA for its A port and VCCB for its B port,
+      for a project whose other side runs at another voltage (a 1.8 V part, say). The rule
+      relies on TI's datasheets, SCES515N and SCES516N (both revised June 2024):
+        "VCC isolation feature – if either VCC input is at GND, both ports are in the
+        high-impedance state"; "Ioff supports partial-power-down mode operation", with Ioff
+        at most ±2 µA from -40 to 85 °C, on the A port with VCCA at 0 V and on the B port
+        with VCCB at 0 V, for any pin voltage from 0 to 5.5 V;
+        "DIR input circuit referenced to VCCA", and the function table: DIR low, "B data to
+        A bus"; DIR high, "A data to B bus". The SN74LVC2T45's one DIR sets both channels,
+        so its two channels run the same way.
+      On each line it wants: A on the chip's side and B on the header's, the Pmod pin reaching
+      A (through a resistor on a ui line) and the header pin on B's net, so that a translator
+      turned round fails, and says so; VCCA on the Pmod's 3.3 V, as in b; VCCB on the net of
+      a pin of the external header other than GND, the other side's own supply, so that B is
+      unpowered whenever that side is (on the kit's 3.3 V it fails); GND on GND; DIR on GND
+      on a ui line (B to A), and on VCCA's 3.3 V on a uo line (A to B), never on VCCB's net,
+      since DIR's input levels are referenced to VCCA; and a capacitor as in d at each of the
+      two VCC pins, from that pin's net to GND.
+      The windows: on a ui line, a resistor between A and the Pmod pin is required, in c's
+      window, for the same reasons as after a buffer, because A drives ui_in[0] against the
+      RP2350's pull-down and its E9 leakage, and against any pin driving the line the other
+      way. On a uo line none is needed: with the dongle unpowered, VCCB is at 0 V, both ports
+      are high-impedance, and B passes at most Ioff (2 µA) into the dongle's RXD, so the
+      current that a buffer's resistor limits there doesn't arise. A resistor between the
+      Pmod pin and A is allowed on a uo line, and isn't sized. Rule e is for buffers; a
+      translator's B port gets no pull. TI specifies VCC isolation with a supply at GND, and
+      a dongle that is unplugged leaves VCCB floating unless something on the board pulls it
+      down, which this check doesn't ask for.
+      Not on the list: the SN74LVC2T45YZP, a ball-grid array; Nexperia's 74LVC2T45DC, whose
+      datasheet we couldn't fetch to check (its site refused); and the 74LVCH parts, whose
+      bus hold pushes current into a line.
    A line that reaches its header pin directly, or through resistors only, fails, with the
    reason in numbers: a resistor big enough for SkyWater's 100 µA into an unpowered chip
    (27 kΩ from a 3.3 V driver) is more than the 15.4 kΩ that still gives a valid high
@@ -206,6 +242,13 @@ BUFFERS = {"74LVC1G17": _1G, "74LVC1G34": _1G, "74LVC1G125": _1G125,
            "74LVC2G17": _2G, "74LVC2G34": _2G, "74LVC2G125": _2G125,
            "74AUP1G17": _1G, "74AUP1G34": _1G, "74AUP1G125": _1G125}
 
+# The dual-supply translators rule 5 also accepts, as KiCad 10.0.5's Logic_LevelTranslator
+# library numbers their pins: ([(A, B), ...], DIR, VCCA, VCCB, GND). One DIR sets every
+# channel's direction: high is A to B, low (GND) is B to A.
+_1T = ([("3", "4")], "5", "1", "6", "2")
+_2T = ([("2", "7"), ("3", "6")], "5", "1", "8", "4")
+TRANSLATORS = {"SN74LVC1T45DBV": _1T, "SN74LVC1T45DCK": _1T, "SN74LVC1T45DRL": _1T, "SN74LVC2T45DCUR": _2T}
+
 V = 3.3                    # the kit's I/O supply
 VD = 0.6                   # a clamp diode's drop
 I_PAD = 100e-6             # SkyWater's limit into an I/O pin beyond its supply
@@ -224,6 +267,16 @@ def buffer_type(part):
         m = re.search(r"74(?:LVC|AUP)[12]G(?:17|34|125)(?!\d)", s.upper())
         if m and m.group(0) in BUFFERS:
             return m.group(0)
+    return None
+
+
+def translator_type(part):
+    """'SN74LVC1T45DBV' if a netlist part is one of TRANSLATORS, by its symbol's name or its
+    value (with or without the R of a reel)."""
+    for s in (part["part"], part["value"]):
+        m = re.search(r"SN74LVC(?:1T45(DBV|DCK|DRL)|2T45DCU)R?(?![0-9A-Z])", s.upper())
+        if m:
+            return "SN74LVC1T45" + m.group(1) if m.group(1) else "SN74LVC2T45DCUR"
     return None
 
 
@@ -412,12 +465,24 @@ def check(stem, spec, protect):
             return None
         return series(a).get(b, False) if a else False
 
+    # The Pmod's 3.3 V on either side of the current-sense resistor: vcc itself, and the net
+    # on the far side of any resistor of 100 Ω or less from it, {net: that resistor}.
+    far = {n: r for n, (r, v) in series(vcc).items() if (parse_value(v) or 1e9) <= 100} if vcc else {}
+    pmod_3v3 = ({vcc} | set(far)) if vcc else set()
+
+    def pmod_3v3_text():
+        """'+3V3, the net of the Pmod pins 6 and 12, or /+3V3_PMOD, on the far side of R3'."""
+        return f"{vcc}, the net of the Pmod pins 6 and 12" + "".join(
+            f", or {n}, on the far side of {r}" for n, r in sorted(far.items()))
+
     def route(n0, hnet, into):
         """How the Pmod pin's net n0 reaches the header pin's net hnet, as a dict whose "kind"
         is direct, resistors (one or two in a row), buffer (a buffer from BUFFERS, driven from
-        the side the line comes from), reversed (the same, turned round) or unlisted (another
-        part that sits between them); None if it doesn't reach it. `into` is True for a line
-        into the chip (ui, uio), whose header pin drives it."""
+        the side the line comes from), reversed (the same, turned round), translator (a
+        channel of one of TRANSLATORS with A on the Pmod's side and B on the header's),
+        translator-reversed (the same, turned round) or unlisted (another part that sits
+        between them); None if it doesn't reach it. `into` is True for a line into the chip
+        (ui, uio), whose header pin drives it."""
         if n0 is None or hnet is None:
             return None
         if n0 == hnet:
@@ -441,6 +506,16 @@ def check(stem, spec, protect):
                     return {"kind": "buffer", "ref": ref, "type": t, "ch": ch, "before": before, "after": after}
                 if hop(src, ny) is not False and hop(na, dst) is not False:
                     turned = turned or {"kind": "reversed", "ref": ref, "type": t, "ch": ch}
+            t = translator_type(p)
+            for ch in TRANSLATORS[t][0] if t else []:
+                na, nb = p["pins"].get(ch[0]), p["pins"].get(ch[1])
+                if na is None or nb is None:
+                    continue
+                a_side, b_side = hop(n0, na), hop(nb, hnet)
+                if a_side is not False and b_side is not False:
+                    return {"kind": "translator", "ref": ref, "type": t, "ch": ch, "a_side": a_side, "b_side": b_side}
+                if hop(n0, nb) is not False and hop(na, hnet) is not False:
+                    turned = turned or {"kind": "translator-reversed", "ref": ref, "type": t, "ch": ch}
         if turned:
             return turned
         near_src, near_dst = {src} | set(series(src)), {dst} | set(series(dst))
@@ -455,18 +530,42 @@ def check(stem, spec, protect):
         """(the end that drives the line, the end it drives)."""
         return (there, here) if into else (here, there)
 
-    def through(way):
-        """'U1 (74LVC2G17, 1A pin 1 to 1Y pin 6) and R1 (1k)': a buffer chain, in words."""
+    def channel(t, ch, table):
+        """'1' or '2' for a channel of a part with two, '' for a part with one."""
+        chs = table[t][0]
+        return str(chs.index(ch) + 1) if len(chs) > 1 else ""
+
+    def listed(items):
+        """'A', 'A and B', 'A, B and C'."""
+        return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1]
+
+    def through(way, into):
+        """'U1 (74LVC2G17, 1A pin 1 to 1Y pin 6) and R1 (1k)', or 'U1 (SN74LVC1T45DBV, B pin 4
+        to A pin 3) and R1 (1k)': a buffer's or a translator's chain, in words, in the
+        direction the line runs."""
+        res = lambda r: f"{r[0]} ({r[1]})"  # noqa: E731
+        if way["kind"] == "translator":
+            ref, t, (a, b) = way["ref"], way["type"], way["ch"]
+            n = channel(t, way["ch"], TRANSLATORS)
+            if into:
+                chain = [way["b_side"], f"{ref} ({t}, B{n} pin {b} to A{n} pin {a})", way["a_side"]]
+            else:
+                chain = [way["a_side"], f"{ref} ({t}, A{n} pin {a} to B{n} pin {b})", way["b_side"]]
+            return listed([c if isinstance(c, str) else res(c) for c in chain if c])
         ref, t, (a, y, _) = way["ref"], way["type"], way["ch"]
-        chs = BUFFERS[t][0]
-        n = str(chs.index(way["ch"]) + 1) if len(chs) > 1 else ""
+        n = channel(t, way["ch"], BUFFERS)
         out = f"{ref} ({t}, {n}A pin {a} to {n}Y pin {y})"
-        return out + (f" and {way['after'][0]} ({way['after'][1]})" if way["after"] else "")
+        return out + (f" and {res(way['after'])}" if way["after"] else "")
 
     def turned_round(here, there, into, way):
+        if way["kind"] == "translator-reversed":
+            ref, t, (a, b) = way["ref"], way["type"], way["ch"]
+            n = channel(t, way["ch"], TRANSLATORS)
+            return (f"{ref} ({t}) is turned round on this line: its B{n} port (pin {b}) faces {here}, and its A{n} "
+                    f"port (pin {a}) faces {there}\nthe A port, whose supply VCCA also powers DIR, must face the chip, "
+                    f"and the B port {there.split(' (')[0]}")
         ref, t, (a, y, _) = way["ref"], way["type"], way["ch"]
-        chs = BUFFERS[t][0]
-        n = str(chs.index(way["ch"]) + 1) if len(chs) > 1 else ""
+        n = channel(t, way["ch"], BUFFERS)
         drv, rcv = ends(here, there, into)
         return (f"{ref} ({t}) is turned round on this line: its output, {n}Y (pin {y}), faces {drv}, and its "
                 f"input, {n}A (pin {a}), faces {rcv}\n{drv.split(' (')[0]} drives the line, so it must reach "
@@ -474,18 +573,68 @@ def check(stem, spec, protect):
 
     def joined(here, there, into, way):
         """Lab 03's rule for a "to" pin: on one net, through one series resistor, or through
-        a buffer the right way round."""
+        a buffer or a translator the right way round."""
         k = way["kind"]
         if k == "direct":
             return True, f"{here} reaches {there} directly"
         if k == "resistors" and len(way["res"]) == 1:
             return True, f"{here} reaches {there} through {way['res'][0][0]} ({way['res'][0][1]})"
-        if k == "buffer":
+        if k in ("buffer", "translator"):
             drv, rcv = ends(here, there, into)
-            return True, f"{drv} drives {rcv} through {through(way)}"
-        if k == "reversed":
+            return True, f"{drv} drives {rcv} through {through(way, into)}"
+        if k in ("reversed", "translator-reversed"):
             return False, turned_round(here, there, into, way)
         return False, f"{here} doesn't reach {there}"
+
+    def ui_window(rref, ohms):
+        """(ok, text) for the resistor between a buffer's or a translator's output and a ui pin."""
+        lo, hi = R_UI
+        txt = (f"{rref} = {fmt_ohms(ohms)} ({fmt_ohms(lo)} to {fmt_ohms(hi)}): {V:g} V / {fmt_ohms(ohms)} = "
+               f"{fmt_amps(V / ohms)} against a pin "
+               f"driving the other way; {V:g} V × {fmt_ohms(R_PD)} / ({fmt_ohms(R_PD)} + {fmt_ohms(ohms)}) = "
+               f"{fmt_volts(V * R_PD / (R_PD + ohms))} high against a {fmt_ohms(R_PD)} pull-down")
+        if ohms < lo:
+            return False, txt + f"\n{rref} is below {fmt_ohms(lo)}, so a fight can pass more than {fmt_amps(V / lo)}"
+        if ohms > hi:
+            return False, txt + (f"\n{rref} is above {fmt_ohms(hi)}, the most that still pulls the line low "
+                                 f"against an A2 RP2350's input leakage (erratum E9)")
+        return True, txt
+
+    def uo_window(rref, ohms):
+        """(ok, text) for the resistor between a buffer's output and a dongle's RXD."""
+        lo, hi = R_UO
+        txt = (f"{rref} = {fmt_ohms(ohms)} ({fmt_ohms(lo)} to {fmt_ohms(hi)}): ({V:g} V - {VD:g} V) / "
+               f"{fmt_ohms(ohms)} = "
+               f"{fmt_amps((V - VD) / ohms)} into an unpowered dongle; {V:g} V × {fmt_ohms(ohms)} / "
+               f"({fmt_ohms(ohms)} + {fmt_ohms(R_PU)}) = {fmt_volts(V * ohms / (ohms + R_PU))} low "
+               f"against a {fmt_ohms(R_PU)} pull-up")
+        if ohms < lo:
+            return False, txt + (f"\n{rref} is below {fmt_ohms(lo)}, so more than "
+                                 f"{fmt_amps((V - VD) / lo)} can flow into an unpowered dongle")
+        if ohms > hi:
+            return False, txt + (f"\n{rref} is above {fmt_ohms(hi)}, so the low can be over the "
+                                 f"{VIL_DONGLE:g} V a CH340 reads as low")
+        return True, txt
+
+    def decoupling(ref, vpin, net, name):
+        """(ok, text) for the capacitor from `net` to GND nearest a part's supply pin, measured
+        on the board."""
+        if ref not in bd.fps or vpin not in bd.fps[ref]["pads"]:
+            return False, f"{ref} isn't on the board yet, so its decoupling can't be measured"
+        at = bd.place(ref, *bd.fps[ref]["pads"][vpin])
+        caps = sorted((min(math.dist(at, bd.place(c, *xy)) for xy in bd.fps[c]["pads"].values()), c,
+                       cp["value"]) for c, cp in nl.parts.items()
+                      if c.startswith("C") and c in bd.fps and len(cp["pins"]) == 2
+                      and set(cp["pins"].values()) == {net, "GND"})
+        pin = f"{ref} pin {vpin}" + (f" ({name})" if name != "VCC" else "")
+        if caps and caps[0][0] <= DECOUPLE_MM:
+            return True, f"decoupling: {caps[0][1]} ({caps[0][2]}) from {net} to GND, a pad {caps[0][0]:.2f} mm from {pin}"
+        if caps:
+            return False, (f"no decoupling at {ref}'s {name}: the nearest capacitor from {net} to GND, "
+                           f"{caps[0][1]}, has its nearest pad {caps[0][0]:.2f} mm from {pin}, "
+                           f"more than {DECOUPLE_MM:g} mm")
+        return False, (f"no capacitor from {net} to GND to decouple {ref}'s {name}; put one with a pad within "
+                       f"{DECOUPLE_MM:g} mm of pin {vpin}")
 
     def crossing(here, there, into, way):
         """Rule 5, on a line that crosses from another supply: (ok, message)."""
@@ -504,15 +653,18 @@ def check(stem, spec, protect):
         if k == "unlisted":
             p = nl.parts[way["ref"]]
             return False, (f"{way['ref']} ({p['value']}) sits between {here} and {there}, and it isn't one of the "
-                           f"buffers this check accepts\nthose are single-supply parts specified for partial "
-                           f"power down (Ioff): {', '.join(BUFFERS)}")
-        if k == "reversed":
+                           f"parts this check accepts\nthose are single-supply buffers specified for partial power "
+                           f"down (Ioff), {listed(list(BUFFERS))}, and dual-supply translators with Ioff on both "
+                           f"ports, {listed(list(TRANSLATORS))}")
+        if k in ("reversed", "translator-reversed"):
             return False, turned_round(here, there, into, way)
+        if k == "translator":
+            return crossing_translator(here, there, into, way)
 
         ref, t, (a, y, oe) = way["ref"], way["type"], way["ch"]
         drv, rcv = ends(here, there, into)
         p = nl.parts[ref]
-        lines, bad = [f"{drv} drives {rcv} through {through(way)}"], []
+        lines, bad = [f"{drv} drives {rcv} through {through(way, into)}"], []
 
         def problem(text):
             lines.append(text)
@@ -524,16 +676,17 @@ def check(stem, spec, protect):
             problem(f"{ref}'s pins {a} and {y} are {p['types'].get(a)} and {p['types'].get(y)} in its symbol; "
                     f"KiCad's {t} has them as input and output")
 
-        # Its supply, and the enable of a 125.
+        # Its supply, on the Pmod's 3.3 V on either side of the current-sense resistor, and the
+        # enable of a 125.
         vpin, gpin = BUFFERS[t][1], BUFFERS[t][2]
+        vnet = nl.net(ref, vpin)
         sup = []
         if vcc is None:
             problem(f"{ref}'s supply isn't checked until the power row passes")
-        elif nl.net(ref, vpin) != vcc:
-            problem(f"{ref}'s VCC (pin {vpin}) is on {net_names({nl.net(ref, vpin)})}; it must be on {vcc}, "
-                    "the net of the Pmod pins 6 and 12")
+        elif vnet not in pmod_3v3:
+            problem(f"{ref}'s VCC (pin {vpin}) is on {net_names({vnet})}; it must be on {pmod_3v3_text()}")
         else:
-            sup.append(f"VCC (pin {vpin}) on {vcc}")
+            sup.append(f"VCC (pin {vpin}) on {vnet}")
         if nl.net(ref, gpin) != "GND":
             problem(f"{ref}'s GND (pin {gpin}) is on {net_names({nl.net(ref, gpin)})}; it must be on GND")
         else:
@@ -555,62 +708,19 @@ def check(stem, spec, protect):
             ohms = parse_value(rval)
             if ohms is None or ohms <= 0:
                 problem(f"{rref}'s value {rval!r} isn't a resistance the check can read")
-            elif into:
-                lo, hi = R_UI
-                txt = (f"{rref} = {fmt_ohms(ohms)} ({fmt_ohms(lo)} to {fmt_ohms(hi)}): {V:g} V / {fmt_ohms(ohms)} = "
-                       f"{fmt_amps(V / ohms)} against a pin "
-                       f"driving the other way; {V:g} V × {fmt_ohms(R_PD)} / ({fmt_ohms(R_PD)} + {fmt_ohms(ohms)}) = "
-                       f"{fmt_volts(V * R_PD / (R_PD + ohms))} high against a {fmt_ohms(R_PD)} pull-down")
-                if ohms < lo:
-                    problem(txt + f"\n{rref} is below {fmt_ohms(lo)}, so a fight can pass more than "
-                                  f"{fmt_amps(V / lo)}")
-                elif ohms > hi:
-                    problem(txt + f"\n{rref} is above {fmt_ohms(hi)}, the most that still pulls the line low "
-                                  f"against an A2 RP2350's input leakage (erratum E9)")
-                else:
-                    lines.append(txt)
             else:
-                lo, hi = R_UO
-                txt = (f"{rref} = {fmt_ohms(ohms)} ({fmt_ohms(lo)} to {fmt_ohms(hi)}): ({V:g} V - {VD:g} V) / "
-                       f"{fmt_ohms(ohms)} = "
-                       f"{fmt_amps((V - VD) / ohms)} into an unpowered dongle; {V:g} V × {fmt_ohms(ohms)} / "
-                       f"({fmt_ohms(ohms)} + {fmt_ohms(R_PU)}) = {fmt_volts(V * ohms / (ohms + R_PU))} low "
-                       f"against a {fmt_ohms(R_PU)} pull-up")
-                if ohms < lo:
-                    problem(txt + f"\n{rref} is below {fmt_ohms(lo)}, so more than "
-                                  f"{fmt_amps((V - VD) / lo)} can flow into an unpowered dongle")
-                elif ohms > hi:
-                    problem(txt + f"\n{rref} is above {fmt_ohms(hi)}, so the low can be over the "
-                                  f"{VIL_DONGLE:g} V a CH340 reads as low")
-                else:
-                    lines.append(txt)
+                ok, txt = (ui_window if into else uo_window)(rref, ohms)
+                (lines.append if ok else problem)(txt)
 
-        # A decoupling capacitor at its VCC pin, measured on the board.
-        if vcc is not None:
-            if ref not in bd.fps or vpin not in bd.fps[ref]["pads"]:
-                problem(f"{ref} isn't on the board yet, so its decoupling can't be measured")
-            else:
-                at = bd.place(ref, *bd.fps[ref]["pads"][vpin])
-                caps = sorted((min(math.dist(at, bd.place(c, *xy)) for xy in bd.fps[c]["pads"].values()), c,
-                               cp["value"]) for c, cp in nl.parts.items()
-                              if c.startswith("C") and c in bd.fps and len(cp["pins"]) == 2
-                              and set(cp["pins"].values()) == {vcc, "GND"})
-                if caps and caps[0][0] <= DECOUPLE_MM:
-                    lines.append(f"decoupling: {caps[0][1]} ({caps[0][2]}) from {vcc} to GND, a pad "
-                                 f"{caps[0][0]:.2f} mm from {ref} pin {vpin}")
-                elif caps:
-                    problem(f"no decoupling at {ref}'s VCC: the nearest capacitor from {vcc} to GND, "
-                            f"{caps[0][1]}, has its nearest pad {caps[0][0]:.2f} mm from {ref} pin {vpin}, "
-                            f"more than {DECOUPLE_MM:g} mm")
-                else:
-                    problem(f"no capacitor from {vcc} to GND to decouple {ref}; put one with a pad within "
-                            f"{DECOUPLE_MM:g} mm of pin {vpin}")
+        # A decoupling capacitor at its VCC pin, on the net that pin is on.
+        if vnet in pmod_3v3:
+            ok, txt = decoupling(ref, vpin, vnet, "VCC")
+            (lines.append if ok else problem)(txt)
 
         # A pull on the input of a buffer that brings a line into the chip.
         if into:
             na = nl.net(ref, a)
-            rails = {"GND", vcc} | {n for n, (r, v) in series(vcc).items()
-                                    if (parse_value(v) or 1e9) <= 100} if vcc else {"GND"}
+            rails = {"GND"} | pmod_3v3
             pull = None
             for r, x, w, val in res:
                 for u, z in ((x, w), (w, x)):
@@ -622,6 +732,103 @@ def check(stem, spec, protect):
             else:
                 problem(f"nothing pulls {ref}'s input ({na}) up or down, so it floats while no dongle is "
                         f"plugged in; add a resistor from it to {vcc or '3.3 V'} or GND")
+        return not bad, "\n".join(lines)
+
+    def crossing_translator(here, there, into, way):
+        """Rule 5 on a line through a dual-supply translator: (ok, message)."""
+        ref, t, (a, b) = way["ref"], way["type"], way["ch"]
+        _, dpin, vapin, vbpin, gpin = TRANSLATORS[t]
+        n = channel(t, way["ch"], TRANSLATORS)
+        drv, rcv = ends(here, there, into)
+        hpin = there.split(" (")[0]
+        lines, bad = [f"{drv} drives {rcv} through {through(way, into)}"], []
+
+        def problem(text):
+            lines.append(text)
+            bad.append(text)
+        if way["b_side"]:
+            problem(f"{way['b_side'][0]} sits between {hpin} and {ref}'s B{n}; {hpin} must be on B{n}'s net")
+
+        # Its two supplies: VCCA on the Pmod's 3.3 V, VCCB on the other side's own supply.
+        va, vb, g, d = (nl.net(ref, x) for x in (vapin, vbpin, gpin, dpin))
+        hdr_pins = sorted((k for k, v in nl.parts[hdr]["pins"].items() if v == vb), key=lambda k: (len(k), k)) \
+            if vb not in (None, "GND") else []
+        sup = []
+        if vcc is None:
+            problem(f"{ref}'s supplies aren't checked until the power row passes")
+        else:
+            if va in pmod_3v3:
+                sup.append(f"VCCA (pin {vapin}) on {va}")
+            else:
+                problem(f"{ref}'s VCCA (pin {vapin}) is on {net_names({va})}; the A port faces the chip, so VCCA must "
+                        f"be on {pmod_3v3_text()}")
+            if vb in pmod_3v3:
+                problem(f"{ref}'s VCCB (pin {vbpin}) is on {vb}, the kit's 3.3 V, so the B port stays powered while "
+                        f"the other side is off; VCCB must take that side's own supply, from a pin of {hdr}")
+            elif not hdr_pins:
+                problem(f"{ref}'s VCCB (pin {vbpin}) is on {net_names({vb})}, which no pin of {hdr} but GND is on; "
+                        f"VCCB must take the supply of the side {hdr} connects to, from a pin of {hdr}")
+            else:
+                sup.append(f"VCCB (pin {vbpin}) on {vb}, {hdr} pin {hdr_pins[0]}")
+        if g != "GND":
+            problem(f"{ref}'s GND (pin {gpin}) is on {net_names({g})}; it must be on GND")
+        else:
+            sup.append(f"GND (pin {gpin}) on GND")
+        if len(sup) == 3:
+            lines.append(f"{ref}: Ioff on both ports, {', '.join(sup)}")
+
+        # DIR: low (GND) sends B to A, high (VCCA's net) A to B. TI references DIR to VCCA.
+        vcca = va if va in pmod_3v3 else vcc
+        if into:
+            if d == "GND":
+                lines.append(f"DIR (pin {dpin}) on GND: B to A, the way this line runs")
+            elif d is not None and d == vb:
+                problem(f"{ref}'s DIR (pin {dpin}) is on {d}, VCCB's net, which TI's datasheet doesn't allow (DIR is "
+                        f"referenced to VCCA), and high it sends A to B; this line runs from {hpin} into the chip, "
+                        f"B to A, so DIR must be on GND")
+            elif d in pmod_3v3:
+                problem(f"{ref}'s DIR (pin {dpin}) is on {d}, high, which sends A to B; this line runs from {hpin} "
+                        f"into the chip, B to A, so DIR must be on GND")
+            else:
+                problem(f"{ref}'s DIR (pin {dpin}) is on {net_names({d})}; this line runs from {hpin} into the chip, "
+                        f"B to A, so tie DIR to GND")
+        else:
+            if d in pmod_3v3:
+                lines.append(f"DIR (pin {dpin}) on {d}: A to B, the way this line runs")
+            elif d == "GND":
+                problem(f"{ref}'s DIR (pin {dpin}) is on GND, which sends B to A; this line runs from the chip out "
+                        f"to {hpin}, A to B, so DIR must be on {vcca}, VCCA's net")
+            elif d is not None and d == vb:
+                problem(f"{ref}'s DIR (pin {dpin}) is on {d}, VCCB's net; TI's datasheet references DIR to VCCA, so "
+                        f"tie it to {vcca}")
+            else:
+                problem(f"{ref}'s DIR (pin {dpin}) is on {net_names({d})}; this line runs from the chip out to "
+                        f"{hpin}, A to B, so tie DIR to {vcca}, VCCA's net")
+
+        # The resistor between A and the Pmod pin: R1's window on a ui line; none needed on a uo
+        # line, where B is high-impedance whenever the dongle's VCC is at 0 V.
+        if into:
+            if not way["a_side"]:
+                problem(f"{ref}'s A{n} (pin {a}) reaches {here} with no resistor between them; one of "
+                        f"{fmt_ohms(R_UI[0])} to {fmt_ohms(R_UI[1])} caps a fight with a pin driving the line the "
+                        f"other way")
+            else:
+                rref, rval = way["a_side"]
+                ohms = parse_value(rval)
+                if ohms is None or ohms <= 0:
+                    problem(f"{rref}'s value {rval!r} isn't a resistance the check can read")
+                else:
+                    ok, txt = ui_window(rref, ohms)
+                    (lines.append if ok else problem)(txt)
+        elif way["a_side"]:
+            lines.append(f"{way['a_side'][0]} ({way['a_side'][1]}) between {here} and {ref}'s A{n}: a uo line "
+                         f"through a translator needs none, and the check doesn't size it")
+
+        # A decoupling capacitor at each VCC pin, on the net that pin is on.
+        for vpin, net, name, good in ((vapin, va, "VCCA", va in pmod_3v3), (vbpin, vb, "VCCB", bool(hdr_pins))):
+            if good and vcc is not None:
+                ok, txt = decoupling(ref, vpin, net, name)
+                (lines.append if ok else problem)(txt)
         return not bad, "\n".join(lines)
 
     # --- the external header -----------------------------------------------------------
@@ -782,7 +989,8 @@ def main():
     ap = argparse.ArgumentParser(description="The board check, then the Pmod connectors and the pin list.")
     ap.add_argument("project", help=".kicad_pro, or a folder with one")
     ap.add_argument("--pins", default=DEFAULT_PINS, help="the project's pin list (default: SimProc's)")
-    ap.add_argument("--protect", action="store_true", help="Lab 04: buffers on crossing lines, ESD and a current-sense point")
+    ap.add_argument("--protect", action="store_true",
+                    help="Lab 04: a buffer or translator on crossing lines, ESD and a current-sense point")
     ap.add_argument("--bringup", help="also check this BRINGUP.md")
     ap.add_argument("--no-board-check", action="store_true", help="skip check_board.py")
     args = ap.parse_args()
