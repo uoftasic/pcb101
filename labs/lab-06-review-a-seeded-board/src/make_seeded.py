@@ -79,7 +79,9 @@ def schematic(s):
     s.label("RX_BUF", (210.82, 86.36), 0)
     s.place("R4", "Device:R", 264.16, 82.55, 0, value="100k", footprint=mr.R_FP,
             ref_at=(266.7, 81.28, "left"), value_at=(266.7, 83.82, "left"))
-    s.attach("R4", "1", "P:+3V3")
+    end, _ = s.stub("R4", "1")
+    s.wire(end, (end[0] + 2.54, end[1]))
+    s.label("+3V3_PMOD", (end[0] + 2.54, end[1]), 0)
     s.wire(s.points[("U1", "1")][:2], s.points[("R4", "2")][:2])
     s.label("DONGLE_TXD", (250.19, 86.36), 0)
     s.place("U1", mr.BUF, 231.14, 99.06, 180, value="74LVC2G17", footprint=mr.SOT6_FP, unit=2,
@@ -91,13 +93,19 @@ def schematic(s):
     s.attach("R2", "2", "L:DONGLE_RXD")
     s.place("U1", mr.BUF, 264.16, 127.0, 0, value="74LVC2G17", footprint=mr.SOT6_FP, unit=3,
             ref_at=(256.54, 125.73, "right"), value_at=(256.54, 128.27, "right"))
-    s.attach("U1", "5", "P:+3V3")
     s.attach("U1", "2", "P:GND")
     s.place("C1", "Device:C", 279.4, 127.0, 0, value="100n", footprint=mr.C_FP,
             ref_at=(276.86, 125.73, "right"), value_at=(276.86, 128.27, "right"))
-    s.attach("C1", "1", "P:+3V3")
+    vcc, _ = s.stub("U1", "5")
+    top, _ = s.stub("C1", "1")
+    s.wire(vcc, (top[0], vcc[1]))
+    s.wire(top, (top[0], vcc[1]))
+    s.wire(vcc, (vcc[0] - 5.08, vcc[1]))
+    s.junction(vcc)
+    s.label("+3V3_PMOD", (vcc[0] - 5.08, vcc[1]), 180)
     s.attach("C1", "2", "P:GND")
-    s.text("U1: two Schmitt-trigger buffers on the kit's +3V3.\n"
+    s.text("U1: two Schmitt-trigger buffers on the kit's 3.3 V,\n"
+           "after R3, so the current spy sees U1's current.\n"
            "With the kit off, each pin of U1 passes at most\n"
            "10 uA (Ioff), so the dongle can't power the chip.\n"
            "R1: at most 3.3 V / 1k = 3.3 mA if something\n"
@@ -105,7 +113,7 @@ def schematic(s):
            "R2: at most (3.3 - 0.6) V / 1k = 2.7 mA into an\n"
            "unpowered dongle.\n"
            "R4 holds U1's input high with no dongle in J4.\n"
-           "C1 decouples U1.", (185.42, 121.92))
+           "C1 decouples U1.", (185.42, 120.65))
     s.place("D1", "Power_Protection:SP0502BAHT", 266.7, 50.8, 0, value="SP0502BAHT",
             ref_at=(271.78, 49.53, "left"), value_at=(271.78, 52.07, "left"))
     s.attach("D1", "1", "L:DONGLE_TXD")
@@ -131,10 +139,15 @@ def schematic(s):
     s.wire((38.1, 180.34), (38.1, 182.88))
     s.flag((38.1, 180.34), 0)
     s.text("Power enters through the Pmod connectors,\nso PWR_FLAG tells ERC where it comes from.", (45.72, 177.8))
+    s.flag((50.8, 190.5), 0)
+    s.wire((50.8, 190.5), (55.88, 190.5))
+    s.label("+3V3_PMOD", (55.88, 190.5), 0)
+    s.text("+3V3_PMOD is fed through R3, a passive part,\nso it needs a PWR_FLAG of its own.", (71.12, 187.96))
 
 
 C1_AT = (154.5, 63.0)                          # below J3, under its pins 4 and 3
-PLACE = dict(mr.PLACE4, **{"J3": (J3_X, PMOD_Y, 90), "C1": (C1_AT[0], C1_AT[1], 270)})
+PLACE = dict(mr.PLACE4, **{"J3": (J3_X, PMOD_Y, 90), "C1": (C1_AT[0], C1_AT[1], 90)})
+C1_VIA = (156.0, C1_AT[1] - 1.0375)            # GND, beside C1's upper pad
 
 
 def routes(lab, swapped=False):
@@ -162,20 +175,23 @@ def routes(lab, swapped=False):
     r.append(("F.Cu", P, [(x2, 63.0), (121.5, 63.0)]))
     r.append(("F.Cu", P, [(x2, 67.4), (x2, 70.0), (x2, 74.62)] + sw_low))
     r.append(("F.Cu", P, [(x2, 70.0), (121.5, 70.0)]))
-    # ui[0], and R4's 3.3 V from J1, as on Lab 04's board; J4's pins are 2.00 mm apart.
+    # ui[0], and R4's +3V3_PMOD under U1 and R1, as on Lab 04's board; J4's pins are 2.00 mm apart.
     r.append(("F.Cu", S, [(114.70, PMOD_Y), (114.70, 60.5)]))
     r.append(("F.Cu", S, [(114.70, 62.5), (119.0, 62.5), (119.0, 63.65)]))
     r.append(("F.Cu", S, [(116.725, 63.65), (113.6, 63.65), (113.6, 67.9025), (112.9625, 68.54),
                           (110.0, HDR_Y[1])]))
     r.append(("F.Cu", S, [(112.4, 62.6), (112.4, 63.65), (113.6, 63.65)]))
-    r.append(("F.Cu", P, [(102.0, PMOD_Y), (102.0, 58.6), (104.0, 60.6), (112.4, 60.6)]))
-    # U1's VCC (pin 5) straight to TP1's +3V3 branch, and its GND (pin 2) to a via.
-    r.append(("F.Cu", P, [(121.5, 63.0), (119.9, 64.6), (119.0, 64.6)]))
+    # U1's VCC (pin 5) straight up from TP2's +3V3_PMOD, past the via that takes it to R4,
+    # and its GND (pin 2) to a via.
+    r.append(("F.Cu", P, [(121.5, 70.0), (121.5, 65.4), (120.7, 64.6), (120.4, 64.6)]))
+    r.append(("F.Cu", P, [(119.0, 64.6), (120.4, 64.6)]))
+    r.append(("B.Cu", P, [(120.4, 64.6), (115.1, 59.3), (112.4, 59.3)]))
+    r.append(("F.Cu", P, [(112.4, 59.3), (112.4, 60.6)]))
     r.append(("F.Cu", P, [(116.725, 64.6), (115.5, 64.6)]))
-    # C1 from J3's pin 6, its other pad to a via.
-    c1a, c1b = (C1_AT[0], C1_AT[1] - 1.0375), (C1_AT[0], C1_AT[1] + 1.0375)
-    r.append(("F.Cu", P, [(x3, PMOD_Y), (x3, 58.6), (x3 + 1.4, 60.0), (c1a[0], 60.0), c1a]))
-    r.append(("F.Cu", P, [c1b, (c1b[0], c1b[1] + 1.3)]))
+    # C1 from SW1's +3V3_PMOD common, past the right end of SW1; its other pad to a via.
+    c1a, c1b = (C1_AT[0], C1_AT[1] + 1.0375), (C1_AT[0], C1_AT[1] - 1.0375)
+    r.append(("F.Cu", P, [sw_low[-1], (150.0, 74.62), (c1a[0], 70.12), c1a]))
+    r.append(("F.Cu", P, [c1b, C1_VIA]))
     # uo[0]: J3 pin 1 around the bottom and up the right of R2 to U1's pin 4; pin 3 down to R2,
     # then R2 to a via, and along the bottom layer to J4's pin 3.
     xt = x3 + 12.7
@@ -211,8 +227,14 @@ def main():
     comps, pad_net = mr.netlist(sch, work)
 
     mr.routes = routes
-    # Lab 04's vias, less the one beside C1's old place, and one for C1's GND pad.
-    mr.VIAS = {"04": [v for v in mr.VIAS["04"] if v != (122.6, 67.675)] + [(C1_AT[0], C1_AT[1] + 2.3375)]}
+    # Lab 04's vias, less the one beside C1's old place, one for C1's GND pad, and one at
+    # (118, 58) for the piece of the top layer's ground pour that the ring of J1 pin 1, R1,
+    # U1, TP2, R3 and J2's +3V3 closes off. On Lab 04's board C1's via is inside that ring;
+    # without one, DRC reports a starved_thermal error on J1's pad 11.
+    mr.VIAS = {"04": [v for v in mr.VIAS["04"] if v != (122.9375, 64.4)] + [C1_VIA, (118.0, 58.0)]}
+    # C1's reference stays with C1, where its footprint puts it, not where Lab 04's board
+    # moves it.
+    mr.REF_AT["04"] = {k: v for k, v in mr.REF_AT["04"].items() if k != "C1"}
     mr.SILK = SILK
     pcb = os.path.join(out, mr.NAME + ".kicad_pcb")
     mr.build_board(pcb, comps, pad_net, PLACE, "04", True, True)

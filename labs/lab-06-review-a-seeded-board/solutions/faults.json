@@ -10,7 +10,7 @@
     {"id": "decoupling-far", "lines": [4], "where": ["c1", "u1"],
      "what": "C1, U1's decoupling capacitor, sits below J3 at the right of the board, its nearest pad 35.5 mm from U1's VCC pin (pin 5), so nothing decouples U1."},
     {"id": "unplug-order", "lines": [7], "where": ["bringup.md", "bringup", "bring-up", "bring-up plan"],
-     "what": "BRINGUP.md switches the kit off before the dongle comes off J4, both at the end of the steps and when a reading is wrong, against checklist line 7: for that time the powered dongle drives U1's unpowered input (at most 10 µA, its Ioff) and, through R4, up to 33 µA into the kit's +3V3."},
+     "what": "BRINGUP.md switches the kit off before the dongle comes off J4, both at the end of the steps and when a reading is wrong, against checklist line 7: for that time the powered dongle drives U1's unpowered input (at most 10 µA, its Ioff) and, through R4 and R3, up to 33 µA into the kit's +3V3."},
     {"id": "missing-tp", "lines": [8], "where": ["bringup.md", "bringup", "bring-up", "bring-up plan", "tp3"],
      "what": "Step 7 of BRINGUP.md measures at TP3, and the board has no TP3: only TP1 and TP2."},
     {"id": "text-rules", "lines": [9], "where": ["pmod.kicad_pro", "kicad_pro", "pmod.kicad_pcb", "kicad_pcb", "board setup", "silkscreen", "f.silkscreen", "silk", "legend", "text", "rules", "design rules"],
