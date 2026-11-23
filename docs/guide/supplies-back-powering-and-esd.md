@@ -33,7 +33,7 @@
     has "no pulls"). RP2350 datasheet, Release 8: pull-down 36 to 113 kOhm at IOVDD = 3.3 V
     (Table 1683). The 15.4 kOhm limit is worked out on protecting-the-chips-io.
   - Lab 04's reference board and BRINGUP.md (labs/lab-04-protect-and-plan/solutions/):
-    U1 74LVC2G17, R1 and R2 1k, R4 100k; since 4bdb8bb, U1's VCC and R4 on +3V3_PMOD,
+    U1 74LVC2G17, R1 and R2 1k, R4 100k; since 85f4fe1, U1's VCC and R4 on +3V3_PMOD,
     after R3 (10 ohm); 1.65 V on ui[0] with DIP switch 1 on. An unpowered
     dongle's TX clamp pulling R4 to about 0.6 V is our inference, and we haven't measured it.
 -->

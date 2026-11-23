@@ -66,8 +66,8 @@
     the RP2350's GPIO17; DIP switch 1 from ui_in0 to +3V3 through 1k.
   - SimProc (uoftasic/simproc 1d97772): info.yaml and top-level RTL.
   - Lab 04's reference board (labs/lab-04-protect-and-plan/solutions/simproc-pmod) and rule 5
-    of labs/common/check_pmod.py, at 955719c: U1, R1, R2 and R4, and the resistor windows.
-    At 4bdb8bb: U1's VCC, C1 and R4 on +3V3_PMOD, after R3; rule 5f, the translators.
+    of labs/common/check_pmod.py, at dd9cd3d: U1, R1, R2 and R4, and the resistor windows.
+    At 85f4fe1: U1's VCC, C1 and R4 on +3V3_PMOD, after R3; rule 5f, the translators.
     Its BRINGUP.md: DIP switch 1 against R1 leaves a low at 1.65 V; keep the dongle powered
     whenever it's plugged in.
 -->
