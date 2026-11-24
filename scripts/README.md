@@ -6,7 +6,7 @@ Scripts for PCB101 — PCB Design with KiCad (`uoftasic`): the link check for th
 
 | Script | Purpose |
 |--------|---------|
-| `check_site.py` | Check that every local link and `#anchor` in the rendered site resolves; `.github/workflows/site.yml` runs it on `docs/_site` |
+| `check_site.py` | Check that every local link and `#anchor` in the rendered site resolves, and that every page has the navbar's link to https://edu.uoftasic.com/; `.github/workflows/site.yml` runs it on `docs/_site` |
 | `hello.py` | Smoke-check that Python runs in this clone |
 | `init-template.py` | The template's bootstrap script, which fills in the course id, title and description in a repo made from the template. PCB101's are already filled in; see [`TEMPLATE.md`](../TEMPLATE.md) |
 | `screenshots/kicad/shot.sh` | KiCad GUI screenshots in the pinned image under Xvfb; see [`screenshots/kicad/README.md`](screenshots/kicad/README.md) |
